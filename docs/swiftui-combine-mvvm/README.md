@@ -12,7 +12,6 @@
     - [소스 코드 구조](#소스-코드-구조)
   - [예시](#예시)
     - [TicTacToe-Mac](#tictactoe-mac)
-    - [아키텍처 예시](#아키텍처-예시)
   - [참고 자료](#참고-자료)
 
 ## 개요
@@ -48,8 +47,6 @@ Combine을 사용할 때 주의할 점은 Combine이 동시성 환경에서 사�
 ## 예시
 
 ### TicTacToe-Mac
-
-### 아키텍처 예시
 
 ```swift
 final class EmotionDiaryViewModel: ObservableObject {
@@ -106,4 +103,4 @@ struct EmotionDiaryView: View {
 
 - [Apple: Introducing Combine](https://developer.apple.com/videos/play/wwdc2019/722/)
 - [Apple: Data Essentials in SwiftUI](https://developer.apple.com/videos/play/wwdc2020/10040/)
-- [Swift by Sundell: Combine basics](https://www.swiftbysundell.com/articles/combining-swiftui-and-combine/)
+- [Apple: Data Flow Through SwiftUI (WWDC21)](https://developer.apple.com/videos/play/wwdc2021/10019/)
