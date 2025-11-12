@@ -5,102 +5,95 @@
 - [SwiftUI에서 Combine 기반 MVVM 사용하기](#swiftui에서-combine-기반-mvvm-사용하기)
   - [목차](#목차)
   - [개요](#개요)
-    - [MVVM이란](#mvvm이란)
-    - [Combine이란](#combine이란)
-    - [Combine의 역할](#combine의-역할)
-  - [설명](#설명)
-    - [소스 코드 구조](#소스-코드-구조)
+    - [아키텍처 소개](#아키텍처-소개)
+    - [파일 구조](#파일-구조)
   - [예시](#예시)
-    - [TicTacToe-Mac](#tictactoe-mac)
+    - [상태 업데이트](#상태-업데이트)
+    - [SampleCounter 둘러보기](#samplecounter-둘러보기)
+    - [Publisher 예시 코드](#publisher-예시-코드)
   - [참고 자료](#참고-자료)
 
 ## 개요
 
-### MVVM이란
+### 아키텍처 소개
 
-MVVM은 모바일 애플리케이션에서 자주 사용되는 아키텍처 방식입니다.
+Mentory-iOS에서 사용한 아키텍처는 **MVVM**입니다. 프로젝트의 소스 코드는 Domain과 Presentation으로 구분되며, Domain은 비즈니스 로직과 데이터 상태를 관리하는 핵심 영역으로, 앱의 기능적 규칙과 모델을 정의합니다. 반면 Presentation은 사용자 인터페이스와 상호작용을 담당하며, SwiftUI를 통해 ViewModel로부터 전달받은 상태 변화를 즉각적으로 반영합니다.
 
-SwiftUI는 선언형 UI 프레임워크이기 때문에 상태 변화를 예측 가능하게 관리하는 패턴이 중요합니다. Combine 기반 MVVM을 사용하면 `ObservableObject`로 ViewModel을 정의하고 `@Published` 또는 `@StateObject`를 활용해 UI와 데이터 스트림을 연결할 수 있습니다.
+![MVVM 구조 다이어그램](image.png)
 
-SwiftUI에서는 View 프로토콜을 채택한 구조체가 View와 ViewModel을 구현하기 위해 사용할 수 있습니다.
+### 파일 구조
 
-![alt text](image.png)
+아래는 프로젝트에서 사용하는 디렉토리 구조입니다. 애플리케이션의 상태와 관련된 모든 로직은 **Domain** 디렉토리 내에 정의되며, 여기서는 데이터 모델과 비즈니스 규칙, 그리고 상태 변화 로직이 관리됩니다. 반면 **Presentation** 디렉토리는 SwiftUI 기반의 사용자 인터페이스를 담당하며, ViewModel을 통해 전달된 상태 변화를 즉각적으로 반영하는 역할을 합니다.
 
-### Combine이란
-
-Combine은 WWDC19에서 SwiftUI와 함께 공개된 비동기 프레임워크입니다.
-
-Combine은 이벤트 파이프라인을 구축하여 인스턴스 간의 비동기 통신을 구현하도록 도와줍니다.
-
-### Combine의 역할
-
-기본적으로, MVVM에서 View가 ViewModel의 프로퍼티 변화로 View를 업데이트하려면 이를 View로 전달할 수 있어야 합니다. 그래서 Apple에서는 Combine 프레임워크를 만들어 SwiftUI에서 View를 업데이트하기 위한 용도로 사용한 것입니다.
-
-Combine을 사용할 때 주의할 점은 Combine이 동시성 환경에서 사용하도록 의도되지 않았다는 점입니다. 그래서
-
-## 설명
-
-### 소스 코드 구조
-
-프로젝트에 포함된 소스 코드들은 Domain과 Representation 폴더로 구분하여 관리합니다.
+```bash
+# 프로젝트 폴더 구조
+SampleCounter
+├─ Domain            // 비즈니스 로직과 상태 객체
+│  └─ SampleCounter  // 트리 형태고 구조화되는 객체들
+└─ Presentation      // SwiftUI View와 App 진입점
+   ├─ Graphic        // ContentView, SignInFormView 등 UI 조립
+   └─ SampleCounterApp.swift
+```
 
 ## 예시
 
-### TicTacToe-Mac
+### 상태 업데이트
+
+예를 들어, 정해진 코드를 입력해야 사용할 수 있는 Counter 애플리케이션을 개발한다고 가정하면, 아래와 같이 폴더가 구성될 수 있습니다.
+
+### SampleCounter 둘러보기
+
+`docs/swiftui-combine-mvvm/SampleCounter/SampleCounter/Domain/SampleCounter.swift`에는 전역 상태를 보유하는 루트 객체가 정의되어 있습니다. 로그인 폼과 새로운 카운터를 동적으로 생성/소멸 시키며, 모든 속성이 `@Published`이기 때문에 다른 View가 쉽게 구독할 수 있습니다.
 
 ```swift
-final class EmotionDiaryViewModel: ObservableObject {
-    @Published var entries: [EmotionEntry] = []
-    @Published var isLoading = false
-    private let repository: EmotionDiaryRepository
-    private var cancellables = Set<AnyCancellable>()
+final class SampleCounter: ObservableObject {
+    @Published var signInForm: SignInForm? = nil
+    @Published var newCounter: NewCounter? = nil
+    @Published var isSigned: Bool = false
+    @Published var number: Int = 0
 
-    init(repository: EmotionDiaryRepository) {
-        self.repository = repository
-    }
+    func increment() { number += 1 }
+    func decrement() { number -= 1 }
 
-    func load() {
-        isLoading = true
-        repository.fetchLatestEntries()
-            .receive(on: DispatchQueue.main)
-            .sink(
-                receiveCompletion: { [weak self] completion in
-                    self?.isLoading = false
-                    if case .failure(let error) = completion {
-                        print("Load failed: \(error)")
-                    }
-                },
-                receiveValue: { [weak self] entries in
-                    self?.entries = entries
-                }
-            )
-            .store(in: &cancellables)
+    func setUpForm() {
+        guard signInForm == nil else { return }
+        signInForm = SignInForm(owner: self)
     }
 }
 ```
 
-```swift
-struct EmotionDiaryView: View {
-    @StateObject private var viewModel: EmotionDiaryViewModel
+`SignInForm`과 `SignUpForm`(각각 `Domain/SampleCounter/SignInForm/` 폴더)은 소유자를 `nonisolated let owner`로 유지하면서 필요 시 상위 객체 상태를 갱신합니다. SwiftUI View는 아래와 같이 단순하게 상태를 관찰합니다.
 
-    init(viewModel: EmotionDiaryViewModel) {
-        _viewModel = StateObject(wrappedValue: viewModel)
-    }
+```swift
+struct ContentView: View {
+    @ObservedObject var app: SampleCounter
 
     var body: some View {
-        List(viewModel.entries) { entry in
-            Text(entry.summary)
+        VStack {
+            Text("숫자 : \(app.number)")
+            Button("+") { app.increment() }
+            Button("SetUp") { app.setUpForm() }
+            if let form = app.signInForm {
+                NavigationLink { SignInFormView(form) } label: {
+                    Text("로그인으로 넘어갑니다.")
+                }
+            }
         }
-        .overlay {
-            if viewModel.isLoading { ProgressView() }
-        }
-        .task { viewModel.load() }
     }
 }
 ```
+
+복잡한 화면에서는 `@StateObject`를 사용해 ViewModel 수명을 View와 일치시키거나, 전역 상태(예: `SampleCounter`)를 `@EnvironmentObject`로 주입해 전역적으로 구독할 수 있습니다.
+
+### Publisher 예시 코드
+
+아래 예시는 Mentory 앱의 감정 다이어리 화면을 모델링한 Combine 기반 ViewModel 샘플입니다. Repository에서 최신 기록을 전달받아 UI 상태를 갱신하는 기본 패턴을 보여줍니다.
+
+이 패턴을 Mentory의 다른 화면에도 동일하게 적용할 수 있습니다. 주요 포인트는 **Publisher 체인을 ViewModel 내부에 숨기고**, View는 `@StateObject`/`@ObservedObject` 바인딩만 다루도록 만드는 것입니다.
 
 ## 참고 자료
 
 - [Apple: Introducing Combine](https://developer.apple.com/videos/play/wwdc2019/722/)
 - [Apple: Data Essentials in SwiftUI](https://developer.apple.com/videos/play/wwdc2020/10040/)
 - [Apple: Data Flow Through SwiftUI (WWDC21)](https://developer.apple.com/videos/play/wwdc2021/10019/)
+- [Apple: Combine in Practice](https://developer.apple.com/videos/play/wwdc2020/10147/)
