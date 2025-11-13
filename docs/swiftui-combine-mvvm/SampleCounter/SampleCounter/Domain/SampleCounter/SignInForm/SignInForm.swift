@@ -17,7 +17,7 @@ final class SignInForm: Sendable, ObservableObject {
     
     
     // MARK: state
-    nonisolated let owner: SampleCounter
+    let owner: SampleCounter
     
     @Published var signUpForm: SignUpForm? = nil
     

@@ -1,102 +1,126 @@
 # MVVM에 Swift Concurrency 도입하기
 
 ## 목차
-- [개요](#개요)
-- [비동기 흐름 설계](#비동기-흐름-설계)
-- [Async/Await ViewModel 예시](#asyncawait-viewmodel-예시)
-- [Actor와 상태 관리](#actor와-상태-관리)
-- [적용 팁](#적용-팁)
-- [참고 자료](#참고-자료)
+
+- [MVVM에 Swift Concurrency 도입하기](#mvvm에-swift-concurrency-도입하기)
+  - [목차](#목차)
+  - [개요](#개요)
+    - [Swift Concurreny](#swift-concurreny)
+  - [배경 지식](#배경-지식)
+    - [세부 항목](#세부-항목)
+    - [동시성 문제](#동시성-문제)
+    - [Swift 6.2 - Approachable Concurrency](#swift-62---approachable-concurrency)
+    - [Approachable Concurrency](#approachable-concurrency)
+  - [참고 자료](#참고-자료)
 
 ## 개요
 
-Swift Concurrency는 `async/await`, `Task`, `Actor` 등을 제공해 Combine보다 단순한 제어 흐름으로 비동기 작업을 표현할 수 있습니다. Mentory의 MVVM 구조에서는 네트워크 호출, 음성 전사, 감정 분석 LLM 요청 등을 비동기 함수로 추상화해 ViewModel이 명령형 스타일로 로직을 작성하면서도 UI는 SwiftUI의 상태 업데이트만 신경 쓰도록 합니다.
+### Swift Concurreny
 
-## 비동기 흐름 설계
+Swift Concurrency는 동시성을 활용해 작업을 비동기 처리하거나 연산을 병렬화고자 할 때, 이를 동기적인 방식으로 구현할 수 있도록 도와줍니다. Swift Concurrency에 포함된 기능 혹은 개념들입니다.
 
-1. **Repository**는 `async throws` 함수로 데이터 소스를 추상화합니다.
-2. **ViewModel**은 Swift Concurrency의 `Task` 또는 `task` modifier에서 호출되며, 결과를 `@Published`나 `@MainActor` 속성과 연결합니다.
-3. **View**는 `@StateObject` ViewModel을 가진 상태로, 비동기 작업을 `task { await viewModel.load() }`처럼 트리거합니다.
+- 비동기 처리: `Task`, `async`, `await`, `withCheckedContinuation`
+- 병렬 처리: `async let`, `TaskGroup`, `@concurrent`
+- 공유 안정성: `Sendable`
+- 원자성 보장: `Actor`, `nonisolated`
+- 일관성 보장: `GlobalActor`, `MainActor`
 
-## Async/Await ViewModel 예시
+## 배경 지식
 
-```swift
-@MainActor
-final class EmotionAdviceViewModel: ObservableObject {
-    @Published var advice: String?
-    @Published var isLoading = false
-    private let service: EmotionAdviceService
+### 세부 항목
 
-    init(service: EmotionAdviceService) {
-        self.service = service
-    }
+1. Swift Concurrency와 코루틴, 동시성 구현 모델(Thread Pool, Continuation)
+2. iOS GUI 이벤트 루프, RunLoop
+3. 비즈니스 로직들로 구성된 하나의 작업(Flow)는 동시 실행(비동기 실행)될 수 있다.
 
-    func loadAdvice(for entry: EmotionEntry) async {
-        guard !isLoading else { return }
-        isLoading = true
-        defer { isLoading = false }
+### 동시성 문제
 
-        do {
-            let suggestion = try await service.fetchAdvice(for: entry)
-            advice = suggestion
-        } catch {
-            advice = "오늘은 스스로에게 휴식을 선물해보세요."
-            print("Advice fetch failed: \\(error)")
-        }
-    }
-}
-```
+1. 객체의 갱신 충돌 - 10000번의 카운터
 
-```swift
-struct EmotionAdviceView: View {
-    @StateObject private var viewModel: EmotionAdviceViewModel
-    private let entry: EmotionEntry
+   ```swift
+   // 동시성 문제 예시: 공유 데이터에 대한 경쟁 조건 (Race Condition)
 
-    init(viewModel: EmotionAdviceViewModel, entry: EmotionEntry) {
-        _viewModel = StateObject(wrappedValue: viewModel)
-        self.entry = entry
-    }
+   final class Counter {
+       var value: Int = 0
 
-    var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text(viewModel.advice ?? "감정 분석 중...")
-            if viewModel.isLoading {
-                ProgressView().frame(maxWidth: .infinity, alignment: .center)
-            }
-        }
-        .task { await viewModel.loadAdvice(for: entry) }
-    }
-}
-```
+       func increment() {
+           let oldValue = value
+           // 동시에 여러 Task가 접근할 경우, 중간 상태가 덮어씌워질 수 있음
+           value = oldValue + 1
+       }
+   }
 
-## Actor와 상태 관리
+   let counter = Counter()
 
-```swift
-actor EmotionEntryStore {
-    private var entries: [EmotionEntry] = []
+   await withTaskGroup(of: Void.self) { group in
+       for _ in 0..<10_000 {
+           group.addTask {
+               counter.increment()
+           }
+       }
+   }
 
-    func add(_ entry: EmotionEntry) {
-        entries.append(entry)
-    }
+   print("최종 카운트: \(counter.value)") // 예상: 10000, 실제: 더 작을 수 있음
+   // 이 문제를 해결하려면 Actor 또는 Task-safe한 동시성 제어가 필요함
+   ```
 
-    func latest(limit: Int) -> [EmotionEntry] {
-        Array(entries.suffix(limit))
-    }
-}
-```
+2. 객체들 간의 상태 일관성 - 은행 계좌
 
-- Actor를 Repository나 로컬 캐시 계층에 적용하면 동시 접근으로 인한 데이터 경쟁을 방지할 수 있습니다.
-- `@MainActor`를 ViewModel에 선언해 UI 관련 상태가 항상 메인 스레드에서 업데이트되도록 해야 합니다.
+   ```swift
+   // 동시성 문제 예시: 객체 간의 상태 불일치 (Inconsistent State)
 
-## 적용 팁
+   final class BankAccount {
+       var balance: Int
 
-- **Task 취소 처리**: 긴 작업은 `Task { try await ... }` 내에서 `Task.checkCancellation()`을 호출하거나 `withTaskCancellationHandler`를 사용해 중단 시 리소스를 정리합니다.
-- **AsyncSequence 활용**: 음성 전사처럼 스트리밍 데이터는 `AsyncStream` 또는 `AsyncThrowingStream`으로 감싸 상태를 순차적으로 방출하게 합니다.
-- **테스트**: `XCTest`의 `async` 테스트 함수를 활용하고, `@MainActor` 메서드는 `await MainActor.run { ... }`를 통해 검증합니다.
-- **Combine과 병용**: 기존 Combine Publisher를 `values` 프로퍼티나 `async` 변환으로 연결해 점진적으로 전환할 수 있습니다.
+       init(balance: Int) {
+           self.balance = balance
+       }
+
+       func transfer(to target: BankAccount, amount: Int) {
+           if balance >= amount {
+               balance -= amount
+               // 동시에 다른 스레드가 같은 계좌에서 송금하면, 중간 상태에서 불일치 발생 가능
+               target.balance += amount
+           }
+       }
+   }
+
+   let accountA = BankAccount(balance: 1000)
+   let accountB = BankAccount(balance: 1000)
+
+   await withTaskGroup(of: Void.self) { group in
+       for _ in 0..<1000 {
+           group.addTask {
+               accountA.transfer(to: accountB, amount: 1)
+           }
+       }
+   }
+
+   print("A 잔액: \(accountA.balance), B 잔액: \(accountB.balance), 합계: \(accountA.balance + accountB.balance)")
+   // 예상: 합계 2000, 실제: 더 작을 수 있음
+   // 이 문제를 해결하려면 Actor, Lock, 또는 Serial Queue로 일관성 있는 접근이 필요함
+   ```
+
+### Swift 6.2 - Approachable Concurrency
+
+Swift 6.2의 Approachable Concurrency는 동시성을 더 쉽고 안전하게, 기존 코드베이스에서도 부담 없이 채택할 수 있도록 설계된 런타임 및 컴파일러 변화이다. 대부분의 코드가 기본적으로 메인 액터(MainActor) 혹은 호출자(actor)의 실행 컨텍스트에서 동작하도록 만들어 “언제 백그라운드로 떨어지는가?”에 대한 예측 가능성을 높인다.
+
+- Swift의 주요 동시성 개념을 실무 코드에 자연스럽게 통합할 수 있게 하며, 기존 GCD나 completion handler 기반 코드와의 호환성을 개선한다.
+- `@concurrent` 키워드를 통해 모호했던 `nonisolated async`의 의미를 명확하게 표현할 수 있다.
+- MainActor의 암시적 채택 범위가 확대되어 UI 코드 외에도 기본 진입점(main run loop)에서 안전한 동작을 보장한다.
+
+참고: [Swift 동시성 사용하기 - WWDC25 (Session 268)](https://developer.apple.com/kr/videos/play/wwdc2025/268)
+
+![alt text](image.png)
+
+### Approachable Concurrency
 
 ## 참고 자료
 
 - [Apple: Meet async/await in Swift](https://developer.apple.com/videos/play/wwdc2021/10132/)
 - [Apple: Swift Concurrency in Practice](https://developer.apple.com/videos/play/wwdc2022/110352/)
 - [WWDC Sample: Bring structured concurrency to SwiftUI](https://developer.apple.com/documentation/swiftui/bringing-structured-concurrency-to-swiftui)
+- [Apple: Embracing Swift Concurrency (WWDC25)](https://developer.apple.com/videos/play/wwdc2025/268/)
+- [Apple: Code-along: Elevate an app with Swift concurrency (WWDC25)](https://developer.apple.com/videos/play/wwdc2025/270/)
+- [Apple: Migrate your app to Swift 6 (WWDC24)](https://developer.apple.com/videos/play/wwdc2024/10169/)
+- [Apple: What’s new in Swift (WWDC24)](https://developer.apple.com/videos/play/wwdc2024/10136/)

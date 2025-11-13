@@ -6,9 +6,11 @@
 //
 import Combine
 import Observation
+import Foundation
 
 
 // MARK: Object
+@MainActor
 final class SampleCounter: ObservableObject {
     // MARK: core
     
@@ -29,12 +31,19 @@ final class SampleCounter: ObservableObject {
     
     
     // MARK: action
-    func setUpForm() {
+    func setUpForm() async {
         // capture
         guard signInForm == nil else {
             print("이미 SignInForm이 존재합니다.")
             return
         }
+        
+        // process
+        // GoogleAPI 요청
+        let urlsession = URLSession.shared
+        
+        let result = try? await urlsession.data(for: URLRequest(url: URL(string: "https://www.google.com")!))
+        
         
         // mutate
         self.signInForm = SignInForm(owner: self)
