@@ -23,12 +23,12 @@ final class Onboarding: Sendable, ObservableObject {
     nonisolated let owner: MentoryiOS
     nonisolated private let logger = Logger(subsystem: "Mentory", category: "Domain")
     
-    var nameInput: String = ""
+    @Published var nameInput: String = ""
     func setName(_ newName: String) {
         self.nameInput = newName
     }
     
-    var validationResult: ValidationResult = .none
+    @Published var validationResult: ValidationResult = .none
     
     
     // MARK: action

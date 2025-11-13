@@ -20,9 +20,9 @@ final class MentoryiOS: Sendable, ObservableObject {
     nonisolated let id: UUID = UUID()
     nonisolated let logger = Logger(subsystem: "Mentory", category: "MentoryiOS")
     
-    var userName: String? = nil
-    var onboardingFinished: Bool = false
-    var onboarding: Onboarding? = nil
+    @Published var userName: String? = nil
+    @Published var onboardingFinished: Bool = false
+    @Published var onboarding: Onboarding? = nil
     
     
     // MARK: action
