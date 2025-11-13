@@ -12,9 +12,13 @@ import Combine
 @MainActor
 final class Onboarding: Sendable, ObservableObject {
     // MARK: core
+    init(owner: MentoryiOS) {
+        self.owner = owner
+    }
     
     
     // MARK: state
+    nonisolated let owner: MentoryiOS
     
     
     // MARK: action

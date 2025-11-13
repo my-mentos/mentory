@@ -11,6 +11,7 @@
     - [객체와 비즈니스 로직](#객체와-비즈니스-로직)
     - [게터, 세터, 액션](#게터-세터-액션)
     - [객체 템플릿](#객체-템플릿)
+    - [OSLog를 활용한 로깅](#oslog를-활용한-로깅)
     - [객체의 트리 구조화](#객체의-트리-구조화)
     - [액션 검증하기](#액션-검증하기)
   - [참고 자료](#참고-자료)
@@ -164,6 +165,43 @@ final class SampleObject: Sendable, ObservableObject {
 }
 
 ```
+
+### OSLog를 활용한 로깅
+
+Mentory-iOS에서는 액션의 흐름과 상태 변화를 추적하기 위해 [`OSLog`](https://developer.apple.com/documentation/os/oslog)를 활용합니다. OSLog는 시스템 전반에서 일관된 로그 포맷과 필터링 도구(Console.app, Instruments 등)를 제공하므로, 액션 실행 순서나 Combine 스트림에서 발생하는 이벤트를 분석할 때 유용합니다.
+
+- 뷰모델이나 객체에서 `Logger(subsystem:category:)`를 한 번만 선언하고 재사용합니다.
+- 액션 단위로 `info`/`debug`/`error` 레벨을 구분해 상태 변화를 기록합니다.
+- 민감한 값은 `.privacy(.private)`를 명시해 Console 출력 시 자동으로 마스킹되도록 합니다.
+
+```swift
+import OSLog
+
+@MainActor
+final class SomeCounter {
+    private let logger = Logger(subsystem: "com.mentory.samplecounter",
+                                category: "SomeCounter")
+
+    func incrementIfSignedIn() {
+        guard isSignedIn else {
+            logger.debug("increment skipped – not signed in")
+            return
+        }
+        let oldValue = count
+        count += 1
+        logger.info("incremented from \(oldValue) to \(self.count, privacy: .public)")
+    }
+
+    func signOutAndReset() {
+        logger.notice("signing out and resetting counter")
+        isSignedIn = false
+        count = 0
+    }
+}
+```
+
+> [!TIP]
+> Combine 파이프라인에서도 `handleEvents(receiveOutput:)` 안에서 logger를 호출하면, 토픽 별로 추적 가능한 “이벤트 타임라인”을 남길 수 있습니다.
 
 ### 객체의 트리 구조화
 
