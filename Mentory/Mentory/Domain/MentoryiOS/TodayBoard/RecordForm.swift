@@ -65,7 +65,7 @@ final class RecordForm: Sendable, ObservableObject {
 
         // mutate
         // Record 객체 생성 (입력받은 것만 포함)
-        let record = TodayBoard.Record(
+        let record = Record(
             title: titleInput,
             date: Date(), // 오늘 날짜
             text: textInput.isEmpty ? nil : textInput,
@@ -74,7 +74,7 @@ final class RecordForm: Sendable, ObservableObject {
         )
 
         // todayBoard에 저장
-        todayBoard.addRecord(record)
+        addRecord(record, to: todayBoard)
 
         // form 초기화
         self.titleInput = ""
@@ -85,9 +85,32 @@ final class RecordForm: Sendable, ObservableObject {
 
         logger.info("기록이 성공적으로 제출되었습니다.")
     }
-    
-    
+
+    func addRecord(_ record: Record, to todayBoard: TodayBoard) {
+        todayBoard.records.append(record)
+        logger.info("새로운 기록이 추가되었습니다. ID: \(record.id)")
+    }
+
+
     // MARK: value
+    struct Record: Identifiable, Sendable, Hashable {
+        let id: UUID
+        let title: String
+        let date: Date
+        let text: String?
+        let image: Data?
+        let voice: URL?
+
+        init(id: UUID = UUID(), title: String, date: Date, text: String? = nil, image: Data? = nil, voice: URL? = nil) {
+            self.id = id
+            self.title = title
+            self.date = date
+            self.text = text
+            self.image = image
+            self.voice = voice
+        }
+    }
+
     nonisolated enum ValidationResult: String, Sendable, Hashable {
         case none
         case titleInputIsEmpty
