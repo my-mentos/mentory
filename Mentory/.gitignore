@@ -4,3 +4,5 @@ GoogleInfo-Info.plist
 # Secrets (ALAN API key)
 Config/Secrets.xcconfig
 *.xcconfig.local
+
+.DS_Store

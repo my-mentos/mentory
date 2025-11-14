@@ -12,7 +12,7 @@ import SwiftUI
 struct MentoryApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            MentoryiOSView()
         }
     }
 }
