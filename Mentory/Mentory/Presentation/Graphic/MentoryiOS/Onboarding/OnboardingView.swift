@@ -4,12 +4,16 @@
 //
 //  Created by 구현모 on 11/14/25.
 //
-
 import SwiftUI
 
+
+// MARK: View
 struct OnboardingView: View {
+    // MARK: model
     @ObservedObject var onboardingModel: Onboarding
 
+    
+    // MARK: body
     var body: some View {
         VStack(spacing: 0) {
             // 타이틀
