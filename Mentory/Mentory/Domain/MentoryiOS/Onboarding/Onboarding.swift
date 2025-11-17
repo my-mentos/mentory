@@ -17,6 +17,7 @@ final class Onboarding: Sendable, ObservableObject {
         self.owner = owner
     }
     
+    
     // MARK: state
     nonisolated let id = UUID()
     weak var owner: MentoryiOS?
