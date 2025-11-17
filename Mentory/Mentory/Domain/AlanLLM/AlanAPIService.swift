@@ -24,10 +24,10 @@ final class AlanAPIService {
     /// 질문하기 API - 일반 응답
     /// - Parameter content: 질문 내용
     /// - Returns: Alan API 응답
-    func question(content: String) async throws -> AlanAPIResponse {
+    func question(content: String) async throws -> AlanLLM.Answer {
         guard var urlComponents = URLComponents(string: "\(baseURL)/question") else {
             logger.error("URL 생성 실패")
-            throw AlanAPIError.invalidURL
+            throw AlanLLM.Error.invalidURL
         }
 
         urlComponents.queryItems = [
@@ -37,7 +37,7 @@ final class AlanAPIService {
 
         guard let url = urlComponents.url else {
             logger.error("URL Components로부터 URL 생성 실패")
-            throw AlanAPIError.invalidURL
+            throw AlanLLM.Error.invalidURL
         }
 
         logger.info("API 요청: \(url.absoluteString)")
@@ -47,28 +47,28 @@ final class AlanAPIService {
 
             guard let httpResponse = response as? HTTPURLResponse else {
                 logger.error("HTTP 응답 변환 실패")
-                throw AlanAPIError.invalidResponse
+                throw AlanLLM.Error.invalidResponse
             }
 
             guard httpResponse.statusCode == 200 else {
                 logger.error("HTTP 오류: 상태 코드 \(httpResponse.statusCode)")
-                throw AlanAPIError.httpError(statusCode: httpResponse.statusCode)
+                throw AlanLLM.Error.httpError(statusCode: httpResponse.statusCode)
             }
 
             let decoder = JSONDecoder()
-            let apiResponse = try decoder.decode(AlanAPIResponse.self, from: data)
+            let apiResponse = try decoder.decode(AlanLLM.Answer.self, from: data)
 
             logger.info("API 응답 성공: \(apiResponse.content)")
             return apiResponse
 
         } catch let error as DecodingError {
             logger.error("디코딩 오류: \(error.localizedDescription)")
-            throw AlanAPIError.decodingError(error)
-        } catch let error as AlanAPIError {
+            throw AlanLLM.Error.decodingError(error)
+        } catch let error as AlanLLM.Error {
             throw error
         } catch {
             logger.error("네트워크 오류: \(error.localizedDescription)")
-            throw AlanAPIError.networkError(error)
+            throw AlanLLM.Error.networkError(error)
         }
     }
 
@@ -76,7 +76,7 @@ final class AlanAPIService {
     func resetState() async throws {
         guard let url = URL(string: "\(baseURL)/reset-state") else {
             logger.error("URL 생성 실패")
-            throw AlanAPIError.invalidURL
+            throw AlanLLM.Error.invalidURL
         }
 
         var request = URLRequest(url: url)
@@ -93,21 +93,21 @@ final class AlanAPIService {
 
             guard let httpResponse = response as? HTTPURLResponse else {
                 logger.error("HTTP 응답 변환 실패")
-                throw AlanAPIError.invalidResponse
+                throw AlanLLM.Error.invalidResponse
             }
 
             guard httpResponse.statusCode == 200 else {
                 logger.error("HTTP 오류: 상태 코드 \(httpResponse.statusCode)")
-                throw AlanAPIError.httpError(statusCode: httpResponse.statusCode)
+                throw AlanLLM.Error.httpError(statusCode: httpResponse.statusCode)
             }
 
             logger.info("상태 초기화 성공")
 
-        } catch let error as AlanAPIError {
+        } catch let error as AlanLLM.Error {
             throw error
         } catch {
             logger.error("네트워크 오류: \(error.localizedDescription)")
-            throw AlanAPIError.networkError(error)
+            throw AlanLLM.Error.networkError(error)
         }
     }
 }

@@ -18,7 +18,14 @@ final class AlanLLMMock: Sendable {
     
     // MARK: state
     nonisolated let logger = Logger(subsystem: "AlanLLM.AlanLLMMock", category: "Domain")
-    nonisolated let strs = ["Hello", "World", "Swift", "Great", "Is it fun?", "No, it's not fun."]
+    nonisolated let answers: [AlanLLM.Answer] = [
+        .init(action: .init(name: "speak", speak: "Hello"), content: "Hello"),
+        .init(action: .init(name: "speak", speak: "World"), content: "World"),
+        .init(action: .init(name: "speak", speak: "Swift"), content: "Swift"),
+        .init(action: .init(name: "speak", speak: "Great"), content: "Great"),
+        .init(action: .init(name: "speak", speak: "Is it fun?"), content: "Is it fun?"),
+        .init(action: .init(name: "speak", speak: "No, it's not fun."), content: "No, it's not fun.")
+    ]
     var answerBox: [AlanLLM.Question.ID: AlanLLM.Answer] = [:]
     var questionQueue: Deque<AlanLLM.Question> = []
     
@@ -27,7 +34,7 @@ final class AlanLLMMock: Sendable {
     func processQuestions() {
         // capture
         guard questionQueue.isEmpty == false else {
-            logger.error("queustionQueue가 비어 있습니다.")
+            logger.error("questionQueue가 비어 있습니다.")
             return
         }
         
@@ -35,8 +42,7 @@ final class AlanLLMMock: Sendable {
         while questionQueue.isEmpty == false {
             let question = questionQueue.removeFirst()
             
-            let randomString = strs.randomElement()!
-            let randomAnswer = AlanLLM.Answer(randomString)
+            let randomAnswer = answers.randomElement()!
             
             answerBox[question.id] = randomAnswer
         }
