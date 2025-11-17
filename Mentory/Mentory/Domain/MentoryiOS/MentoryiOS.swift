@@ -14,21 +14,29 @@ import OSLog
 final class MentoryiOS: Sendable, ObservableObject {
     // MARK: core
     init() { }
-    
-    private nonisolated let userNameDefaultsKey = "mentory.userName"
 
     // MARK: state
     nonisolated let id: UUID = UUID()
     nonisolated let logger = Logger(subsystem: "MentoryiOS", category: "Domain")
     
     @Published var userName: String? = nil
+    func getGreetingText() -> String {
+        guard let userName else {
+            return "반가워요!"
+        }
+        
+        return "반가워요, \(userName)님!"
+    }
+    
     @Published var onboardingFinished: Bool = false
     
     @Published var onboarding: Onboarding? = nil
     @Published var todayBoard: TodayBoard? = nil
     @Published var settingBoard: SettingBoard? = nil
     
+    
     // MARK: action
+    private nonisolated let userNameDefaultsKey = "mentory.userName"
     func saveUserName() {
         guard let name = userName else {
             UserDefaults.standard.removeObject(forKey: userNameDefaultsKey)
@@ -50,11 +58,6 @@ final class MentoryiOS: Sendable, ObservableObject {
         } else {
             self.onboardingFinished = false
         }
-    }
-    
-    func getGreetingText() -> String {
-        let name = userName ?? "userName"
-        return "반가워요, \(name)님!"
     }
     
     func setUp() {
