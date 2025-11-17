@@ -26,6 +26,7 @@ struct MentoryiOSView: View {
                 }
             }.task {
                 mentoryiOS.setUp()
+                mentoryiOS.loadUserName()
             }
         }
     }

@@ -53,7 +53,6 @@ final class MentoryiOS: Sendable, ObservableObject {
     }
     
     func setUp() {
-        loadUserName()
         if userName != nil {
             return
         }
