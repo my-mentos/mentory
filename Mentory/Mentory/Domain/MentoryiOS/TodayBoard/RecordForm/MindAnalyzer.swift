@@ -53,19 +53,19 @@ final class MindAnalyzer: Sendable, ObservableObject {
     // 결과 오는지만 확인용
     func callAPI(prompt: String, character: CharacterType) async {
         // capture
-        let alanClientKey = Bundle.main.object(forInfoDictionaryKey: "ALAN_CLIENT_KEY") as Any
-            print("🔑 ALAN_CLIENT_KEY raw:", alanClientKey)
+        let alanClientKey = Bundle.main.object(forInfoDictionaryKey: "ALAN_API_TOKEN") as Any
+            print("🔑 ALAN_API_TOKEN raw:", alanClientKey)
         
-        print("ALAN_CLIENT_KEY =", alanClientKey)
+        print("ALAN_API_TOKEN =", alanClientKey)
         
-        guard let clientKey = Bundle.main.object(forInfoDictionaryKey: "ALAN_CLIENT_KEY") as? String,
-              clientKey.isEmpty == false else {
-            print("ALAN_CLIENT_KEY 없음")
+        guard let apiToken = Bundle.main.object(forInfoDictionaryKey: "ALAN_API_TOKEN") as? String,
+              apiToken.isEmpty == false else {
+            print("ALAN_API_TOKEN 없음")
             return
         }
         var urlBuilder = URLComponents(string: "https://kdt-api-function.azurewebsites.net/api/v1/question")!
         urlBuilder.queryItems = [
-            URLQueryItem(name: "client_id", value: clientKey),
+            URLQueryItem(name: "client_id", value: apiToken),
             URLQueryItem(name: "content", value: prompt)
         ]
         
