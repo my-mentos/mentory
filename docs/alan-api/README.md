@@ -11,6 +11,7 @@
     - [상태 초기화 요청](#상태-초기화-요청)
   - [키 관리](#키-관리)
     - [Secrets.xcconfig](#secretsxcconfig)
+    - [xcconfig를 활용한 APIKey 관리](xcconfig-api-key.md)
 
 ## API 테스트
 
@@ -104,6 +105,8 @@ func resetState(clientID: String) async throws {
 초기화는 사용자가 계정을 로그아웃하거나 감정 히스토리를 삭제할 때 호출합니다. 호출 후 Mentory 내 캐시와 SwiftData 레코드도 함께 정리해야 합니다.
 
 ## 키 관리
+
+> Alan API Key를 xcconfig로 전달하는 전체 예시는 [xcconfig를 활용한 APIKey 관리](xcconfig-api-key.md) 문서를 참고하세요.
 
 ### Secrets.xcconfig
 
