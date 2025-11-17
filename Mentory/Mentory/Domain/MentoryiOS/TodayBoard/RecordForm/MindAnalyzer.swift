@@ -53,8 +53,10 @@ final class MindAnalyzer: Sendable, ObservableObject {
     // 결과 오는지만 확인용
     func callAPI(prompt: String, character: CharacterType) async {
         // capture
-        let alanClientKey = Bundle.main.object(forInfoDictionaryKey: "ALAN_CLIENT_KEY") as? String
-        print("ALAN_CLIENT_KEY =", alanClientKey ?? "nil")
+        let alanClientKey = Bundle.main.object(forInfoDictionaryKey: "ALAN_CLIENT_KEY") as Any
+            print("🔑 ALAN_CLIENT_KEY raw:", alanClientKey)
+        
+        print("ALAN_CLIENT_KEY =", alanClientKey)
         
         guard let clientKey = Bundle.main.object(forInfoDictionaryKey: "ALAN_CLIENT_KEY") as? String,
               clientKey.isEmpty == false else {
