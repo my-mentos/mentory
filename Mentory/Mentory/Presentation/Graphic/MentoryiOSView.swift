@@ -38,6 +38,14 @@ struct MentoryiOSView: View {
                             }
                         
                         // 3) 설정 탭 (SettingBoardView)
+                        Text("설정 화면 준비 중")
+                            .tabItem {
+                                Image(systemName: "gearshape")
+                                Text("설정")
+                            }
+                        
+                        // SettingBoard merge 후 밑에 코드로 변경
+                        /*
                         if let settingBoard = mentoryiOS.settingBoard { //settingBoard가 Merger되기 전이라 오류가 발생함.
                             SettingBoardView(settingBoard: settingBoard) // 아직 merge가 진행되기 전이라 오류가 발생함.
                                 .tabItem {
@@ -50,7 +58,7 @@ struct MentoryiOSView: View {
                                     Image(systemName: "gearshape")
                                     Text("설정")
                                 }
-                        }
+                        }*/
                     }
                 } else {
                     if let onBoarding = mentoryiOS.onboarding {
