@@ -43,7 +43,9 @@ struct TodayBoardView: View {
                     .padding(.top, 16)
                     
                     // 작은 설명 텍스트
-                    Text("현모님 20번째 기록하셨네요!")
+                    let userName = todayBoardModel.owner.userName ?? "이름없음"
+                    
+                    Text("\(userName)님 20번째 기록하셨네요!")
                         .font(.system(size: 12))
                         .foregroundColor(.gray)
                         .frame(maxWidth: .infinity, alignment: .center)
