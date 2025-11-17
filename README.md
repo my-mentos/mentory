@@ -6,6 +6,14 @@ Mentory는 STT와 LLM을 활용해 사용자의 감정을 기록·분석하고 �
 
 주간·월간 감정 통계, 감정 캘린더, Alert/리마인드, 하루 한 줄 조언, 감정 상태별 행사 추천 등으로 사용자가 스스로의 변화를 추적할 수 있고, SwiftData·HealthKit 연동으로 안전한 백업과 헬스 데이터 확장이 가능합니다.
 
+## 환경 설정
+
+1. 저장소 루트에 있는 `Secrets.xcconfig.sample`을 복사하여 `Secrets.xcconfig`를 생성합니다.
+   ```bash
+   cp Secrets.xcconfig.sample Secrets.xcconfig
+   ```
+2. 새로 생성된 `Secrets.xcconfig`에 Alan API 키 등 민감한 값을 채웁니다. 해당 파일은 `.gitignore`에 포함되어 있으니 저장소에 커밋되지 않습니다.
+
 ## 소프트웨어 디자인
 
 아래 사진을 통해 MentoryiOS, MentoryLLM, MentoryDB 도메인을 확인할 수 있습니다.
