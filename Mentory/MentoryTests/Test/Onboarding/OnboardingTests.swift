@@ -23,6 +23,7 @@ struct OnboardingTests {
         @Test func whenNameInputIsEmpty() async throws {
             // given
             try await #require(onboarding.nameInput.isEmpty)
+            try await #require(onboarding.validationResult == .none)
             
             await #expect(onboarding.validationResult == .none)
             
@@ -180,6 +181,7 @@ struct OnboardingTests {
 
 // MARK: Helphers
 private func getOnboardingForTest(_ mentoryiOS: MentoryiOS) async throws -> Onboarding {
+    // create Onboarding
     try await #require(mentoryiOS.onboarding == nil)
     
     await mentoryiOS.setUp()

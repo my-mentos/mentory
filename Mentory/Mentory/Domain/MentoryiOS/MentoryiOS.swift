@@ -17,7 +17,8 @@ final class MentoryiOS: Sendable, ObservableObject {
 
     // MARK: state
     nonisolated let id: UUID = UUID()
-    nonisolated let logger = Logger(subsystem: "MentoryiOS.MentoryiOS", category: "Domain")
+    nonisolated let logger = Logger(subsystem: "MentoryiOS.MentoryiOS",
+                                    category: "Domain")
     
     @Published var userName: String? = nil
     func getGreetingText() -> String {
@@ -65,6 +66,7 @@ final class MentoryiOS: Sendable, ObservableObject {
     }
     
     func loadUserName() {
+        // process
         if let savedName = UserDefaults.standard.string(forKey: userNameDefaultsKey) {
             self.userName = savedName
             self.onboardingFinished = true
@@ -75,6 +77,7 @@ final class MentoryiOS: Sendable, ObservableObject {
                 todayBoard.recordForm = RecordForm(owner: todayBoard)
             }
         } else {
+            // mutate
             self.onboardingFinished = false
         }
     }

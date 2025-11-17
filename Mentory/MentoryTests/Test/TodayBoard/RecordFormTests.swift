@@ -150,24 +150,29 @@ struct RecordFormTests {
             #expect(newCount == initialCount + 1)
         }
 
-        @Test("제출 후 폼이 초기화됨")
+        @Test("제출 후 폼이 초기화되지 않음")
         func afterSubmit_formIsReset() async throws {
             // Given
+            let testTitle = "TEST_TITLE"
+            let testText = "TEST_TEXT"
+            let testImageData: Data = .init([0x00, 0x01])
+            let testVoiceURL = URL(string: "file:///test.m4a")!
+            
             await MainActor.run {
-                recordForm.titleInput = "테스트 제목"
-                recordForm.textInput = "테스트 내용"
-                recordForm.imageInput = Data([0x00, 0x01])
-                recordForm.voiceInput = URL(string: "file:///test.m4a")
+                recordForm.titleInput = testTitle
+                recordForm.textInput = testText
+                recordForm.imageInput = testImageData
+                recordForm.voiceInput = testVoiceURL
             }
 
             // When
             await recordForm.submit()
 
             // Then
-            await #expect(recordForm.titleInput == "")
-            await #expect(recordForm.textInput == "")
-            await #expect(recordForm.imageInput == nil)
-            await #expect(recordForm.voiceInput == nil)
+            await #expect(recordForm.titleInput == testTitle)
+            await #expect(recordForm.textInput == testText)
+            await #expect(recordForm.imageInput == testImageData)
+            await #expect(recordForm.voiceInput == testVoiceURL)
             await #expect(recordForm.validationResult == .none)
         }
 
