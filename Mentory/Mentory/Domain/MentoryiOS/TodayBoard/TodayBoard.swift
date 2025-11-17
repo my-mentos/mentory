@@ -2,7 +2,7 @@
 //  TodayBoard.swift
 //  Mentory
 //
-//  Created by 구현모 on 11/14/25.
+//  Created by SJS on 11/14/25.
 //
 import Foundation
 import Combine

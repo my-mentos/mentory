@@ -74,7 +74,8 @@ final class RecordForm: Sendable, ObservableObject {
         )
 
         // todayBoard에 저장
-        addRecord(record, to: todayBoard)
+        todayBoard.records.append(record)
+        logger.info("새로운 기록이 추가되었습니다. ID: \(record.id)")
 
         // form 초기화
         self.titleInput = ""
@@ -86,14 +87,8 @@ final class RecordForm: Sendable, ObservableObject {
         logger.info("기록이 성공적으로 제출되었습니다.")
     }
 
-    func addRecord(_ record: Record, to todayBoard: TodayBoard) {
-        todayBoard.records.append(record)
-        logger.info("새로운 기록이 추가되었습니다. ID: \(record.id)")
-    }
-
-
     // MARK: value
-    struct Record: Identifiable, Sendable, Hashable {
+    nonisolated struct Record: Identifiable, Sendable, Hashable {
         let id: UUID
         let title: String
         let date: Date
