@@ -9,7 +9,8 @@ import Foundation
 import Combine
 
 // MARK: Object
-@MainActor final class MindAnalyzer: Sendable, ObservableObject {
+@MainActor
+final class MindAnalyzer: Sendable, ObservableObject {
     // MARK: core
     init(owner: RecordForm) { self.owner = owner }
     
@@ -32,22 +33,58 @@ import Combine
         guard textInput.isEmpty == false else {
             return
         }
-        guard let imageInput = owner?.imageInput else { return }
-        guard let voiceInput = owner?.voiceInput else { return }
-    
-        // process
-        // 연산에 해당하는 부분 모든 상태를 읽어온다음에 그값으로 연산...
-        // ex)DB에 저장하거나 네트워크 호출
+        //guard let imageInput = owner?.imageInput else { return }
+        //guard let voiceInput = owner?.voiceInput else { return }
         
+        // process
+        isAnalyzing = true
+        analyzedResult = nil
+        selectedCharacter = CharacterType.A
+        Task {
+            await self.callAPI(prompt: textInput, character: .A)
+            self.isAnalyzing = false
+        }
         
         // mutate
-        // 연산이 끝난 값을 가지고 상태를 변경해주거나 등등
-        selectedCharacter = CharacterType.A
-        mindType = MindType.slightlyUnpleasant
-        analyzedResult = "오늘은 전체적으로 큰 기복 없이 흘러갔지만, 마음속에는 설명하기 어려운 잔잔한 피로가 조금씩 쌓여 가는 기분이 있었어요. 특별히 힘들었던 건 아니지만 집중이 잘 되지 않는 순간들이 있었고, 그럴 때마다 잠시 숨을 고르며 스스로를 다독여야 했어요. 전반적으로 무난한 하루였지만, 저도 모르게 마음이 조금 무거워지는 시간이 종종 찾아와 조용히 쉬고 싶은 감정이 자연스럽게 떠오르는 하루였어요."
         
         
     }
+    
+    // 결과 오는지만 확인용
+    func callAPI(prompt: String, character: CharacterType) async {
+        // capture
+        guard let clientKey = Bundle.main.object(forInfoDictionaryKey: "ALAN_CLIENT_KEY") as? String,
+              clientKey.isEmpty == false else {
+            print("ALAN_CLIENT_KEY 없음")
+            return
+        }
+        var urlBuilder = URLComponents(string: "https://kdt-api-function.azurewebsites.net/api/v1/question")!
+        urlBuilder.queryItems = [
+            URLQueryItem(name: "client_key", value: clientKey),
+            URLQueryItem(name: "content", value: prompt)
+        ]
+        
+        guard let requestURL = urlBuilder.url else {
+            print("URL 생성 실패")
+            return
+        }
+        
+        // process
+        do {
+            let (data, _) = try await URLSession.shared.data(from: requestURL)
+            let text = String(data: data, encoding: .utf8) ?? ""
+            print("요청 결과:", text)
+            
+            mindType = MindType.slightlyUnpleasant
+            self.analyzedResult = text
+            
+        } catch {
+            print("요청 실패:", error)
+        }
+        
+        // mutate
+    }
+    
     
     // MARK: value
     

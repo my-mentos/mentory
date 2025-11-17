@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		694B33002ECAC0810094E855 /* Secrets.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 694B32FF2ECAC0810094E855 /* Secrets.xcconfig */; };
+		694B33012ECAC0810094E855 /* Secrets.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 694B32FF2ECAC0810094E855 /* Secrets.xcconfig */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		CE8EE8352EC5D1600006E5A4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -17,6 +22,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		694B32FF2ECAC0810094E855 /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 		CE39BFBC2EC313F20090DF78 /* Mentory.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Mentory.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE8EE8312EC5D1600006E5A4 /* MentoryTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MentoryTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -55,6 +61,7 @@
 		CE39BFB32EC313F20090DF78 = {
 			isa = PBXGroup;
 			children = (
+				694B32FF2ECAC0810094E855 /* Secrets.xcconfig */,
 				CE39BFBE2EC313F20090DF78 /* Mentory */,
 				CE8EE8322EC5D1600006E5A4 /* MentoryTests */,
 				CE39BFBD2EC313F20090DF78 /* Products */,
@@ -162,6 +169,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				694B33002ECAC0810094E855 /* Secrets.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -169,6 +177,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				694B33012ECAC0810094E855 /* Secrets.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -202,7 +211,9 @@
 /* Begin XCBuildConfiguration section */
 		CE39BFC52EC313F30090DF78 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 694B32FF2ECAC0810094E855 /* Secrets.xcconfig */;
 			buildSettings = {
+				ALAN_CLIENT_KEY = "$(ALAN_CLIENT_KEY)";
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -266,7 +277,9 @@
 		};
 		CE39BFC62EC313F30090DF78 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 694B32FF2ECAC0810094E855 /* Secrets.xcconfig */;
 			buildSettings = {
+				ALAN_CLIENT_KEY = "$(ALAN_CLIENT_KEY)";
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -323,6 +336,7 @@
 		};
 		CE39BFC82EC313F30090DF78 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 694B32FF2ECAC0810094E855 /* Secrets.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -355,6 +369,7 @@
 		};
 		CE39BFC92EC313F30090DF78 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 694B32FF2ECAC0810094E855 /* Secrets.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -387,6 +402,7 @@
 		};
 		CE8EE8382EC5D1600006E5A4 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 694B32FF2ECAC0810094E855 /* Secrets.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -408,6 +424,7 @@
 		};
 		CE8EE8392EC5D1600006E5A4 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 694B32FF2ECAC0810094E855 /* Secrets.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
