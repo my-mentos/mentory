@@ -7,11 +7,14 @@
 import Foundation
 
 
-// MARK: Domain
+// MARK: External Object
 nonisolated
-struct MentoryDB {
+struct MentoryDB: Sendable {
     // MARK: core
     nonisolated let id: UUID
+    nonisolated init(_ id: UUID) {
+        self.id = id
+    }
     
     
     // MARK: flow
