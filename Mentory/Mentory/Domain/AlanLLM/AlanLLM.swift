@@ -41,6 +41,30 @@ struct AlanLLM: AlanLLMFlow {
     
     // MARK: value
     nonisolated
+    enum Error: Swift.Error, LocalizedError {
+        case invalidURL
+        case invalidResponse
+        case networkError(Swift.Error)
+        case decodingError(Swift.Error)
+        case httpError(statusCode: Int)
+
+        var errorDescription: String? {
+            switch self {
+            case .invalidURL:
+                return "유효하지 않은 URL입니다."
+            case .invalidResponse:
+                return "서버 응답이 유효하지 않습니다."
+            case .networkError(let error):
+                return "네트워크 오류: \(error.localizedDescription)"
+            case .decodingError(let error):
+                return "데이터 파싱 오류: \(error.localizedDescription)"
+            case .httpError(let statusCode):
+                return "HTTP 오류 (상태 코드: \(statusCode))"
+            }
+        }
+    }
+    
+    nonisolated
     struct Question: Sendable, Hashable, Identifiable {
         // MARK: codr
         let id: ID = ID()
@@ -58,13 +82,15 @@ struct AlanLLM: AlanLLMFlow {
     }
     
     nonisolated
-    struct Answer: Sendable, Hashable {
+    struct Answer: Sendable, Codable {
         // MARK: core
-        let id = UUID()
+        let action: Action
         let content: String
         
-        init(_ content: String) {
-            self.content = content
+        nonisolated
+        struct Action: Sendable, Codable {
+            let name: String
+            let speak: String
         }
     }
     
