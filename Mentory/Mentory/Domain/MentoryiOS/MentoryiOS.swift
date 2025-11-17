@@ -26,7 +26,7 @@ final class MentoryiOS: Sendable, ObservableObject {
     
     @Published var onboarding: Onboarding? = nil
     @Published var todayBoard: TodayBoard? = nil
-    
+    @Published var settingBoard: SettingBoard? = nil
     
     // MARK: action
     func saveUserName() {
@@ -50,6 +50,11 @@ final class MentoryiOS: Sendable, ObservableObject {
         } else {
             self.onboardingFinished = false
         }
+    }
+    
+    func getGreetingText() -> String {
+        let name = userName ?? "userName"
+        return "반가워요, \(name)님!"
     }
     
     func setUp() {
