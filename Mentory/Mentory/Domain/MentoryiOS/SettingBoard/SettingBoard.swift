@@ -36,6 +36,7 @@ final class SettingBoard: Sendable, ObservableObject {
     // 화면 클릭
     @Published var isShowingPrivacyPolicy: Bool = false
     @Published var isShowingLicenseInfo: Bool = false
+    @Published var isShowingTermsOfService: Bool = false   // 👈 추가
     
     // MARK: value
     
@@ -65,7 +66,11 @@ final class SettingBoard: Sendable, ObservableObject {
         isShowingPrivacyPolicy = true
     }
     
-    func showLicenseInfo() {                    
+    func showLicenseInfo() {
         isShowingLicenseInfo = true
+    }
+    
+    func showTermsOfService() {
+        isShowingTermsOfService = true
     }
 }

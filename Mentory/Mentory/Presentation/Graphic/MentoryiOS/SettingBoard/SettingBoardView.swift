@@ -47,6 +47,9 @@ struct SettingBoardView: View {
         .navigationDestination(isPresented: $settingBoard.isShowingLicenseInfo) {   // 👈 추가
             LicenseInfoView()
         }
+        .navigationDestination(isPresented: $settingBoard.isShowingTermsOfService) {
+            TermsOfServiceView()
+        }
     }
     private var header: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -136,7 +139,9 @@ struct SettingBoardView: View {
                 iconBackground: Color.blue.opacity(0.8),
                 title: "이용 약관",
                 showDivider: false
-            )
+            ){
+                settingBoard.showTermsOfService()   // 👈 추가
+            }
         }
     }
     
