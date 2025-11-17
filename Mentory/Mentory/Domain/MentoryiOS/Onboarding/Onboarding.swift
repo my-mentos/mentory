@@ -53,14 +53,15 @@ final class Onboarding: Sendable, ObservableObject {
             logger.error("Onboarding의 nameInput에는 값이 존재해야 합니다. 현재 값이 비어있습니다.")
             return
         }
-        let mentoryiOS = self.owner
-        let nameInput = self.nameInput
-        
-        // mutate
         guard isUsed == false else {
             logger.error("이미 Onboarding이 사용된 상태입니다.")
             return
         }
+        let mentoryiOS = self.owner
+        let nameInput = self.nameInput
+        
+        
+        // mutate
         mentoryiOS?.onboardingFinished = true
         mentoryiOS?.userName = nameInput
         mentoryiOS?.onboarding = nil

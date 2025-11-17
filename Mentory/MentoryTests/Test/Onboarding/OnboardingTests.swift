@@ -73,6 +73,24 @@ struct OnboardingTests {
             self.onboarding = try await getOnboardingForTest(mentoryiOS)
         }
         
+        @Test func whenNameInputIsEmpty() async throws {
+            // given
+            let onboardingFormMentory = try #require(await mentoryiOS.onboarding)
+            try await #require(mentoryiOS.onboarding != nil)
+            try await #require(mentoryiOS.onboardingFinished == false)
+            try await #require(mentoryiOS.todayBoard == nil)
+            try await #require(mentoryiOS.settingBoard == nil)
+            
+            // when
+            await onboarding.next()
+            
+            // then
+            await #expect(mentoryiOS.onboarding?.id == onboardingFormMentory.id)
+            await #expect(mentoryiOS.onboardingFinished == false)
+            await #expect(mentoryiOS.todayBoard == nil)
+            await #expect(mentoryiOS.settingBoard == nil)
+        }
+        
         @Test func MentoryiOS_removeOnboarding() async throws {
             // given
             try await #require(mentoryiOS.onboarding != nil)
@@ -85,7 +103,6 @@ struct OnboardingTests {
             // then
             await #expect(mentoryiOS.onboarding == nil)
         }
-        
         @Test func MentoryiOS_setUserName() async throws {
             // given
             try await #require(mentoryiOS.userName == nil)
