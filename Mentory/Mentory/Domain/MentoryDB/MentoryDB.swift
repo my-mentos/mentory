@@ -7,9 +7,17 @@
 import Foundation
 
 
-// MARK: External Object
+// MARK: Interface
+protocol MentoryDBFlow: Sendable {
+    func updateName(_ newName: String) async throws -> Void
+    func getName() async throws -> String
+}
+
+
+
+// MARK: Flow
 nonisolated
-struct MentoryDB: Sendable {
+struct MentoryDB: MentoryDBFlow {
     // MARK: core
     nonisolated let id: UUID
     nonisolated init(_ id: UUID) {

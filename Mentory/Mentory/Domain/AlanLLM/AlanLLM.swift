@@ -10,7 +10,7 @@ import OSLog
 
 // MARK: Flow
 protocol AlanLLMFlow: Sendable {
-    func question(token: AlanLLM.AuthToken, question: AlanLLM.Question) async throws -> AlanLLM.Answer
+    func question(_ question: AlanLLM.Question) async throws -> AlanLLM.Answer
     func resetState(token: AlanLLM.AuthToken) async throws
 }
 
@@ -25,8 +25,10 @@ struct AlanLLM: AlanLLMFlow {
     
     // MARK: flows
     @concurrent
-    func question(token: AuthToken = .current, question: Question) async throws -> Answer {
+    func question(_ question: Question) async throws -> Answer {
         // configure url
+        let token = AuthToken.current
+        
         guard var urlComponents = URLComponents(string: "\(id.value.absoluteString)/question") else {
             logger.error("URL 생성 실패")
             throw AlanLLM.Error.invalidURL
