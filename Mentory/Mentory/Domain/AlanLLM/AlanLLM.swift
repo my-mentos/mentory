@@ -9,7 +9,7 @@ import OSLog
 
 
 // MARK: Flow
-protocol AlanLLMFlow: Sendable {
+protocol AlanLLMInterface: Sendable {
     func question(_ question: AlanLLM.Question) async throws -> AlanLLM.Answer
     func resetState(token: AlanLLM.AuthToken) async throws
 }
@@ -17,7 +17,7 @@ protocol AlanLLMFlow: Sendable {
 
 // MARK: Domain
 nonisolated
-struct AlanLLM: AlanLLMFlow {
+struct AlanLLM: AlanLLMInterface {
     // MARK: core
     nonisolated let id = ID(URL(string: "https://kdt-api-function.azurewebsites.net/api/v1")!)
     nonisolated let logger = Logger(subsystem: "AlanLLM.AlanLLMFlow", category: "Domain")

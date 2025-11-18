@@ -13,7 +13,9 @@ import OSLog
 @MainActor
 final class MentoryiOS: Sendable, ObservableObject {
     // MARK: core
-    init() { }
+    init() {
+        
+    }
 
     // MARK: state
     nonisolated let id: UUID = UUID()

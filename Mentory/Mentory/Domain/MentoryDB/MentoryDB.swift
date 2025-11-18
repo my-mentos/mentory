@@ -8,7 +8,7 @@ import Foundation
 
 
 // MARK: Interface
-protocol MentoryDBFlow: Sendable {
+protocol MentoryDBInterface: Sendable {
     func updateName(_ newName: String) async throws -> Void
     func getName() async throws -> String?
 }
@@ -17,7 +17,7 @@ protocol MentoryDBFlow: Sendable {
 
 // MARK: Flow
 nonisolated
-struct MentoryDB: MentoryDBFlow {
+struct MentoryDB: MentoryDBInterface {
     // MARK: core
     nonisolated let id: String = "mentoryDB"
     nonisolated let nameKey = "mentoryDB.name"

@@ -9,7 +9,7 @@ import Foundation
 
 // MARK: Mock
 nonisolated
-struct AlanLLMMock: AlanLLMFlow {
+struct AlanLLMMock: AlanLLMInterface {
     // MARK: flow
     @concurrent
     func question(_ question: AlanLLM.Question) async throws -> AlanLLM.Answer {

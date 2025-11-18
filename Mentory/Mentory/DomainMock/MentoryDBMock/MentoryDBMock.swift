@@ -9,7 +9,7 @@ import Foundation
 
 // MARK: Mock
 nonisolated
-struct MentoryDBMock: MentoryDBFlow {
+struct MentoryDBMock: MentoryDBInterface {
     @concurrent
     func updateName(_ newName: String) async throws {
         await MainActor.run {
