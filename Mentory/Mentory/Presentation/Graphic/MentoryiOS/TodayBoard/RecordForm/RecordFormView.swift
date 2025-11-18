@@ -4,14 +4,14 @@
 //
 //  Created by JAY, 구현모 on 11/17/25.
 //
-
 import SwiftUI
 
-struct RecordFormView: View {
-    // Model -> 비즈니스 로직
-    @ObservedObject var recordFormModel: RecordForm
 
-    // ViewModel -> 화면의 열고 닫고
+// MARK: View
+struct RecordFormView: View {
+    // MARK: model
+    @ObservedObject var recordForm: RecordForm
+
     @State private var cachedTextForAnalysis: String = ""
     @State private var isShowingMindAnalyzerView = false
 
@@ -22,7 +22,12 @@ struct RecordFormView: View {
     // 오디오 관련
     @StateObject private var audioManager = AudioRecorderManager()
     @State private var showingAudioRecorder = false
+    
+    init(_ recordForm: RecordForm) {
+        self.recordForm = recordForm
+    }
 
+    // MARK: body
     var body: some View {
         ZStack {
             // iOS 26 스타일 배경
@@ -36,7 +41,7 @@ struct RecordFormView: View {
                     VStack(spacing: 16) {
                         // 제목 입력 카드
                         LiquidGlassCard {
-                            TextField("제목", text: $recordFormModel.titleInput)
+                            TextField("제목", text: $recordForm.titleInput)
                                 .font(.title3)
                                 .padding()
                         }
@@ -44,7 +49,7 @@ struct RecordFormView: View {
                         // 본문 입력 카드
                         LiquidGlassCard {
                             ZStack(alignment: .topLeading) {
-                                if recordFormModel.textInput.isEmpty {
+                                if recordForm.textInput.isEmpty {
                                     Text("글쓰기 시작…")
                                         .foregroundColor(.gray.opacity(0.5))
                                         .padding(.horizontal, 8)
@@ -52,17 +57,16 @@ struct RecordFormView: View {
                                         .allowsHitTesting(false)
                                 }
 
-                                TextEditor(text: $recordFormModel.textInput)
+                                TextEditor(text: $recordForm.textInput)
                                     .scrollContentBackground(.hidden)
                                     .background(Color.clear)
                                     .frame(minHeight: 300)
                                     .padding(.horizontal, 4)
-                                    .padding(.vertical, 8)
-                            }
+                                    .padding(.vertical, 8)                            }
                         }
 
                         // 첨부된 이미지 미리보기
-                        if let imageData = recordFormModel.imageInput,
+                        if let imageData = recordForm.imageInput,
                            let uiImage = UIImage(data: imageData) {
                             LiquidGlassCard {
                                 VStack(alignment: .leading, spacing: 12) {
@@ -74,7 +78,7 @@ struct RecordFormView: View {
                                             .foregroundColor(.secondary)
                                         Spacer()
                                         Button(action: {
-                                            recordFormModel.imageInput = nil
+                                            recordForm.imageInput = nil
                                         }) {
                                             Image(systemName: "xmark.circle.fill")
                                                 .foregroundColor(.gray)
@@ -94,7 +98,7 @@ struct RecordFormView: View {
                         }
 
                         // 첨부된 음성 녹음
-                        if let _ = recordFormModel.voiceInput {
+                        if let _ = recordForm.voiceInput {
                             LiquidGlassCard {
                                 HStack {
                                     Image(systemName: "waveform")
@@ -107,7 +111,7 @@ struct RecordFormView: View {
                                         .foregroundColor(.secondary)
                                     Button(action: {
                                         audioManager.deleteRecording()
-                                        recordFormModel.voiceInput = nil
+                                        recordForm.voiceInput = nil
                                     }) {
                                         Image(systemName: "xmark.circle.fill")
                                             .foregroundColor(.gray)
@@ -133,7 +137,7 @@ struct RecordFormView: View {
         }
         .ignoresSafeArea(.keyboard, edges: .bottom)
         .fullScreenCover(isPresented: $isShowingMindAnalyzerView) {
-            MindAnalyzerView(mindAnalyzer: recordFormModel.mindAnalyzer!)
+            MindAnalyzerView(recordForm.mindAnalyzer!)
         }
     }
     
@@ -151,8 +155,8 @@ struct RecordFormView: View {
                 // 리퀴드 글래스 완료 버튼
                 Button(action: {
                     Task {
-                        recordFormModel.validateInput()
-                        recordFormModel.submit()
+                        recordForm.validateInput()
+                        recordForm.submit()
                         isShowingMindAnalyzerView.toggle()
                     }
                 }) {
@@ -207,8 +211,8 @@ struct RecordFormView: View {
 
     // 제출 가능 여부 계산
     private var isSubmitEnabled: Bool {
-        !recordFormModel.titleInput.trimmingCharacters(in: .whitespaces).isEmpty &&
-        !recordFormModel.textInput.trimmingCharacters(in: .whitespaces).isEmpty
+        !recordForm.titleInput.trimmingCharacters(in: .whitespaces).isEmpty &&
+        !recordForm.textInput.trimmingCharacters(in: .whitespaces).isEmpty
     }
 
     private var bottomToolbar: some View {
@@ -220,7 +224,7 @@ struct RecordFormView: View {
                 Image(systemName: "photo")
                     .font(.title2)
                     .fontWeight(.medium)
-                    .foregroundStyle(recordFormModel.imageInput != nil ? .blue : .primary)
+                    .foregroundStyle(recordForm.imageInput != nil ? .blue : .primary)
             }
             Spacer()
             Button(action: {
@@ -229,7 +233,7 @@ struct RecordFormView: View {
                 Image(systemName: "camera")
                     .font(.title2)
                     .fontWeight(.medium)
-                    .foregroundStyle(recordFormModel.imageInput != nil ? .blue : .primary)
+                    .foregroundStyle(recordForm.imageInput != nil ? .blue : .primary)
             }
             Spacer()
             Button(action: {
@@ -238,7 +242,7 @@ struct RecordFormView: View {
                 Image(systemName: "waveform")
                     .font(.title2)
                     .fontWeight(.medium)
-                    .foregroundStyle(recordFormModel.voiceInput != nil ? .blue : .primary)
+                    .foregroundStyle(recordForm.voiceInput != nil ? .blue : .primary)
             }
             Spacer()
         }
@@ -256,16 +260,16 @@ struct RecordFormView: View {
         .padding(.horizontal, 16)
         .padding(.bottom, 16)
         .sheet(isPresented: $showingImagePicker) {
-            PhotosPicker(imageData: $recordFormModel.imageInput)
+            PhotosPicker(imageData: $recordForm.imageInput)
         }
         .sheet(isPresented: $showingCamera) {
-            ImagePicker(imageData: $recordFormModel.imageInput, sourceType: .camera)
+            ImagePicker(imageData: $recordForm.imageInput, sourceType: .camera)
         }
         .sheet(isPresented: $showingAudioRecorder) {
             RecordingSheet(
                 audioManager: audioManager,
                 onComplete: { url in
-                    recordFormModel.voiceInput = url
+                    recordForm.voiceInput = url
                     showingAudioRecorder = false
                 },
                 onCancel: {
@@ -280,26 +284,28 @@ struct RecordFormView: View {
         let seconds = Int(timeInterval) % 60
         return String(format: "%02d:%02d", minutes, seconds)
     }
+}
+
+
+// MARK: Preview
+fileprivate struct RecordFormPreview: View {
+    @StateObject var mentoryiOS = MentoryiOS()
     
-//    private func handleSubmitTapped() {
-//        recordFormModel.validateInput()
-//        guard recordFormModel.validationResult == .none else { return }
-//        cachedTextForAnalysis = recordFormModel.textInput
-//        recordFormModel.submit()
-//        recordFormModel.mindAnalyzer = mindAnalyzer
-//        recordFormModel.textInput = cachedTextForAnalysis
-//        isShowingMindAnalyzerView = true
-   // }
-    
-//    private func resetToEditor() {
-//        cachedTextForAnalysis = ""
-//        recordFormModel.titleInput = ""
-//        recordFormModel.textInput = ""
-//        recordFormModel.mindAnalyzer = mindAnalyzer
-//        mindAnalyzer.isAnalyzing = false
-//        mindAnalyzer.mindType = nil
-//        mindAnalyzer.analyzedResult = nil
-//    }
+    var body: some View {
+        if let todayBoard = mentoryiOS.todayBoard,
+           let recordForm = todayBoard.recordForm {
+            RecordFormView(recordForm)
+        } else {
+            ProgressView("프리뷰 로딩 중입니다.")
+                .task {
+                    mentoryiOS.setUp()
+                    
+                    let onboarding = mentoryiOS.onboarding!
+                    onboarding.nameInput = "김철수"
+                    onboarding.next()
+                }
+        }
+    }
 }
 
 // MARK: - 리퀴드 글래스 컴포넌트
@@ -321,17 +327,5 @@ struct LiquidGlassCard<Content: View>: View {
 }
 
 #Preview {
-    @MainActor
-    struct PreviewWrapper: View {
-        let recordForm: RecordForm
-        init() {
-            let mentoryiOS = MentoryiOS()
-            let todayBoard = TodayBoard(owner: mentoryiOS)
-            self.recordForm = RecordForm(owner: todayBoard)
-        }
-        var body: some View {
-            RecordFormView(recordFormModel: recordForm)
-        }
-    }
-    return PreviewWrapper()
+    RecordFormPreview()
 }

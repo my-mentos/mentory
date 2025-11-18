@@ -10,7 +10,10 @@ import SwiftUI
 // MARK: View
 struct MentoryiOSView: View {
     // MARK: model
-    @StateObject var mentoryiOS = MentoryiOS()
+    @ObservedObject var mentoryiOS: MentoryiOS
+    init(_ mentoryiOS: MentoryiOS) {
+        self.mentoryiOS = mentoryiOS
+    }
     
     
     // MARK: body
@@ -51,11 +54,11 @@ struct MentoryiOSView: View {
     }
     
     
-    // MARK: sub-views
+    // MARK: component
     @ViewBuilder
     private var TodayBoardTab: some View {
         if let todayBoard = mentoryiOS.todayBoard {
-            TodayBoardView(todayBoardModel: todayBoard)
+            TodayBoardView(todayBoard)
         } else {
             Text("기록 화면을 준비 중입니다.")
         }
@@ -96,5 +99,5 @@ struct MentoryiOSView: View {
 
 // MARK: Preview
 #Preview {
-    MentoryiOSView()
+    MentoryiOSView(.init())
 }

@@ -73,7 +73,6 @@ final class RecordForm: Sendable, ObservableObject {
         let todayBoard = self.owner
 
         // mutate
-        // Record 객체 생성 (입력받은 것만 포함)
         let record = Record(
             title: title,
             date: Date(), // 오늘 날짜
@@ -85,14 +84,6 @@ final class RecordForm: Sendable, ObservableObject {
         // todayBoard에 저장
         todayBoard?.records.append(record)
         logger.info("새로운 기록이 추가되었습니다. ID: \(record.id)")
-
-        // form 초기화
-//        self.titleInput = ""
-//        self.textInput = ""
-//        self.imageInput = nil
-//        self.voiceInput = nil
-//        self.validationResult = .none        
-        logger.info("기록이 성공적으로 제출되었습니다.")
         
         self.mindAnalyzer = MindAnalyzer(owner: self)
     }

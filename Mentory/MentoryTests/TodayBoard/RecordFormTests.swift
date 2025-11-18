@@ -20,15 +20,15 @@ struct RecordFormTests {
             self.recordForm = try await getRecordFormForTest(mentoryiOS)
         }
 
-        // MARK: 입력 검증 테스트 - 실패 케이스
-
-        @Test("제목이 비어있으면 titleInputIsEmpty 반환")
-        func whenTitleIsEmpty() async throws {
+        // 실패 케이스
+        @Test func whenTitleIsEmpty() async throws {
             // Given: 제목이 비어있고 텍스트만 있음
             await MainActor.run {
                 recordForm.titleInput = ""
                 recordForm.textInput = "내용"
             }
+            
+            try await #require(recordForm.validationResult == .none)
 
             // When
             await recordForm.validateInput()
@@ -36,9 +36,7 @@ struct RecordFormTests {
             // Then
             await #expect(recordForm.validationResult == .titleInputIsEmpty)
         }
-
-        @Test("제목은 있지만 모든 컨텐츠가 비어있으면 contentsInputIsEmpty 반환")
-        func whenAllContentsAreEmpty() async throws {
+        @Test func whenAllContentsAreEmpty() async throws {
             // Given: 제목만 있고 모든 컨텐츠가 비어있음
             await MainActor.run {
                 recordForm.titleInput = "제목"
@@ -46,6 +44,8 @@ struct RecordFormTests {
                 recordForm.imageInput = nil
                 recordForm.voiceInput = nil
             }
+            
+            try await #require(recordForm.validationResult == .none)
 
             // When
             await recordForm.validateInput()
@@ -54,15 +54,15 @@ struct RecordFormTests {
             await #expect(recordForm.validationResult == .contentsInputIsEmpty)
         }
 
-        // MARK: 입력 검증 테스트 - 성공 케이스
-
-        @Test("제목과 텍스트가 있으면 검증 통과")
-        func whenTitleAndTextExist() async throws {
+        // 성공 케이스
+        @Test func whenTitleAndTextExist() async throws {
             // Given
             await MainActor.run {
                 recordForm.titleInput = "제목"
                 recordForm.textInput = "내용"
             }
+            
+            try await #require(recordForm.validationResult == .none)
 
             // When
             await recordForm.validateInput()
@@ -70,14 +70,14 @@ struct RecordFormTests {
             // Then
             await #expect(recordForm.validationResult == .none)
         }
-
-        @Test("제목과 이미지가 있으면 검증 통과")
-        func whenTitleAndImageExist() async throws {
+        @Test func whenTitleAndImageExist() async throws {
             // Given
             await MainActor.run {
                 recordForm.titleInput = "제목"
                 recordForm.imageInput = Data([0x00, 0x01, 0x02])
             }
+            
+            try await #require(recordForm.validationResult == .none)
 
             // When
             await recordForm.validateInput()
@@ -85,14 +85,14 @@ struct RecordFormTests {
             // Then
             await #expect(recordForm.validationResult == .none)
         }
-
-        @Test("제목과 음성이 있으면 검증 통과")
-        func whenTitleAndVoiceExist() async throws {
+        @Test func whenTitleAndVoiceExist() async throws {
             // Given
             await MainActor.run {
                 recordForm.titleInput = "제목"
                 recordForm.voiceInput = URL(string: "file:///path/to/voice.m4a")
             }
+            
+            try await #require(recordForm.validationResult == .none)
 
             // When
             await recordForm.validateInput()
@@ -100,9 +100,7 @@ struct RecordFormTests {
             // Then
             await #expect(recordForm.validationResult == .none)
         }
-
-        @Test("모든 입력이 있으면 검증 통과")
-        func whenAllInputsExist() async throws {
+        @Test func whenAllInputsExist() async throws {
             // Given
             await MainActor.run {
                 recordForm.titleInput = "제목"
@@ -209,8 +207,8 @@ struct RecordFormTests {
             // Then
             let lastRecord = await todayBoard.records.last
             let record = try #require(lastRecord)
-            await #expect(record.text == nil)
-            await #expect(record.title == "제목")
+            #expect(record.text == nil)
+            #expect(record.title == "제목")
         }
     }
 }

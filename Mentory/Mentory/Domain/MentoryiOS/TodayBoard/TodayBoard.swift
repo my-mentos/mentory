@@ -54,5 +54,4 @@ final class TodayBoard: Sendable, ObservableObject {
 
 
     // MARK: value
-    
 }

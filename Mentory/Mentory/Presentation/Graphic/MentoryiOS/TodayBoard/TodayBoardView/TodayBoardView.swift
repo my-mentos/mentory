@@ -4,12 +4,21 @@
 //
 //  Created by JAY on 11/14/25.
 //
-
 import SwiftUI
 
+
+// MARK: View
 struct TodayBoardView: View {
-    @ObservedObject var todayBoardModel: TodayBoard
+    // MARK: core
+    @ObservedObject var todayBoard: TodayBoard
     @State private var isShowingRecordFormView = false
+    
+    init(_ todayBoard: TodayBoard) {
+        self.todayBoard = todayBoard
+    }
+    
+    
+    // MARK: body
     var body: some View {
         ZStack(alignment: .topTrailing) {
             // 배경
@@ -17,7 +26,7 @@ struct TodayBoardView: View {
                 .ignoresSafeArea()
                 .onAppear {
                     Task {
-                        await todayBoardModel.fetchTodayString()
+                        await todayBoard.fetchTodayString()
                     }
                 }
             
@@ -50,8 +59,8 @@ struct TodayBoardView: View {
                     
                     // 작은 설명 텍스트
                     
-                    let userName = todayBoardModel.owner?.userName ?? "이름없음"
-                    let count = todayBoardModel.records.count
+                    let userName = todayBoard.owner?.userName ?? "이름없음"
+                    let count = todayBoard.records.count
                     
                     if count == 0 {
                         Text("\(userName)님, 일기를 작성해보아요!")
@@ -70,7 +79,7 @@ struct TodayBoardView: View {
                         Text("오늘의 명언")
                             .font(.system(size: 18, weight: .semibold))
 
-                        if let todayString = todayBoardModel.todayString {
+                        if let todayString = todayBoard.todayString {
                             Text(todayString)
                                 .font(.system(size: 16))
                                 .foregroundColor(.gray)
@@ -126,7 +135,7 @@ struct TodayBoardView: View {
                                 )
                         }
                         .fullScreenCover(isPresented: $isShowingRecordFormView) {
-                            RecordFormView(recordFormModel: todayBoardModel.recordForm!)                                }
+                            RecordFormView(todayBoard.recordForm!)                                }
                         .padding(.horizontal, 32)
                     }
                     .padding(.vertical, 24)
@@ -198,37 +207,29 @@ struct TodayBoardView: View {
     }
 }
 
-struct ActionRow: View {
-    var checked: Bool
-    var text: String
+
+
+
+// MARK: Preview
+fileprivate struct TodayBoardPreview: View {
+    @StateObject var mentoryiOS = MentoryiOS()
     
     var body: some View {
-        HStack(alignment: .center, spacing: 8) {
-            if checked {
-                Image(systemName: "checkmark")
-                    .font(.system(size: 16, weight: .bold))
-            } else {
-                // 체크 없을 때 간격 맞추기용
-                Rectangle()
-                    .foregroundColor(.clear)
-                    .frame(width: 18, height: 18)
-            }
-            
-            Text(text.isEmpty ? " " : text)
-                .font(.system(size: 16))
-            
-            Spacer()
+        if let todayBoard = mentoryiOS.todayBoard {
+            TodayBoardView(todayBoard)
+        } else {
+            ProgressView("프리뷰 준비 중")
+                .task {
+                    mentoryiOS.setUp()
+                    
+                    let onboarding = mentoryiOS.onboarding!
+                    onboarding.nameInput = "김철수"
+                    onboarding.next()
+                }
         }
-        .padding(.vertical, 14)
-        .padding(.horizontal, 16)
-        .background(
-            RoundedRectangle(cornerRadius: 18)
-                .stroke(Color.gray.opacity(0.6), lineWidth: 1)
-        )
     }
 }
 
 #Preview {
-    let mentoryiOS = MentoryiOS()
-    return TodayBoardView(todayBoardModel: mentoryiOS.todayBoard!)
+    TodayBoardPreview()
 }

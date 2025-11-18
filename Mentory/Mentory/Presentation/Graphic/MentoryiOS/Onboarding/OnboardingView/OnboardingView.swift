@@ -121,16 +121,16 @@ struct OnboardingView: View {
     }
 }
 
-// MARK: - Feature Row View
-
 
 // MARK: Preview
-struct OnboardingPreview: View {
+fileprivate struct OnboardingPreview: View {
     @StateObject var mentoryiOS = MentoryiOS()
     
     var body: some View {
         if let onboarding = mentoryiOS.onboarding {
             OnboardingView(onboarding)
+        } else if mentoryiOS.onboardingFinished {
+            Text("Onboarding이 종료되었습니다.")
         } else {
             ProgressView()
                 .task {

@@ -7,12 +7,20 @@
 import SwiftUI
 
 
-
+// MARK: App
 @main
 struct MentoryApp: App {
+    // MARK: model
+    @State var mentoryiOS = MentoryiOS(
+        mentoryDB: MentoryDB(),
+        alanLLM: AlanLLM()
+    )
+    
+    
+    // MARK: body
     var body: some Scene {
         WindowGroup {
-            MentoryiOSView()
+            MentoryiOSView(mentoryiOS)
         }
     }
 }

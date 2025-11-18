@@ -4,12 +4,17 @@
 //
 //  Created by JAY on 11/17/25.
 //
-
 import SwiftUI
 
+
+// MARK: View
 struct MindAnalyzerView: View {
     // MARK: model
     @ObservedObject var mindAnalyzer: MindAnalyzer
+    
+    init(_ mindAnalyzer: MindAnalyzer) {
+        self.mindAnalyzer = mindAnalyzer
+    }
     
     
     // MARK: body
@@ -77,13 +82,7 @@ struct MindAnalyzerView: View {
             )
             .foregroundColor(.white)
         }
-        //        .disabled(canRequestAnalysis == false || mindAnalyzerModel.isAnalyzing)
     }
-    //
-    //    private var canRequestAnalysis: Bool {
-    //        let text = mindAnalyzerModel.owner?.textInput ?? ""
-    //        return text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false
-    //    }
     
     @ViewBuilder
     private var analysisStatus: some View {
@@ -118,7 +117,7 @@ struct MindAnalyzerView: View {
     }
 }
 
-private struct CharacterSelectionCard: View {
+fileprivate struct CharacterSelectionCard: View {
     let character: MindAnalyzer.CharacterType
     let isSelected: Bool
     let action: () -> Void
@@ -126,8 +125,11 @@ private struct CharacterSelectionCard: View {
     var body: some View {
         Button(action: action) {
             VStack(spacing: 12) {
-                CharacterImageView(imageName: character.imageName)
+                Image(character.imageName)
+                    .resizable()
+                    .scaledToFit()
                     .frame(height: 110)
+                
                 Text(character.displayName)
                     .font(.headline)
                     .foregroundColor(.primary)
@@ -154,17 +156,7 @@ private struct CharacterSelectionCard: View {
     }
 }
 
-private struct CharacterImageView: View {
-    let imageName: String
-    
-    var body: some View {
-        Image(imageName)
-            .resizable()
-            .scaledToFit()
-    }
-}
-
-private struct StatusBadge: View {
+fileprivate struct StatusBadge: View {
     let text: String
     
     var body: some View {
@@ -183,7 +175,7 @@ private struct StatusBadge: View {
     }
 }
 
-private struct MindTypeResultView: View {
+fileprivate struct MindTypeResultView: View {
     let mindType: MindAnalyzer.MindType
     
     var body: some View {
@@ -209,7 +201,7 @@ private struct MindTypeResultView: View {
     }
 }
 
-private struct ResultView: View {
+fileprivate struct ResultView: View {
     let text: String
     
     var body: some View {
@@ -220,7 +212,7 @@ private struct ResultView: View {
     }
 }
 
-private extension MindAnalyzer.MindType {
+fileprivate extension MindAnalyzer.MindType {
     var title: String {
         switch self {
         case .veryUnpleasant: return "매우 불편한 하루"
@@ -281,7 +273,7 @@ extension MindAnalyzer.CharacterType: CaseIterable {
     static var allCases: [MindAnalyzer.CharacterType] { [.A, .B] }
 }
 
-private extension MindAnalyzer.CharacterType {
+fileprivate extension MindAnalyzer.CharacterType {
     var displayName: String {
         switch self {
         case .A: return "냉스 처리스키"
@@ -304,11 +296,38 @@ private extension MindAnalyzer.CharacterType {
     }
 }
 
+
+// MARK: Preview
+fileprivate struct MindAnalyzerPreview: View {
+    @StateObject private var mentoryiOS = MentoryiOS()
+    
+    var body: some View {
+        if let todayBoard = mentoryiOS.todayBoard,
+           let recordForm = todayBoard.recordForm,
+           let mindAnalyzer = recordForm.mindAnalyzer {
+            MindAnalyzerView(mindAnalyzer)
+        } else {
+            ProgressView("프리뷰 로딩 중입니다.")
+                .task {
+                    mentoryiOS.setUp()
+                    
+                    let onboarding = mentoryiOS.onboarding!
+                    onboarding.nameInput = "김깝십"
+                    onboarding.next()
+                    
+                    let todayBoard = mentoryiOS.todayBoard!
+                    let recordForm = todayBoard.recordForm!
+                    
+                    recordForm.titleInput = "SAMPLE-TITLE"
+                    recordForm.textInput = "SAMPLE-TEXT"
+                    
+                    recordForm.submit()
+                }
+        }
+    }
+}
+
+
 #Preview {
-    let mentoryiOS = MentoryiOS()
-    let todayBoard = TodayBoard(owner: mentoryiOS)
-    let recordForm = RecordForm(owner: todayBoard)
-    let mindAnalyzer = MindAnalyzer(owner: recordForm)
-    mindAnalyzer.analyzedResult = "긍정과 긴장이 함께 있는 하루였네요."
-    return MindAnalyzerView(mindAnalyzer: recordForm.mindAnalyzer!)
+    MindAnalyzerPreview()
 }

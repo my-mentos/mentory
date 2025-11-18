@@ -9,7 +9,6 @@ import Combine
 import OSLog
 
 
-
 // MARK: Object
 @MainActor
 final class MindAnalyzer: Sendable, ObservableObject {
@@ -31,8 +30,6 @@ final class MindAnalyzer: Sendable, ObservableObject {
     
     
     // MARK: action
-    // 분석(LLM에게 보내서) >> 결과 기다려서 반환해야 하는지?(이파일에서 가지고 있어야하는지)
-    // RecordForm에서 갖고있는 사용자가 입력한 여러 상태들을
     func startAnalyzing() async{
         // capture
         guard let textInput = owner?.textInput else {
@@ -44,62 +41,32 @@ final class MindAnalyzer: Sendable, ObservableObject {
             logger.error("textInput이 비어있습니다.")
             return
         }
-        //guard let imageInput = owner?.imageInput else { return }
-        //guard let voiceInput = owner?.voiceInput else { return }
+        
+        let recordForm = self.owner!
+        let todayBoard = recordForm.owner!
+        let mentoryiOS = todayBoard.owner!
+        let alanLLM = mentoryiOS.alanLLM
+        
         
         // process
-        analyzedResult = nil
-        selectedCharacter = CharacterType.A
-        await callAPI(prompt: textInput, character: .A)
-        
-        // mutate
-        
-        
-    }
-    
-    // 결과 오는지만 확인용
-    func callAPI(prompt: String, character: CharacterType) async {
-        // capture
-        let alanClientKey = Bundle.main.object(forInfoDictionaryKey: "ALAN_API_TOKEN") as Any
-        print("🔑 ALAN_API_TOKEN raw:", alanClientKey)
-        
-        print("ALAN_API_TOKEN =", alanClientKey)
-        
-        guard let apiToken = Bundle.main.object(forInfoDictionaryKey: "ALAN_API_TOKEN") as? String,
-              apiToken.isEmpty == false else {
-            print("ALAN_API_TOKEN 없음")
-            return
-        }
-        var urlBuilder = URLComponents(string: "https://kdt-api-function.azurewebsites.net/api/v1/question")!
-        urlBuilder.queryItems = [
-            URLQueryItem(name: "client_id", value: apiToken),
-            URLQueryItem(name: "content", value: prompt)
-        ]
-        
-        guard let requestURL = urlBuilder.url else {
-            print("URL 생성 실패")
-            return
-        }
-        
-        // process
+        let answer: AlanLLM.Answer
         do {
-            let (data, _) = try await URLSession.shared.data(from: requestURL)
-            let text = String(data: data, encoding: .utf8) ?? ""
-            print("요청 결과:", text)
+            let question = AlanLLM.Question(textInput)
+            answer = try await alanLLM.question(question)
             
-            self.mindType = .slightlyUnpleasant
-            self.analyzedResult = text
             
         } catch {
-            print("요청 실패:", error)
+            logger.error("\(error)")
+            return
         }
         
         // mutate
+        self.analyzedResult = answer.content
+        self.mindType = .unPleasant
     }
     
     
     // MARK: value
-    
     enum CharacterType: Sendable {
         case A
         case B
