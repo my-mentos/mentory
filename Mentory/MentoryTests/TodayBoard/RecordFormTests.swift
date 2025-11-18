@@ -215,21 +215,37 @@ struct RecordFormTests {
 
 // MARK: Helpers
 private func getRecordFormForTest(_ mentoryiOS: MentoryiOS) async throws -> RecordForm {
-    // TodayBoard가 없으면 생성
-    if await mentoryiOS.todayBoard == nil {
-        await MainActor.run {
-            mentoryiOS.todayBoard = TodayBoard(owner: mentoryiOS)
-        }
+    // 앱 기본 세팅
+    await mentoryiOS.setUp()
+    
+    // 온보딩 가져오기
+    guard let onboarding = await mentoryiOS.onboarding else {
+        throw NSError(domain: "Onboarding not initialized", code: -1)
     }
-
-    let todayBoard = try #require(await mentoryiOS.todayBoard)
-
-    // RecordForm이 없으면 생성
+    
+    // 온보딩 값 입력 + 검증
+    await onboarding.setName("테스트유저")
+    await onboarding.validateInput()
+    
+    // 온보딩 완료 
+    await onboarding.next()
+    
+    // TodayBoard 가져오기
+    guard let todayBoard = await mentoryiOS.todayBoard else {
+        throw NSError(domain: "TodayBoard not initialized", code: -1)
+    }
+    
+    // RecordForm 없으면 생성
     if await todayBoard.recordForm == nil {
         await MainActor.run {
             todayBoard.recordForm = RecordForm(owner: todayBoard)
         }
     }
-
-    return try #require(await todayBoard.recordForm)
+    
+    // RecordForm 리턴
+    guard let recordForm = await todayBoard.recordForm else {
+        throw NSError(domain: "RecordForm not initialized", code: -1)
+    }
+    
+    return recordForm
 }
