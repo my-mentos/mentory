@@ -13,58 +13,98 @@ import OSLog
 @MainActor
 final class MentoryiOS: Sendable, ObservableObject {
     // MARK: core
-    init() { }
-    
-    private nonisolated let userNameDefaultsKey = "mentory.userName"
+    nonisolated let mentoryDB: any MentoryDBInterface
+    nonisolated let alanLLM: any AlanLLMInterface
+    init(mentoryDB: any MentoryDBInterface = MentoryDBMock(),
+         alanLLM: any AlanLLMInterface = AlanLLMMock()) {
+        self.mentoryDB = mentoryDB
+        self.alanLLM = alanLLM
+    }
 
+    
     // MARK: state
     nonisolated let id: UUID = UUID()
-    nonisolated let logger = Logger(subsystem: "MentoryiOS", category: "Domain")
+    nonisolated let logger = Logger(subsystem: "MentoryiOS.MentoryiOS",
+                                    category: "Domain")
     
     @Published var userName: String? = nil
-    @Published var onboardingFinished: Bool = false
+    func getGreetingText() -> String {
+        guard let userName else {
+            return "반가워요!"
+        }
+        
+        return "반가워요, \(userName)님!"
+    }
     
+    @Published var onboardingFinished: Bool = false
     @Published var onboarding: Onboarding? = nil
+    
     @Published var todayBoard: TodayBoard? = nil
     @Published var settingBoard: SettingBoard? = nil
     
+    
     // MARK: action
-    func saveUserName() {
-        guard let name = userName else {
-            UserDefaults.standard.removeObject(forKey: userNameDefaultsKey)
+    func setUp() {
+        // capture
+        guard onboardingFinished == false else {
+            logger.error("Onboarding이 이미 완료되어 있어 종료됩니다.")
             return
         }
-        UserDefaults.standard.set(name, forKey: userNameDefaultsKey)
-    }
-    
-    func loadUserName() {
-        if let savedName = UserDefaults.standard.string(forKey: userNameDefaultsKey) {
-            self.userName = savedName
-            self.onboardingFinished = true
-            
-            if self.todayBoard == nil {
-                let todayBoard = TodayBoard(owner: self)
-                self.todayBoard = todayBoard
-                todayBoard.recordForm = RecordForm(owner: todayBoard)
-            }
-        } else {
-            self.onboardingFinished = false
-        }
-    }
-    
-    func getGreetingText() -> String {
-        let name = userName ?? "userName"
-        return "반가워요, \(name)님!"
-    }
-    
-    func setUp() {
-        if userName != nil {
+        guard userName == nil else {
+            logger.error("MentoryiOS의 userName이 현재 nil이서 종료됩니다.")
             return
         }
         guard onboarding == nil else {
             logger.error("Onboarding 객체가 이미 존재합니다.")
             return
         }
+        
+        // mutate
         self.onboarding = Onboarding(owner: self)
+    }
+    func loadUserName() async {
+        // capture
+        let mentoryDB = self.mentoryDB
+        
+        // process
+        let userNameFromDB: String
+        
+        do {
+            guard let name = try await mentoryDB.getName() else {
+                logger.error("현재 MentoryDB에 저장된 이름이 존재하지 않습니다.")
+                return
+            }
+            
+            userNameFromDB = name
+        } catch {
+            logger.error("\(error)")
+            return
+        }
+        
+        // mutate
+        self.userName = userNameFromDB
+        self.onboardingFinished = true
+        
+        let todayBoard = TodayBoard(owner: self)
+        self.todayBoard = todayBoard
+        todayBoard.recordForm = RecordForm(owner: todayBoard)
+        
+        self.settingBoard = SettingBoard(owner: self)
+    }
+    
+    func saveUserName() async {
+        // capture
+        guard let userName else {
+            logger.error("MentoryiOS에 userName이 존재하지 않습니다.")
+            return
+        }
+        
+        // process
+        do {
+            try await self.mentoryDB.updateName(userName)
+        } catch {
+            logger.error("\(error)")
+            return
+        }
     }
 }

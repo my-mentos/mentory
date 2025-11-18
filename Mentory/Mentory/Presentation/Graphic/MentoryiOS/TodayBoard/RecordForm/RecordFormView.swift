@@ -8,7 +8,10 @@
 import SwiftUI
 
 struct RecordFormView: View {
+    // Model -> 비즈니스 로직
     @ObservedObject var recordFormModel: RecordForm
+    
+    // ViewModel -> 화면의 열고 닫고
     @State private var cachedTextForAnalysis: String = ""
     @State private var isShowingMindAnalyzerView = false
     

@@ -4,12 +4,20 @@
 //
 //  Created by 구현모 on 11/14/25.
 //
-
 import SwiftUI
 
-struct OnboardingView: View {
-    @ObservedObject var onboardingModel: Onboarding
 
+// MARK: View
+struct OnboardingView: View {
+    // MARK: model
+    @ObservedObject var onboarding: Onboarding
+    
+    init(_ onboarding: Onboarding) {
+        self.onboarding = onboarding
+    }
+
+    
+    // MARK: body
     var body: some View {
         VStack(spacing: 0) {
             // 타이틀
@@ -53,25 +61,25 @@ struct OnboardingView: View {
 
             // 기능 설명 리스트
             VStack(alignment: .leading, spacing: 20) {
-                FeatureRow(
+                OnboardingDetailView(
                     title: "텍스트, 음성, 이미지로 감정 기록",
                     subtitle: "당신이 편한 방식으로 일상을 기록해보세요",
                     image: "pencil.and.list.clipboard"
                 )
 
-                FeatureRow(
+                OnboardingDetailView(
                     title: "AI가 분석하는 나의 감정 상태",
                     subtitle: "7단계 감정 분류로 내 마음 상태를 정확히 파악해요",
                     image: "brain.head.profile"
                 )
 
-                FeatureRow(
+                OnboardingDetailView(
                     title: "구름이, 분석이와 함께하는 감정 케어",
                     subtitle: "당신의 성향에 맞는 캐릭터가 위로와 조언을 전해요",
                     image: "message.fill"
                 )
 
-                FeatureRow(
+                OnboardingDetailView(
                     title: "감정 캘린더와 맞춤형 행동 추천",
                     subtitle: "통계로 감정을 추적하고 실천 가능한 활동을 받아보세요",
                     image: "calendar"
@@ -82,7 +90,7 @@ struct OnboardingView: View {
             Spacer()
 
             // 닉네임 입력 필드
-            TextField("이름(닉네임)을 적어주세요.", text: $onboardingModel.nameInput)
+            TextField("이름(닉네임)을 적어주세요.", text: $onboarding.nameInput)
                 .padding()
                 .frame(height: 60)
                 .background(Color(white: 0.95))
@@ -93,8 +101,8 @@ struct OnboardingView: View {
             // 계속 버튼
             Button(action: {
                 Task {
-                    onboardingModel.validateInput()
-                    onboardingModel.next()
+                    onboarding.validateInput()
+                    onboarding.next()
                 }
             }) {
                 Text("계속")
@@ -102,10 +110,10 @@ struct OnboardingView: View {
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .frame(height: 60)
-                    .background(onboardingModel.nameInput.isEmpty ? Color.gray : Color.blue)
+                    .background(onboarding.nameInput.isEmpty ? Color.gray : Color.blue)
                     .cornerRadius(16)
             }
-            .disabled(onboardingModel.nameInput.isEmpty)
+            .disabled(onboarding.nameInput.isEmpty)
             .padding(.horizontal, 30)
             .padding(.bottom, 40)
         }
@@ -114,42 +122,25 @@ struct OnboardingView: View {
 }
 
 // MARK: - Feature Row View
-struct FeatureRow: View {
-    let title: String
-    let subtitle: String
-    let image: String
 
+
+// MARK: Preview
+struct OnboardingPreview: View {
+    @StateObject var mentoryiOS = MentoryiOS()
+    
     var body: some View {
-        HStack(alignment: .top, spacing: 12) {
-            // 클립보드 아이콘
-            Image(systemName: image)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 40, height: 40)
-                .foregroundColor(.black)
-
-
-            VStack(alignment: .leading, spacing: 4) {
-                Text(title)
-                    .font(.system(size: 15, weight: .bold))
-                    .foregroundColor(.black)
-                    .lineLimit(nil)
-                    .fixedSize(horizontal: false, vertical: true)
-
-                Text(subtitle)
-                    .font(.system(size: 13))
-                    .foregroundColor(.gray)
-                    .lineLimit(nil)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
+        if let onboarding = mentoryiOS.onboarding {
+            OnboardingView(onboarding)
+        } else {
+            ProgressView()
+                .task {
+                    print(mentoryiOS.onboarding != nil)
+                    mentoryiOS.setUp()
+                }
         }
-        .padding(.bottom, 10)
     }
 }
 
-// MARK: - Preview
 #Preview {
-    let mentoryiOS = MentoryiOS()
-    mentoryiOS.setUp()
-    return OnboardingView(onboardingModel: mentoryiOS.onboarding!)
+    OnboardingPreview()
 }
