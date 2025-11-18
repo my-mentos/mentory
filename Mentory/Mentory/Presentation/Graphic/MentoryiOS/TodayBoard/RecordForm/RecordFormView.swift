@@ -4,7 +4,6 @@
 //
 //  Created by JAY on 11/17/25.
 //
-
 import SwiftUI
 
 struct RecordFormView: View {
@@ -46,7 +45,7 @@ struct RecordFormView: View {
         }
         .ignoresSafeArea(.keyboard, edges: .bottom)
         .fullScreenCover(isPresented: $isShowingMindAnalyzerView) {
-            MindAnalyzerView(mindAnalyzer: recordFormModel.mindAnalyzer!)
+            MindAnalyzerView(recordFormModel.mindAnalyzer!)
         }
     }
     

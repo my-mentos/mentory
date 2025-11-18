@@ -58,7 +58,7 @@ struct MentoryiOSView: View {
     @ViewBuilder
     private var TodayBoardTab: some View {
         if let todayBoard = mentoryiOS.todayBoard {
-            TodayBoardView(todayBoardModel: todayBoard)
+            TodayBoardView(todayBoard)
         } else {
             Text("기록 화면을 준비 중입니다.")
         }

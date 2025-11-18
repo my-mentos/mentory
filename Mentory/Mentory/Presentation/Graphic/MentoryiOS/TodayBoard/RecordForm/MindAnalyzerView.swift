@@ -10,6 +10,9 @@ import SwiftUI
 struct MindAnalyzerView: View {
     // MARK: model
     @ObservedObject var mindAnalyzer: MindAnalyzer
+    init(_ mindAnalyzer: MindAnalyzer) {
+        self.mindAnalyzer = mindAnalyzer
+    }
     
     
     // MARK: body
@@ -310,5 +313,5 @@ private extension MindAnalyzer.CharacterType {
     let recordForm = RecordForm(owner: todayBoard)
     let mindAnalyzer = MindAnalyzer(owner: recordForm)
     mindAnalyzer.analyzedResult = "긍정과 긴장이 함께 있는 하루였네요."
-    return MindAnalyzerView(mindAnalyzer: recordForm.mindAnalyzer!)
+    return MindAnalyzerView(recordForm.mindAnalyzer!)
 }
