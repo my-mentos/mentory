@@ -4,9 +4,10 @@
 //
 //  Created by JAY on 11/14/25.
 //
-
 import SwiftUI
 
+
+// MARK: View
 struct TodayBoardView: View {
     @ObservedObject var todayBoardModel: TodayBoard
     @State private var isShowingRecordFormView = false
@@ -228,7 +229,27 @@ struct ActionRow: View {
     }
 }
 
+
+// MARK: Preview
+fileprivate struct TodayBoardPreview: View {
+    @StateObject var mentoryiOS = MentoryiOS()
+    
+    var body: some View {
+        if let todayBoard = mentoryiOS.todayBoard {
+            TodayBoardView(todayBoardModel: todayBoard)
+        } else {
+            ProgressView("프리뷰 준비 중")
+                .task {
+                    mentoryiOS.setUp()
+                    
+                    let onboarding = mentoryiOS.onboarding!
+                    onboarding.nameInput = "김철수"
+                    onboarding.next()
+                }
+        }
+    }
+}
+
 #Preview {
-    let mentoryiOS = MentoryiOS()
-    return TodayBoardView(todayBoardModel: mentoryiOS.todayBoard!)
+    TodayBoardPreview()
 }
