@@ -18,7 +18,7 @@ struct SettingBoardView: View {
     }()
     
     private var userName: String {
-        settingBoard.owner.userName ?? "사용자"
+        settingBoard.owner?.userName ?? "사용자"
     }
     
     var body: some View {

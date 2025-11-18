@@ -2,7 +2,7 @@
 //  Config.swift
 //  Mentory
 //
-//  Created by Claude Code
+//  Created by 구현모 on 11/17/25.
 //
 
 import Foundation
