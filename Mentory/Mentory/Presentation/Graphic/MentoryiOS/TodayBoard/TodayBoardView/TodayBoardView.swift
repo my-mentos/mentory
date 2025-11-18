@@ -135,7 +135,7 @@ struct TodayBoardView: View {
                                 )
                         }
                         .fullScreenCover(isPresented: $isShowingRecordFormView) {
-                            RecordFormView(recordFormModel: todayBoard.recordForm!)                                }
+                            RecordFormView(todayBoard.recordForm!)                                }
                         .padding(.horizontal, 32)
                     }
                     .padding(.vertical, 24)
