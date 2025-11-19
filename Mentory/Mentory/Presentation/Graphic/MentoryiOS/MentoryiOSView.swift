@@ -47,8 +47,8 @@ struct MentoryiOSView: View {
                     OnboardingTab
                 }
             }.task {
-                mentoryiOS.setUp()
                 await mentoryiOS.loadUserName()
+                    mentoryiOS.setUp()
             }
         }
     }

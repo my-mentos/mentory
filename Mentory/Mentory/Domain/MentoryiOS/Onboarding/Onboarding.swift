@@ -64,6 +64,7 @@ final class Onboarding: Sendable, ObservableObject {
         // mutate
         mentoryiOS.onboardingFinished = true
         mentoryiOS.userName = nameInput
+        
         mentoryiOS.onboarding = nil
         
         let todayBoard = TodayBoard(owner: self.owner ?? MentoryiOS())
