@@ -21,6 +21,7 @@ self.validationResult = .none
 ```
 
 그 결과 MindAnalyzer는 분석 요청 직전에 비어있는 `RecordForm`을 전달받아 API 응답을 매핑할 수 없었고, 응답 처리가 중단되면서 "결과 미반환" 상태가 발생했다.
+<img width="400" height="auto" alt="Simulator Screenshot - iPhone 17 Pro - 2025-11-19 at 14 31 31" src="https://github.com/user-attachments/assets/558dd327-29e5-41ec-8f85-8aadb0c9f96c" />
 
 ## 해결
 1. 폼 초기화가 필요한 경우 MindAnalyzer가 사용을 마친 뒤 별도 메서드에서 초기화하도록 분리한다.
@@ -39,3 +40,5 @@ func submit() async throws {
 1. 폼에 실제 데이터를 입력한 뒤 MindAnalyze를 호출한다.
 2. MindAnalyzer 콜백에서 `RecordForm` 값이 유지되는지 확인한다.
 3. API 응답을 정상적으로 UI에 적용하면 로딩이 종료되고 결과가 표시된다.
+<img width="400" height="auto" alt="Simulator Screenshot - iPhone 17 Pro - 2025-11-19 at 14 34 44" src="https://github.com/user-attachments/assets/543f8c27-883a-4293-9d3b-06e625b1df5b" />
+
