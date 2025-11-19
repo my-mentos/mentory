@@ -1,22 +1,26 @@
 ---
-name: Issue
-about: Track work with clear goals and context
-title: "[Type] Concise title"
+name: Agile Issue
+about: User story / task template for agile delivery
+title: "[Story] 사용자 관점의 목표"
 labels: ''
 assignees: ''
 ---
 
-## Summary
-- _목표를 한 문장으로 요약하세요._
+## User Story
+- _As a [role], I want [goal], so that [reason]._
 
-## Background
-- _맥락, 관련 작업, 참고 자료를 적어주세요._
+## Business Value
+- _이 작업이 팀/제품에 주는 가치를 명확히 하세요._
+
+## Acceptance Criteria
+- Given _상황_, When _행동_, Then _결과_
+- Given _상황_, When _행동_, Then _결과_
 
 ## Tasks
-- [ ] _해야 할 작업을 체크리스트로 나열하세요._
+- [ ] _개발/디자인/QA 작업을 체크리스트로 나열하세요._
 
 ## Definition of Done
-- _완료 조건을 정량적으로 작성하세요._
+- _완료 조건(테스트, 문서, 배포 등)을 정리하세요._
 
-## Additional Notes
-- _우려 사항, QA 포인트, 스크린샷 등을 추가로 남겨주세요._
+## Dependencies / Risks
+- _선행 작업이나 잠재적인 위험을 기록하세요._

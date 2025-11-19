@@ -1,19 +1,21 @@
-## Summary
-- _PR의 목적과 해결하려는 문제를 설명하세요._
+## Why
+- _연결된 User Story / Sprint Goal을 간단히 설명하세요._
+- Closes #[issue-number]
 
-## Changes
-- _핵심 변경 사항을 불릿으로 정리하세요._
+## What
+- _핵심 구현 사항과 변경 범위를 불릿으로 작성하세요._
 
-## Testing
-- [ ] Not tested
+## How to Test
+- [ ] Not tested (설명 필요)
 - [ ] `xcodebuild test`
 - [ ] `swift test`
-- [ ] 기타: _명령 또는 테스트 방법을 명시하세요._
+- [ ] 기타: _명령 또는 시나리오_
 
-## Screenshots / Videos (선택)
-- _UI 변화가 있다면 자료를 첨부하세요._
+## Demo Notes
+- _PO/Stakeholder에게 공유할 스크린샷, 영상, 또는 데모 절차를 남기세요._
 
-## Checklist
-- [ ] 관련 이슈를 링크했습니다. (`Closes #123`)
-- [ ] 문서/주석을 최신 상태로 유지했습니다.
-- [ ] 영향 범위를 검토했고 리그레션 테스트 전략을 공유했습니다.
+## Agile Checklist
+- [ ] Acceptance Criteria 충족
+- [ ] 문서/가이드 업데이트
+- [ ] 릴리스 노트 또는 변경 로그 반영
+- [ ] 영향 받는 스쿼드/챕터와 공유 완료
