@@ -32,8 +32,6 @@ final class RecordForm: Sendable, ObservableObject {
     @Published var validationResult: ValidationResult = .none
     
     
-    
-    
     // MARK: action
     func validateInput() {
         // capture

@@ -8,7 +8,7 @@ import Foundation
 import OSLog
 
 
-// MARK: Flow
+// MARK: Domain Interface
 protocol AlanLLMInterface: Sendable {
     func question(_ question: AlanLLM.Question) async throws -> AlanLLM.Answer
     func resetState(token: AlanLLM.AuthToken) async throws

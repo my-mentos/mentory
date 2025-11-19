@@ -7,7 +7,7 @@
 import Foundation
 
 
-// MARK: Interface
+// MARK: Domain Interface
 protocol MentoryDBInterface: Sendable {
     func updateName(_ newName: String) async throws -> Void
     func getName() async throws -> String?
@@ -15,7 +15,7 @@ protocol MentoryDBInterface: Sendable {
 
 
 
-// MARK: Flow
+// MARK: Domain
 nonisolated
 struct MentoryDB: MentoryDBInterface {
     // MARK: core
