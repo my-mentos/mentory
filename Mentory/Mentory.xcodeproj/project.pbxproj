@@ -100,21 +100,6 @@
 			path = MentoryWidget;
 			sourceTree = "<group>";
 		};
-		7B1337862ECD63CD009931A4 /* MentoryWatch Watch App */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "MentoryWatch Watch App";
-			sourceTree = "<group>";
-		};
-		7B1337942ECD63CF009931A4 /* MentoryWatch Watch AppTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "MentoryWatch Watch AppTests";
-			sourceTree = "<group>";
-		};
-		7B13379E2ECD63CF009931A4 /* MentoryWatch Watch AppUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "MentoryWatch Watch AppUITests";
-			sourceTree = "<group>";
-		};
 		CE39BFBE2EC313F20090DF78 /* Mentory */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -197,9 +182,6 @@
 				CE39BFBE2EC313F20090DF78 /* Mentory */,
 				CE8EE8322EC5D1600006E5A4 /* MentoryTests */,
 				7B13376B2ECD63A2009931A4 /* MentoryWidget */,
-				7B1337862ECD63CD009931A4 /* MentoryWatch Watch App */,
-				7B1337942ECD63CF009931A4 /* MentoryWatch Watch AppTests */,
-				7B13379E2ECD63CF009931A4 /* MentoryWatch Watch AppUITests */,
 				7B1337662ECD63A2009931A4 /* Frameworks */,
 				CE39BFBD2EC313F20090DF78 /* Products */,
 			);
@@ -255,9 +237,6 @@
 			);
 			dependencies = (
 			);
-			fileSystemSynchronizedGroups = (
-				7B1337862ECD63CD009931A4 /* MentoryWatch Watch App */,
-			);
 			name = "MentoryWatch Watch App";
 			packageProductDependencies = (
 			);
@@ -278,9 +257,6 @@
 			dependencies = (
 				7B1337932ECD63CF009931A4 /* PBXTargetDependency */,
 			);
-			fileSystemSynchronizedGroups = (
-				7B1337942ECD63CF009931A4 /* MentoryWatch Watch AppTests */,
-			);
 			name = "MentoryWatch Watch AppTests";
 			packageProductDependencies = (
 			);
@@ -300,9 +276,6 @@
 			);
 			dependencies = (
 				7B13379D2ECD63CF009931A4 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				7B13379E2ECD63CF009931A4 /* MentoryWatch Watch AppUITests */,
 			);
 			name = "MentoryWatch Watch AppUITests";
 			packageProductDependencies = (
