@@ -125,6 +125,7 @@ Mentory는 STT와 LLM을 활용해 사용자의 감정을 기록·분석하고 �
 - [SwiftUI에서 Combine 기반 MVVM 사용하기](docs/swiftui-combine-mvvm/README.md)
 - [MVVM에 Swift Concurrency 도입하기](docs/mvvm-swift-concurrency/README.md)
 - [Alan API 사용법](docs/alan-api/README.md)
+- [WatchOS 기초](docs/watchos/README.md)
 - 브랜치 전략, TBD(Trunk-Based Development)
 
 ## 트러블슈팅 문서
