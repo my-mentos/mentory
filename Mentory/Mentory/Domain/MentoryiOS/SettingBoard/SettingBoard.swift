@@ -36,7 +36,7 @@ final class SettingBoard: Sendable, ObservableObject {
     // 화면 클릭
     @Published var isShowingPrivacyPolicy: Bool = false
     @Published var isShowingLicenseInfo: Bool = false
-    @Published var isShowingTermsOfService: Bool = false   // 👈 추가
+    @Published var editingName: String = ""
     
     // MARK: value
     
@@ -63,7 +63,43 @@ final class SettingBoard: Sendable, ObservableObject {
         isShowingLicenseInfo = true
     }
     
-    func showTermsOfService() {
-        isShowingTermsOfService = true
+    func startRenaming() {
+        editingName = owner?.userName ?? ""
+    }
+    
+    func cancelRenaming() {
+        editingName = ""
+    }
+    
+    func commitRename() async {
+        let trimmedName = editingName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmedName.isEmpty == false else {
+            logger.error("입력된 이름이 비어 있어 저장을 건너뜁니다.")
+            return
+        }
+        
+        guard let owner else {
+            logger.error("owner가 존재하지 않아 이름을 저장할 수 없습니다.")
+            return
+        }
+        
+        owner.userName = trimmedName
+        await owner.saveUserName()
+        editingName = ""
+        logger.info("사용자 이름이 \(trimmedName, privacy: .public)로 변경되었습니다.")
+    }
+    
+    // 데이터 삭제 버튼 탭 처리 (확인 Alert 노출)
+    func requestDataDeletion() {
+        logger.info("데이터 삭제 확인 Alert를 노출합니다.")
+    }
+    
+    func cancelDataDeletion() {
+        logger.info("데이터 삭제가 취소되었습니다.")
+    }
+    
+    func confirmDataDeletion() {
+        logger.info("데이터 삭제를 진행합니다. 실제 삭제 로직은 추후 구현 예정")
+        // TODO: 추후 담당자가 삭제 로직 구현
     }
 }

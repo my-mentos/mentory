@@ -10,6 +10,11 @@ import SwiftUI
 struct SettingBoardView: View {
     @ObservedObject var settingBoard: SettingBoard
     @State private var showingReminderPicker = false
+    @State private var isShowingRenameSheet = false
+    @State private var isShowingTermsOfService = false
+    @State private var isShowingDataDeletionAlert = false
+    
+    @FocusState private var isRenameFieldFocused: Bool
     
     private static let reminderFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -32,6 +37,7 @@ struct SettingBoardView: View {
                         header
                         primarySettingsSection
                         legalSection
+                        dataDeletionSection
                     }
                     .padding(.horizontal, 20)
                     .padding(.vertical, 28)
@@ -40,17 +46,35 @@ struct SettingBoardView: View {
             .sheet(isPresented: $showingReminderPicker) {
                 reminderPickerSheet
             }
+            .sheet(isPresented: $isShowingRenameSheet) {
+                renameSheet
+            }
         }
         .navigationDestination(isPresented: $settingBoard.isShowingPrivacyPolicy) {
             PrivacyPolicyView()
         }
-        .navigationDestination(isPresented: $settingBoard.isShowingLicenseInfo) {   // 👈 추가
+        .navigationDestination(isPresented: $settingBoard.isShowingLicenseInfo) {
             LicenseInfoView()
         }
-        .navigationDestination(isPresented: $settingBoard.isShowingTermsOfService) {
+        .navigationDestination(isPresented: $isShowingTermsOfService) {
             TermsOfServiceView()
         }
+        .alert(
+            "데이터를 삭제하시겠습니까?",
+            isPresented: $isShowingDataDeletionAlert,
+            actions: {
+                Button("삭제", role: .destructive) {
+                    settingBoard.confirmDataDeletion()
+                }
+                Button("취소", role: .cancel) {
+                }
+            },
+            message: {
+                Text("삭제를 누르면 멘토리 데이터가 모두 제거됩니다.")
+            }
+        )
     }
+    
     private var header: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(alignment: .top) {
@@ -82,10 +106,14 @@ struct SettingBoardView: View {
             SettingRow(
                 iconName: "person.text.rectangle",
                 iconBackground: Color.orange,
-                title: "계정 관리",
-                subtitle: "이름 변경 / 데이터 삭제",
+                title: "이름 변경",
                 showDivider: true
-            )
+            ) {
+                // 도메인에는 편집값 초기화만 맡기고
+                settingBoard.startRenaming()
+                // 시트 표시 여부는 View 상태로 관리
+                isShowingRenameSheet = true
+            }
             
             SettingRow(
                 iconName: "app.badge.fill",
@@ -131,7 +159,7 @@ struct SettingBoardView: View {
                 title: "라이센스 정보",
                 showDivider: true
             ){
-                settingBoard.showLicenseInfo()  
+                settingBoard.showLicenseInfo()
             }
             
             SettingRow(
@@ -140,7 +168,21 @@ struct SettingBoardView: View {
                 title: "이용 약관",
                 showDivider: false
             ){
-                settingBoard.showTermsOfService()   // 👈 추가
+                isShowingTermsOfService = true
+            }
+        }
+    }
+    
+    private var dataDeletionSection: some View {
+        SettingSection {
+            SettingRow(
+                iconName: "trash.fill",
+                iconBackground: Color.red.opacity(0.85),
+                title: "데이터 삭제",
+                titleColor: .red,
+                showDivider: false
+            ) {
+                isShowingDataDeletionAlert = true
             }
         }
     }
@@ -183,6 +225,56 @@ struct SettingBoardView: View {
     private var reminderTimeText: String {
         Self.reminderFormatter.string(from: settingBoard.reminderTime)
     }
+    
+    private var renameSheet: some View {
+        NavigationStack {
+            VStack(spacing: 16) {
+                TextField("새 이름을 입력하세요", text: $settingBoard.editingName)
+                    .textFieldStyle(.roundedBorder)
+                    .autocorrectionDisabled()
+                    .textInputAutocapitalization(.never)
+                    .focused($isRenameFieldFocused)
+                
+                Text("변경된 이름은 다음 대화부터 사용돼요.")
+                    .font(.system(size: 14))
+                    .foregroundColor(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .padding()
+            .navigationTitle("이름 변경")
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button("취소") {
+                        settingBoard.cancelRenaming()
+                        isShowingRenameSheet = false
+                    }
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("저장") {
+                        Task {
+                            await settingBoard.commitRename()
+                            // 도메인에서 더 이상 sheet 상태를 모르므로
+                            // 저장 후 sheet 닫기는 View에서 처리
+                            isShowingRenameSheet = false
+                        }
+                    }
+                    .disabled(isRenameSaveDisabled)
+                }
+            }
+        }
+        .presentationDetents([.height(200)])
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                isRenameFieldFocused = true
+            }
+        }
+    }
+    
+    private var isRenameSaveDisabled: Bool {
+        let trimmed = settingBoard.editingName.trimmingCharacters(in: .whitespacesAndNewlines)
+        let currentName = settingBoard.owner?.userName ?? ""
+        return trimmed.isEmpty || trimmed == currentName
+    }
 }
 
 struct SettingRow: View {
@@ -190,6 +282,7 @@ struct SettingRow: View {
     var iconBackground: Color
     var title: String
     var subtitle: String? = nil
+    var titleColor: Color = .primary
     var showDivider: Bool
     var action: () -> Void = {}
     
@@ -200,7 +293,7 @@ struct SettingRow: View {
                     SettingIcon(systemName: iconName, background: iconBackground)
                     VStack(alignment: .leading, spacing: 4) {
                         Text(title)
-                            .foregroundColor(.primary)
+                            .foregroundColor(titleColor)
                         if let subtitle {
                             Text(subtitle)
                                 .font(.system(size: 12))
