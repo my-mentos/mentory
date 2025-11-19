@@ -37,7 +37,6 @@ final class SettingBoard: Sendable, ObservableObject {
     @Published var isShowingPrivacyPolicy: Bool = false
     @Published var isShowingLicenseInfo: Bool = false
     @Published var editingName: String = ""
-    @Published var isShowingDataDeletionAlert: Bool = false
     
     // MARK: value
     
@@ -92,17 +91,14 @@ final class SettingBoard: Sendable, ObservableObject {
     
     // 데이터 삭제 버튼 탭 처리 (확인 Alert 노출)
     func requestDataDeletion() {
-        isShowingDataDeletionAlert = true
         logger.info("데이터 삭제 확인 Alert를 노출합니다.")
     }
     
     func cancelDataDeletion() {
-        isShowingDataDeletionAlert = false
         logger.info("데이터 삭제가 취소되었습니다.")
     }
     
     func confirmDataDeletion() {
-        isShowingDataDeletionAlert = false
         logger.info("데이터 삭제를 진행합니다. 실제 삭제 로직은 추후 구현 예정")
         // TODO: 추후 담당자가 삭제 로직 구현
     }

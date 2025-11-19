@@ -12,6 +12,7 @@ struct SettingBoardView: View {
     @State private var showingReminderPicker = false
     @State private var isShowingRenameSheet = false
     @State private var isShowingTermsOfService = false
+    @State private var isShowingDataDeletionAlert = false
     
     @FocusState private var isRenameFieldFocused: Bool
     
@@ -60,13 +61,12 @@ struct SettingBoardView: View {
         }
         .alert(
             "데이터를 삭제하시겠습니까?",
-            isPresented: $settingBoard.isShowingDataDeletionAlert,
+            isPresented: $isShowingDataDeletionAlert,
             actions: {
                 Button("삭제", role: .destructive) {
                     settingBoard.confirmDataDeletion()
                 }
                 Button("취소", role: .cancel) {
-                    settingBoard.cancelDataDeletion()
                 }
             },
             message: {
@@ -182,7 +182,7 @@ struct SettingBoardView: View {
                 titleColor: .red,
                 showDivider: false
             ) {
-                settingBoard.requestDataDeletion()
+                isShowingDataDeletionAlert = true
             }
         }
     }
