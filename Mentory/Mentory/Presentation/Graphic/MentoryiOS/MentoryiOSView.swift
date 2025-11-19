@@ -15,19 +15,27 @@ struct MentoryiOSView: View {
         self.mentoryiOS = mentoryiOS
     }
     
+    @State private var selectedTab: Tab = .record
+    
+    enum Tab {
+        case record
+        case statistics
+        case setting
+    }
     
     // MARK: body
     var body: some View {
         NavigationStack {
             ZStack {
                 if mentoryiOS.onboardingFinished {
-                    TabView {
+                    TabView(selection: $selectedTab) {
                         // 기록 탭
                         TodayBoardTab
                             .tabItem {
                                 Image(systemName: "square.and.pencil")
                                 Text("기록")
                             }
+                            .tag(Tab.record)
                         
                         // 통계 탭
                         StaticTab
@@ -35,6 +43,7 @@ struct MentoryiOSView: View {
                                 Image(systemName: "chart.xyaxis.line")
                                 Text("통계")
                             }
+                            .tag(Tab.statistics)
                         
                         // 설정 탭
                         SettingTab
@@ -42,13 +51,24 @@ struct MentoryiOSView: View {
                                 Image(systemName: "gearshape")
                                 Text("설정")
                             }
+                            .tag(Tab.setting)
                     }
+                    .onOpenURL { url in
+                        print("딥링크 수신:", url)
+                        
+                        guard url.scheme == "mentory" else { return }
+                        
+                        if url.host == "record" {
+                            selectedTab = .record
+                        }
+                    }
+                    
                 } else {
                     OnboardingTab
                 }
             }.task {
                 await mentoryiOS.loadUserName()
-                    mentoryiOS.setUp()
+                mentoryiOS.setUp()
             }
         }
     }
