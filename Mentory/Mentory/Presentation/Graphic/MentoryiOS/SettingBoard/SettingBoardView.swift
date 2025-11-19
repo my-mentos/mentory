@@ -10,6 +10,9 @@ import SwiftUI
 struct SettingBoardView: View {
     @ObservedObject var settingBoard: SettingBoard
     @State private var showingReminderPicker = false
+    @State private var isShowingRenameSheet = false
+    @State private var isShowingTermsOfService = false
+    
     @FocusState private var isRenameFieldFocused: Bool
     
     private static let reminderFormatter: DateFormatter = {
@@ -42,17 +45,17 @@ struct SettingBoardView: View {
             .sheet(isPresented: $showingReminderPicker) {
                 reminderPickerSheet
             }
-            .sheet(isPresented: $settingBoard.isShowingRenameSheet) {
+            .sheet(isPresented: $isShowingRenameSheet) {
                 renameSheet
             }
         }
         .navigationDestination(isPresented: $settingBoard.isShowingPrivacyPolicy) {
             PrivacyPolicyView()
         }
-        .navigationDestination(isPresented: $settingBoard.isShowingLicenseInfo) {   
+        .navigationDestination(isPresented: $settingBoard.isShowingLicenseInfo) {
             LicenseInfoView()
         }
-        .navigationDestination(isPresented: $settingBoard.isShowingTermsOfService) {
+        .navigationDestination(isPresented: $isShowingTermsOfService) {
             TermsOfServiceView()
         }
         .alert(
@@ -71,6 +74,7 @@ struct SettingBoardView: View {
             }
         )
     }
+    
     private var header: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(alignment: .top) {
@@ -105,7 +109,10 @@ struct SettingBoardView: View {
                 title: "이름 변경",
                 showDivider: true
             ) {
+                // 도메인에는 편집값 초기화만 맡기고
                 settingBoard.startRenaming()
+                // 시트 표시 여부는 View 상태로 관리
+                isShowingRenameSheet = true
             }
             
             SettingRow(
@@ -161,7 +168,7 @@ struct SettingBoardView: View {
                 title: "이용 약관",
                 showDivider: false
             ){
-                settingBoard.showTermsOfService()
+                isShowingTermsOfService = true
             }
         }
     }
@@ -239,12 +246,16 @@ struct SettingBoardView: View {
                 ToolbarItem(placement: .topBarLeading) {
                     Button("취소") {
                         settingBoard.cancelRenaming()
+                        isShowingRenameSheet = false
                     }
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("저장") {
                         Task {
                             await settingBoard.commitRename()
+                            // 도메인에서 더 이상 sheet 상태를 모르므로
+                            // 저장 후 sheet 닫기는 View에서 처리
+                            isShowingRenameSheet = false
                         }
                     }
                     .disabled(isRenameSaveDisabled)

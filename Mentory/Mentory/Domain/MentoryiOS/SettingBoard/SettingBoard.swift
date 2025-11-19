@@ -36,8 +36,6 @@ final class SettingBoard: Sendable, ObservableObject {
     // 화면 클릭
     @Published var isShowingPrivacyPolicy: Bool = false
     @Published var isShowingLicenseInfo: Bool = false
-    @Published var isShowingTermsOfService: Bool = false
-    @Published var isShowingRenameSheet: Bool = false
     @Published var editingName: String = ""
     @Published var isShowingDataDeletionAlert: Bool = false
     
@@ -66,17 +64,11 @@ final class SettingBoard: Sendable, ObservableObject {
         isShowingLicenseInfo = true
     }
     
-    func showTermsOfService() {
-        isShowingTermsOfService = true
-    }
-    
     func startRenaming() {
         editingName = owner?.userName ?? ""
-        isShowingRenameSheet = true
     }
     
     func cancelRenaming() {
-        isShowingRenameSheet = false
         editingName = ""
     }
     
@@ -94,7 +86,6 @@ final class SettingBoard: Sendable, ObservableObject {
         
         owner.userName = trimmedName
         await owner.saveUserName()
-        isShowingRenameSheet = false
         editingName = ""
         logger.info("사용자 이름이 \(trimmedName, privacy: .public)로 변경되었습니다.")
     }
