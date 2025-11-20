@@ -41,28 +41,57 @@ final class MindAnalyzer: Sendable, ObservableObject {
             logger.error("textInput이 비어있습니다.")
             return
         }
-        
+
         let recordForm = self.owner!
         let todayBoard = recordForm.owner!
         let mentoryiOS = todayBoard.owner!
         let alanLLM = mentoryiOS.alanLLM
-        
-        
+
+
         // process
+        self.isAnalyzing = true
         let answer: AlanLLM.Answer
         do {
             let question = AlanLLM.Question(textInput)
             answer = try await alanLLM.question(question)
-            
-            
+
+
         } catch {
             logger.error("\(error)")
+            self.isAnalyzing = false
             return
         }
-        
+
         // mutate
         self.analyzedResult = answer.content
         self.mindType = .unPleasant
+        self.isAnalyzing = false
+
+        // MentoryRecord 생성 및 저장
+        await saveRecord()
+    }
+
+    private func saveRecord() async {
+        // capture
+        guard let recordForm = owner else {
+            logger.error("RecordForm owner가 없습니다.")
+            return
+        }
+        guard let todayBoard = recordForm.owner else {
+            logger.error("TodayBoard owner가 없습니다.")
+            return
+        }
+
+        // MentoryRecord 생성
+        let record = MentoryRecord(
+            recordDate: Date(),
+            analyzedContent: self.analyzedResult,
+            emotionType: self.mindType?.rawValue,
+            completionTimeInSeconds: recordForm.completionTime
+        )
+
+        // TodayBoard를 통해 저장
+        await todayBoard.saveRecord(record)
     }
     
     
@@ -72,7 +101,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
         case B
     }
     
-    enum MindType: Sendable {
+    enum MindType: String, Sendable {
         case veryUnpleasant
         case unPleasant
         case slightlyUnpleasant

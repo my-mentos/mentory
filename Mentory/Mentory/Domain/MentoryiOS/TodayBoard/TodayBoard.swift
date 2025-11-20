@@ -13,18 +13,20 @@ import OSLog
 @MainActor
 final class TodayBoard: Sendable, ObservableObject {
     // MARK: core
-    init(owner: MentoryiOS) {
+    init(owner: MentoryiOS, recordRepository: MentoryRecordRepositoryInterface? = nil) {
         self.owner = owner
+        self.recordRepository = recordRepository
     }
-    
-    
+
+
     // MARK: state
     nonisolated let id = UUID()
     weak var owner: MentoryiOS?
+    var recordRepository: MentoryRecordRepositoryInterface?
     nonisolated private let logger = Logger(subsystem: "MentoryiOS.TodayBoard", category: "Domain")
-    
+
     @Published var recordForm: RecordForm? = nil
-    @Published var records: [RecordForm.Record] = []
+    @Published var records: [MentoryRecord] = []
 
     @Published var todayString: String? = nil
     @Published var isFetchedTodayString: Bool = false
@@ -38,7 +40,7 @@ final class TodayBoard: Sendable, ObservableObject {
             return
         }
         let alanLLM = owner!.alanLLM
-        
+
         // process
         let contentFromAlanLLM: String?
         do {
@@ -52,10 +54,48 @@ final class TodayBoard: Sendable, ObservableObject {
             logger.error("오늘의 명언 fetch 실패: \(error.localizedDescription)")
             return
         }
-        
+
         // mutate
         self.todayString = contentFromAlanLLM
         self.isFetchedTodayString = true
+    }
+
+    func saveRecord(_ record: MentoryRecord) async {
+        // capture
+        guard let repository = recordRepository else {
+            logger.error("RecordRepository가 설정되지 않았습니다.")
+            return
+        }
+
+        // process
+        do {
+            try await repository.save(record)
+            logger.info("레코드 저장 성공: \(record.id)")
+
+            // 저장 후 오늘의 레코드 다시 로드
+            await loadTodayRecords()
+        } catch {
+            logger.error("레코드 저장 실패: \(error)")
+        }
+    }
+
+    func loadTodayRecords() async {
+        // capture
+        guard let repository = recordRepository else {
+            logger.error("RecordRepository가 설정되지 않았습니다.")
+            return
+        }
+
+        // process
+        do {
+            let todayRecords = try await repository.fetchToday()
+            logger.info("오늘의 레코드 \(todayRecords.count)개 로드 성공")
+
+            // mutate
+            self.records = todayRecords
+        } catch {
+            logger.error("레코드 로드 실패: \(error)")
+        }
     }
 
 

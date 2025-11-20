@@ -24,12 +24,14 @@ final class RecordForm: Sendable, ObservableObject {
     nonisolated private let logger = Logger(subsystem: "MentoryiOS.TodayBoard.RecordForm", category: "Domain")
     weak var owner: TodayBoard?
     var mindAnalyzer: MindAnalyzer? = nil
-    
+
     @Published var titleInput: String = ""
     @Published var textInput: String = ""
     @Published var imageInput: Data? = nil
     @Published var voiceInput: URL? = nil
     @Published var validationResult: ValidationResult = .none
+    @Published var startTime: Date = Date() // 기록 시작 시간
+    var completionTime: TimeInterval? = nil // 기록 완성까지 걸린 시간
     
     
     // MARK: action
@@ -54,12 +56,6 @@ final class RecordForm: Sendable, ObservableObject {
     }
     
     func submit() {
-        // capture
-        let title = self.titleInput
-        let text = self.textInput
-        let image = self.imageInput
-        let voice = self.voiceInput
-
         if titleInput.isEmpty {
             logger.error("RecordForm의 titleInput에는 값이 존재해야 합니다. 현재 값이 비어있습니다.")
             return
@@ -68,21 +64,12 @@ final class RecordForm: Sendable, ObservableObject {
             return
         }
 
-        let todayBoard = self.owner
+        // 기록 완성까지 걸린 시간 계산 및 저장
+        self.completionTime = Date().timeIntervalSince(startTime)
+        logger.info("기록 완성 시간: \(self.completionTime!)초")
 
         // mutate
-        let record = Record(
-            title: title,
-            date: Date(), // 오늘 날짜
-            text: text.isEmpty ? nil : text,
-            image: image,
-            voice: voice
-        )
-
-        // todayBoard에 저장
-        todayBoard?.records.append(record)
-        logger.info("새로운 기록이 추가되었습니다. ID: \(record.id)")
-        
+        // MindAnalyzer에게 분석 요청
         self.mindAnalyzer = MindAnalyzer(owner: self)
     }
 

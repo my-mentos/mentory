@@ -64,15 +64,15 @@ final class Onboarding: Sendable, ObservableObject {
         // mutate
         mentoryiOS.onboardingFinished = true
         mentoryiOS.userName = nameInput
-        
+
         mentoryiOS.onboarding = nil
-        
-        let todayBoard = TodayBoard(owner: self.owner ?? MentoryiOS())
+
+        let todayBoard = TodayBoard(owner: mentoryiOS, recordRepository: mentoryiOS.recordRepository)
         mentoryiOS.todayBoard = todayBoard
         todayBoard.recordForm = RecordForm(owner: todayBoard)
-        
+
         mentoryiOS.settingBoard = SettingBoard(owner: mentoryiOS)
-        
+
         self.isUsed = true
     }
     
