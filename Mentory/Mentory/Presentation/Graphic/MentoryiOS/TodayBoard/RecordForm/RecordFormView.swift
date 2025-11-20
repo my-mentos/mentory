@@ -61,7 +61,7 @@ struct RecordFormView: View {
         .fullScreenCover(isPresented: $isShowingMindAnalyzerView) {
             MindAnalyzerView(recordForm.mindAnalyzer!) {
                 // MindAnalyzerView에서 확인 버튼을 누르면 RecordFormView도 닫기
-                dismiss()
+                closeRecordFormView()
             }
         }
     }
