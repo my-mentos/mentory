@@ -30,6 +30,7 @@ final class RecordForm: Sendable, ObservableObject {
     @Published var imageInput: Data? = nil
     @Published var voiceInput: URL? = nil
     @Published var validationResult: ValidationResult = .none
+    
     var startTime: Date? = nil // 기록 시작 시간 (RecordFormView가 열릴 때 설정됨)
     var completionTime: TimeInterval? = nil // 기록 완성까지 걸린 시간
     
