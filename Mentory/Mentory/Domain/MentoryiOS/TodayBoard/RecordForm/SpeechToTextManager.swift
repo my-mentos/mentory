@@ -30,11 +30,6 @@ class SpeechToTextManager: NSObject, ObservableObject {
     
     // MARK: action
     func startRecognizing() {
-        #if targetEnvironment(simulator)
-        logger.debug("⚠️startRecognizing() 호출됨 — 시뮬레이터에서는 음성 인식을 사용할 수 없습니다.")
-        return
-        #endif
-        
         recognizedText = ""
         logger.debug("startRecognizing() 호출됨")
         

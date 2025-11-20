@@ -8,6 +8,7 @@
 import SwiftUI
 import Combine
 import AVFoundation
+import OSLog
 
 @MainActor
 class AudioRecorderManager: NSObject, ObservableObject, AVAudioRecorderDelegate {
@@ -96,6 +97,7 @@ class AudioRecorderManager: NSObject, ObservableObject, AVAudioRecorderDelegate 
 
 // MARK: - 녹음 시트
 struct RecordingSheet: View {
+    nonisolated let logger = Logger(subsystem: "Mentory.RecordForm", category: "Presentation")
     @ObservedObject var audioManager: AudioRecorderManager
     @StateObject private var sttManager = SpeechToTextManager()
     var onComplete: (URL) -> Void
@@ -147,11 +149,13 @@ struct RecordingSheet: View {
 
                 // 녹음/정지 버튼
                 Button(action: {
+                    logger.debug("녹음 버튼 시작 \(audioManager.isRecording)")
+                    
                     if audioManager.isRecording {
-                        audioManager.stopRecording()
+//                        audioManager.stopRecording()
                         sttManager.stopRecognizing()
                     } else {
-                        audioManager.startRecording()
+//                        audioManager.startRecording()
                         sttManager.startRecognizing()
                     }
                 }) {
