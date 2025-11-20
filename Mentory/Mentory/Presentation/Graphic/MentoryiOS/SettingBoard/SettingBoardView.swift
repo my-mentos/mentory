@@ -13,6 +13,7 @@ struct SettingBoardView: View {
     @State private var isShowingRenameSheet = false
     @State private var isShowingTermsOfService = false
     @State private var isShowingDataDeletionAlert = false
+    @State private var isShowingInformationView = false
     
     @FocusState private var isRenameFieldFocused: Bool
     
@@ -49,6 +50,28 @@ struct SettingBoardView: View {
             .sheet(isPresented: $isShowingRenameSheet) {
                 renameSheet
             }
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        isShowingInformationView = true
+                    } label: {
+                        Image(systemName: "info.circle")
+                            .font(.system(size: 18, weight: .semibold))
+                    }
+                }
+            }
+            .fullScreenCover(isPresented: $isShowingInformationView) {
+                NavigationStack {
+                    InformationView()
+                        .toolbar {
+                            ToolbarItem(placement: .topBarTrailing) {
+                                Button("닫기") {
+                                    isShowingInformationView = false
+                                }
+                            }
+                        }
+                }
+            }
         }
         .navigationDestination(isPresented: $settingBoard.isShowingPrivacyPolicy) {
             PrivacyPolicyView()
@@ -81,19 +104,6 @@ struct SettingBoardView: View {
                 Text("설정")
                     .font(.system(size: 34, weight: .black))
                 Spacer()
-                Button {
-                    // info 버튼 액션
-                } label: {
-                    ZStack {
-                        Circle()
-                            .fill(Color.white)
-                            .shadow(radius: 3)
-                            .frame(width: 36, height: 36)
-                        Text("i")
-                            .font(.system(size: 20, weight: .semibold))
-                            .foregroundColor(.black)
-                    }
-                }
             }
             Text(settingBoard.owner?.getGreetingText() ?? "반가워요, userName님!")
                 .font(.system(size: 20, weight: .bold))
