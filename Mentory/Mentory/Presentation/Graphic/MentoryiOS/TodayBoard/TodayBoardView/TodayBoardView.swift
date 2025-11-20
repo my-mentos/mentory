@@ -236,8 +236,8 @@ struct TodayBoardView: View {
                             }
                         }
                     }
+                }
             }
-        }
     }
 }
 

@@ -40,8 +40,7 @@ struct MentoryApp: App {
     // MARK: body
     var body: some Scene {
         WindowGroup {
-//            MentoryiOSView(mentoryiOS)
-            MicrophoneView()
+            MentoryiOSView(mentoryiOS)
         }
         .modelContainer(modelContainer)
     }
