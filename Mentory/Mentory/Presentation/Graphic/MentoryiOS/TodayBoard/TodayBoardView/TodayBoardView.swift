@@ -225,7 +225,7 @@ struct TodayBoardView: View {
                     }
                 }
             }
-        }
+        
         .fullScreenCover(isPresented: $isShowingInformationView) {
             NavigationStack {
                 InformationView()
