@@ -9,8 +9,8 @@ import SwiftUI
 
 // MARK: View
 struct ActionRow: View {
-    @State private var isSelected: Bool = false
-    let checked: Bool
+//    @Binding var isSelected: Bool
+    @Binding var checked: Bool
     let text: String
     
     var body: some View {
@@ -21,12 +21,12 @@ struct ActionRow: View {
                     .stroke(Color.gray.opacity(0.6), lineWidth: 2)
                     .frame(width: 20, height: 20)
                 // 선택시 채워지는 원
-                if isSelected {
+                if checked {
                     Circle()
                         .fill(Color.black.opacity(0.8))
                         .frame(width: 12, height: 12)
                         .transition(.scale.combined(with: .opacity))
-                        .animation(.spring(response: 0.25, dampingFraction: 0.7), value: isSelected)
+                        .animation(.spring(response: 0.25, dampingFraction: 0.7), value: checked)
                 }
             }
             .frame(width: 20, height: 20)
@@ -60,7 +60,7 @@ struct ActionRow: View {
         .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 3)
         .onTapGesture {
             withAnimation {
-                isSelected.toggle()
+                checked.toggle()
             }
         }
     }
@@ -70,9 +70,12 @@ struct ActionRow: View {
 
 // MARK: Preview
 #Preview(traits: .sizeThatFitsLayout) {
-    ActionRow(checked: true, text: "안녕하세요")
+    @Previewable @State var row1 = true
+    @Previewable @State var row2 = false
     
-    ActionRow(checked: false, text: "체크되지 않은 ActionRow입니다.")
+    ActionRow(checked: $row1, text: "안녕하세요")
+    
+    ActionRow(checked: $row2, text: "체크되지 않은 ActionRow입니다.")
 }
 
 
