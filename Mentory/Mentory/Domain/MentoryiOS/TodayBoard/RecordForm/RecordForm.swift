@@ -30,7 +30,7 @@ final class RecordForm: Sendable, ObservableObject {
     @Published var imageInput: Data? = nil
     @Published var voiceInput: URL? = nil
     @Published var validationResult: ValidationResult = .none
-    @Published var startTime: Date = Date() // 기록 시작 시간
+    var startTime: Date = Date() // 기록 시작 시간
     var completionTime: TimeInterval? = nil // 기록 완성까지 걸린 시간
     
     

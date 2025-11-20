@@ -11,12 +11,15 @@ import SwiftUI
 struct MindAnalyzerView: View {
     // MARK: model
     @ObservedObject var mindAnalyzer: MindAnalyzer
-    
-    init(_ mindAnalyzer: MindAnalyzer) {
+    @Environment(\.dismiss) private var dismiss
+    var onComplete: (() -> Void)?
+
+    init(_ mindAnalyzer: MindAnalyzer, onComplete: (() -> Void)? = nil) {
         self.mindAnalyzer = mindAnalyzer
+        self.onComplete = onComplete
     }
-    
-    
+
+
     // MARK: body
     var body: some View {
         ScrollView {
@@ -26,6 +29,13 @@ struct MindAnalyzerView: View {
                 analyzerButton
                 analysisStatus
                 resultSection
+
+                // 분석 완료 후 확인 버튼
+                if let result = mindAnalyzer.analyzedResult,
+                   result.isEmpty == false,
+                   mindAnalyzer.isAnalyzing == false {
+                    confirmButton
+                }
             }
             .padding(24)
             .background(
@@ -35,6 +45,7 @@ struct MindAnalyzerView: View {
             )
             .padding(.horizontal)
             .padding(.top, 32)
+            .padding(.bottom, 40)
         }
     }
     
@@ -79,6 +90,29 @@ struct MindAnalyzerView: View {
             .background(
                 RoundedRectangle(cornerRadius: 20, style: .continuous)
                     .fill(mindAnalyzer.isAnalyzing == false ? Color.purple : Color.gray.opacity(0.35))
+            )
+            .foregroundColor(.white)
+        }
+    }
+
+    private var confirmButton: some View {
+        Button {
+            dismiss()
+            // RecordFormView도 닫기
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                onComplete?()
+            }
+        } label: {
+            HStack(spacing: 8) {
+                Image(systemName: "checkmark.circle.fill")
+                Text("확인")
+                    .fontWeight(.semibold)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 16)
+            .background(
+                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    .fill(Color.blue)
             )
             .foregroundColor(.white)
         }
