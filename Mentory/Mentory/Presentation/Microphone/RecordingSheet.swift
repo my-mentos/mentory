@@ -12,12 +12,14 @@ import OSLog
 
 // MARK: View
 struct RecordingSheet: View {
-    // MARK: core
+    // MARK: model
     let microphone = Microphone.shared
     
     var onComplete: (URL) -> Void
     var onCancel: () -> Void
 
+    
+    // MARK: body
     var body: some View {
         VStack(spacing: 30) {
             Text("음성 녹음")

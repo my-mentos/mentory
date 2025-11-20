@@ -6,10 +6,14 @@
 //
 import SwiftUI
 
+
+// MARK: View
 struct MicrophoneView: View {
-    // 싱글톤 인스턴스를 사용 (iOS 17 @Observable은 StateObject 없이 바로 관찰 가능)
-    var microphone = Microphone.shared
+    // MARK: model
+    let microphone = Microphone.shared
     
+    
+    // MARK: body
     var body: some View {
         VStack(spacing: 20) {
             
@@ -127,7 +131,8 @@ struct MicrophoneView: View {
         }
     }
     
-    // MARK: - Logic Helpers
+    
+    // MARK: flow
     private func handleRecordAction() {
         if microphone.isListening {
             Task {
@@ -148,8 +153,12 @@ struct MicrophoneView: View {
         let seconds = Int(time) % 60
         return String(format: "%02d:%02d", minutes, seconds)
     }
+    
 }
 
+
+
+// MARK: Preview
 #Preview {
     MicrophoneView()
 }
