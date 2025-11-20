@@ -4,16 +4,22 @@
 //
 //  Created by 김민우 on 11/20/25.
 //
-
-
 import SwiftUI
 import Combine
 import AVFoundation
 import OSLog
 
+
+// MARK: View
 struct WaveformView: View {
+    // MARK: model
+    
+    
+    // MARK: viewModel
     @State private var animationValues: [CGFloat] = Array(repeating: 0.3, count: 20)
 
+    
+    // MARK: body
     var body: some View {
         HStack(spacing: 4) {
             ForEach(0..<20, id: \.self) { index in

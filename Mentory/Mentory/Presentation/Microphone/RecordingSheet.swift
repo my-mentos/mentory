@@ -13,10 +13,7 @@ import OSLog
 // MARK: View
 struct RecordingSheet: View {
     // MARK: core
-    nonisolated let logger = Logger(subsystem: "Mentory.RecordForm", category: "Presentation")
-    
-    // 싱글톤 마이크 인스턴스를 사용 (iOS 17 @Observable은 StateObject 없이 바로 관찰 가능)
-    var microphone = Microphone.shared
+    let microphone = Microphone.shared
     
     var onComplete: (URL) -> Void
     var onCancel: () -> Void

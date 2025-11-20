@@ -9,8 +9,11 @@ import SwiftUI
 
 // MARK: View
 struct RecordFormView: View {
-    // MARK: core
+    // MARK: model
     @ObservedObject var recordForm: RecordForm
+    
+    
+    // MARK: viewModel
     @Environment(\.dismiss) var closeRecordFormView
     
     @State private var cachedTextForAnalysis: String = ""
@@ -144,7 +147,6 @@ struct RecordFormView: View {
         }
         .sheet(isPresented: $showingAudioRecorder) {
             RecordingSheet(
-                microphone: microphone,
                 onComplete: { url in
                     recordForm.voiceInput = url
                     showingAudioRecorder = false
