@@ -221,7 +221,7 @@ extension MindAnalyzer.CharacterType {
     func makeSecondAnalysisPrompt(firstResult: MindAnalyzer.FirstAnalysisResult, diaryText: String) -> String {
         switch self {
         case .A:
-            // 냉철한 분석가 "냉스 처리스키" 스타일
+            // T 스타일
             return """
             주제: \(firstResult.topic)
             위험도: \(firstResult.riskLevel.rawValue)
@@ -255,6 +255,7 @@ extension MindAnalyzer.CharacterType {
             """
 
         case .B:
+            // F 스타일
             return """
             주제: \(firstResult.topic)
             위험도: \(firstResult.riskLevel.rawValue)
