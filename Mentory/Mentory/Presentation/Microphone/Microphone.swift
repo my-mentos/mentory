@@ -32,6 +32,7 @@ final class Microphone: Sendable {
     private var engine: AudioEngine? = nil
 
     private(set) var isRecording: Bool = false
+    
     private(set) var audioURL: URL? = nil
     private(set) var recordingTime: TimeInterval = 0
     private(set) var recognizedText: String = ""
@@ -203,9 +204,7 @@ final class Microphone: Sendable {
         let newTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
             guard let self = self else { return }
             Task { @MainActor in
-                if self.audioEngine.isRunning {
-                    self.recordingTime += 0.1
-                }
+                self.recordingTime += 0.1
             }
         }
         

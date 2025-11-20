@@ -37,9 +37,6 @@ actor AudioEngine {
     }
     
     
-    private(set) var timer: Timer?
-    
-    
     // MARK: action
     func setUpEngine() {
         // capture
@@ -156,12 +153,7 @@ actor AudioEngine {
             logger.error("\(error)")
         }
         
-        let task = speechRecognizer?.recognitionTask(with: request) { [weak self] result, error in
-            guard let self else {
-                Logger().error("AudioEngine 객체가 존재하지 않습니다.")
-                return
-            }
-            
+        let task = speechRecognizer?.recognitionTask(with: request) { result, error in
             if let result = result {
                 let text = result.bestTranscription.formattedString
                 
