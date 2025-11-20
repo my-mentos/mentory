@@ -10,10 +10,13 @@ import SwiftUI
 struct SettingBoardView: View {
     @ObservedObject var settingBoard: SettingBoard
     @State private var showingReminderPicker = false
+    @State private var selectedDate: Date = Date()
     @State private var isShowingRenameSheet = false
     @State private var isShowingTermsOfService = false
     @State private var isShowingDataDeletionAlert = false
     @State private var isShowingInformationView = false
+    @State private var isShowingPrivacyPolicy = false
+    @State private var isShowingLicenseInfo = false
     
     @FocusState private var isRenameFieldFocused: Bool
     
@@ -73,10 +76,10 @@ struct SettingBoardView: View {
                 }
             }
         }
-        .navigationDestination(isPresented: $settingBoard.isShowingPrivacyPolicy) {
+        .navigationDestination(isPresented: $isShowingPrivacyPolicy) {
             PrivacyPolicyView()
         }
-        .navigationDestination(isPresented: $settingBoard.isShowingLicenseInfo) {
+        .navigationDestination(isPresented: $isShowingLicenseInfo) {
             LicenseInfoView()
         }
         .navigationDestination(isPresented: $isShowingTermsOfService) {
@@ -96,6 +99,9 @@ struct SettingBoardView: View {
                 Text("삭제를 누르면 멘토리 데이터가 모두 제거됩니다.")
             }
         )
+        .task {
+            settingBoard.loadSavedReminderTime()
+        }
     }
     
     private var header: some View {
@@ -160,7 +166,7 @@ struct SettingBoardView: View {
                 title: "개인정보 처리 방침",
                 showDivider: true
             ){
-                settingBoard.showPrivacyPolicy()
+                isShowingPrivacyPolicy = true
             }
             
             SettingRow(
@@ -169,7 +175,7 @@ struct SettingBoardView: View {
                 title: "라이센스 정보",
                 showDivider: true
             ){
-                settingBoard.showLicenseInfo()
+                isShowingLicenseInfo = true
             }
             
             SettingRow(
@@ -202,11 +208,18 @@ struct SettingBoardView: View {
             VStack(spacing: 16) {
                 DatePicker(
                     "알림 시간",
-                    selection: $settingBoard.reminderTime,
+                    selection: $selectedDate,
                     displayedComponents: .hourAndMinute
                 )
                 .datePickerStyle(.wheel)
                 .labelsHidden()
+                .onAppear {
+                    selectedDate = settingBoard.reminderTime
+                }
+                .onChange(of: selectedDate) { newDate in
+                    settingBoard.reminderTime = newDate
+                    settingBoard.persistReminderTime()
+                }
                 
                 Button("완료") {
                     showingReminderPicker = false
@@ -443,7 +456,7 @@ struct SettingIcon: View {
     let mentory = MentoryiOS()
     mentory.userName = "지석"
     let board = SettingBoard(owner: mentory)
-    board.reminderTime = .now
+    board.updateReminderTime(.now)
     
     return SettingBoardView(settingBoard: board)
 }
