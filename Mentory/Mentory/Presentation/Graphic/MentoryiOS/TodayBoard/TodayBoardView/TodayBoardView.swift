@@ -225,13 +225,14 @@ struct TodayBoardView: View {
                     }
                 }
             }
-            .fullScreenCover(isPresented: $isShowingInformationView) {
-                NavigationStack {
-                    InformationView()
-                        .toolbar {
-                            ToolbarItem(placement: .topBarTrailing) {
-                                Button("닫기") {
-                                    isShowingInformationView = false
+        
+        .fullScreenCover(isPresented: $isShowingInformationView) {
+            NavigationStack {
+                InformationView()
+                    .toolbar {
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Button("닫기") {
+                                isShowingInformationView = false
                             }
                         }
                     }
