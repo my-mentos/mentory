@@ -137,6 +137,10 @@ struct RecordFormView: View {
             }
         }
         .ignoresSafeArea(.keyboard, edges: .bottom)
+        .task {
+            // 기록 시작 시간 설정
+            recordForm.startTime = Date()
+        }
         .fullScreenCover(isPresented: $isShowingMindAnalyzerView) {
             MindAnalyzerView(recordForm.mindAnalyzer!) {
                 // MindAnalyzerView에서 확인 버튼을 누르면 RecordFormView도 닫기

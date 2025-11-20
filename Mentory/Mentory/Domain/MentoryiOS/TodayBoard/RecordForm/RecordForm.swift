@@ -30,7 +30,7 @@ final class RecordForm: Sendable, ObservableObject {
     @Published var imageInput: Data? = nil
     @Published var voiceInput: URL? = nil
     @Published var validationResult: ValidationResult = .none
-    var startTime: Date = Date() // 기록 시작 시간
+    var startTime: Date? = nil // 기록 시작 시간 (RecordFormView가 열릴 때 설정됨)
     var completionTime: TimeInterval? = nil // 기록 완성까지 걸린 시간
     
     
@@ -65,8 +65,12 @@ final class RecordForm: Sendable, ObservableObject {
         }
 
         // 기록 완성까지 걸린 시간 계산 및 저장
-        self.completionTime = Date().timeIntervalSince(startTime)
-        logger.info("기록 완성 시간: \(self.completionTime!)초")
+        if let startTime = startTime {
+            self.completionTime = Date().timeIntervalSince(startTime)
+            logger.info("기록 완성 시간: \(self.completionTime!)초")
+        } else {
+            logger.warning("startTime이 설정되지 않았습니다.")
+        }
 
         // mutate
         // MindAnalyzer에게 분석 요청
