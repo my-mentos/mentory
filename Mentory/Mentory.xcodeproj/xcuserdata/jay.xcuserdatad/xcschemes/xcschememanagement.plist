@@ -7,7 +7,40 @@
 		<key>Mentory.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
+			<integer>3</integer>
+		</dict>
+		<key>MentoryWatch Watch App (Notification).xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>2</integer>
+		</dict>
+		<key>MentoryWatch Watch App.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
+		<key>MentoryWidgetExtension.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
 			<integer>0</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>5888796B2ECD98EB00083137</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>7B1337642ECD63A2009931A4</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>CE39BFBB2EC313F20090DF78</key>
+		<dict>
+			<key>primary</key>
+			<true/>
 		</dict>
 	</dict>
 </dict>

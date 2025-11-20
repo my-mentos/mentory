@@ -8,6 +8,7 @@
 import SwiftUI
 import Combine
 import AVFoundation
+import OSLog
 
 @MainActor
 class AudioRecorderManager: NSObject, ObservableObject, AVAudioRecorderDelegate {
@@ -17,9 +18,11 @@ class AudioRecorderManager: NSObject, ObservableObject, AVAudioRecorderDelegate 
 
     private var audioRecorder: AVAudioRecorder?
     private var timer: Timer?
+    nonisolated private let logger = Logger(subsystem: "MentoryiOS.AudioRecorderManager", category: "Graphic")
 
     override init() {
         super.init()
+        logger.debug("AudioRecorderManager init() 완료")
         setupAudioSession()
     }
 
