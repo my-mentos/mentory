@@ -18,12 +18,6 @@ final class Microphone: Sendable {
     private init() { }
     
     private nonisolated let logger = Logger(subsystem: "MentoryiOS.Microphone", category: "Presentation")
-    private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "ko-KR"))
-    private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
-    private var recognitionTask: SFSpeechRecognitionTask?
-
-    private let audioEngine = AVAudioEngine()
-    private var audioFile: AVAudioFile?
     private var timer: Timer?
     
     
@@ -31,7 +25,7 @@ final class Microphone: Sendable {
     private(set) var isSetUp: Bool = false
     private var engine: AudioEngine? = nil
 
-    private(set) var isRecording: Bool = false
+//    private(set) var isRecording: Bool = false
     
     private(set) var audioURL: URL? = nil
     private(set) var recordingTime: TimeInterval = 0

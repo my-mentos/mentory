@@ -23,9 +23,9 @@ struct MicrophoneView: View {
                     .font(.system(size: 50, weight: .bold, design: .monospaced))
                     .contentTransition(.numericText(value: microphone.recordingTime))
                     .animation(.default, value: microphone.recordingTime)
-                    .foregroundStyle(microphone.isRecording ? .red : .primary)
+                    .foregroundStyle(microphone.isListening ? .red : .primary)
                 
-                if microphone.isRecording {
+                if microphone.isListening {
                     HStack(spacing: 4) {
                         Circle().fill(.red).frame(width: 8, height: 8)
                         Text("Recording...")
@@ -111,13 +111,13 @@ struct MicrophoneView: View {
                         handleRecordAction()
                     } label: {
                         HStack {
-                            Image(systemName: microphone.isRecording ? "stop.fill" : "mic.fill")
-                            Text(microphone.isRecording ? "녹음 중지" : "녹음 시작")
+                            Image(systemName: microphone.isListening ? "stop.fill" : "mic.fill")
+                            Text(microphone.isListening ? "녹음 중지" : "녹음 시작")
                         }
                         .font(.title3.bold())
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(microphone.isRecording ? Color.red : Color.green)
+                        .background(microphone.isListening ? Color.red : Color.green)
                         .foregroundColor(.white)
                         .cornerRadius(12)
                     }
