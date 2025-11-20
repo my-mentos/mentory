@@ -11,14 +11,15 @@ import SwiftUI
 struct RecordFormView: View {
     // MARK: model
     @ObservedObject var recordForm: RecordForm
-
+    @Environment(\.dismiss) var closeRecordFormView
+    
     @State private var cachedTextForAnalysis: String = ""
     @State private var isShowingMindAnalyzerView = false
-
+    
     // 이미지 관련
     @State private var showingImagePicker = false
     @State private var showingCamera = false
-
+    
     // 오디오 관련
     @StateObject private var audioManager = AudioRecorderManager()
     @State private var showingAudioRecorder = false
@@ -26,113 +27,30 @@ struct RecordFormView: View {
     init(_ recordForm: RecordForm) {
         self.recordForm = recordForm
     }
-
-    // MARK: body
+    
+    // MARK: - Body
     var body: some View {
         ZStack {
-            // iOS 26 스타일 배경
             Color(.systemGroupedBackground)
                 .ignoresSafeArea()
-
             VStack(spacing: 0) {
-                recordTopBar
-
+                recordFormTopBar
                 ScrollView {
                     VStack(spacing: 16) {
-                        // 제목 입력 카드
-                        LiquidGlassCard {
-                            TextField("제목", text: $recordForm.titleInput)
-                                .font(.title3)
-                                .padding()
-                        }
-
-                        // 본문 입력 카드
-                        LiquidGlassCard {
-                            ZStack(alignment: .topLeading) {
-                                if recordForm.textInput.isEmpty {
-                                    Text("글쓰기 시작…")
-                                        .foregroundColor(.gray.opacity(0.5))
-                                        .padding(.horizontal, 8)
-                                        .padding(.vertical, 12)
-                                        .allowsHitTesting(false)
-                                }
-
-                                TextEditor(text: $recordForm.textInput)
-                                    .scrollContentBackground(.hidden)
-                                    .background(Color.clear)
-                                    .frame(minHeight: 300)
-                                    .padding(.horizontal, 4)
-                                    .padding(.vertical, 8)                            }
-                        }
-
-                        // 첨부된 이미지 미리보기
-                        if let imageData = recordForm.imageInput,
-                           let uiImage = UIImage(data: imageData) {
-                            LiquidGlassCard {
-                                VStack(alignment: .leading, spacing: 12) {
-                                    HStack {
-                                        Image(systemName: "photo")
-                                            .foregroundColor(.blue)
-                                        Text("첨부된 이미지")
-                                            .font(.subheadline)
-                                            .foregroundColor(.secondary)
-                                        Spacer()
-                                        Button(action: {
-                                            recordForm.imageInput = nil
-                                        }) {
-                                            Image(systemName: "xmark.circle.fill")
-                                                .foregroundColor(.gray)
-                                        }
-                                    }
-                                    .padding(.horizontal, 16)
-                                    .padding(.top, 16)
-
-                                    Image(uiImage: uiImage)
-                                        .resizable()
-                                        .scaledToFit()
-                                        .cornerRadius(12)
-                                        .padding(.horizontal, 16)
-                                        .padding(.bottom, 16)
-                                }
-                            }
-                        }
-
-                        // 첨부된 음성 녹음
-                        if let _ = recordForm.voiceInput {
-                            LiquidGlassCard {
-                                HStack {
-                                    Image(systemName: "waveform")
-                                        .foregroundColor(.blue)
-                                    Text("음성 녹음 첨부됨")
-                                        .font(.subheadline)
-                                    Spacer()
-                                    Text(timeString(from: audioManager.recordingTime))
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                    Button(action: {
-                                        audioManager.deleteRecording()
-                                        recordForm.voiceInput = nil
-                                    }) {
-                                        Image(systemName: "xmark.circle.fill")
-                                            .foregroundColor(.gray)
-                                    }
-                                }
-                                .padding(16)
-                            }
-                        }
+                        titleInputCard
+                        textInputCard
+                        imagePreviewCard
+                        voicePreviewCard
                     }
                     .padding(.horizontal, 16)
                     .padding(.top, 16)
                     .padding(.bottom, 80)
                 }
-
                 Spacer()
             }
-
-            // 하단 툴바를 floating 스타일로
             VStack {
                 Spacer()
-                bottomToolbar
+                recordFormBottomBar
             }
         }
         .ignoresSafeArea(.keyboard, edges: .bottom)
@@ -141,81 +59,32 @@ struct RecordFormView: View {
         }
     }
     
-    private var recordTopBar: some View {
-        ZStack {
-            // 중앙 정렬된 날짜
+    private var recordFormTopBar: some View {
+        HStack {
+            Button {
+                closeRecordFormView()
+            } label: {
+                ActionButtonLabel(text: "취소", type: .cancel)
+            }
+            Spacer()
             Text(formattedDate)
                 .font(.headline)
                 .foregroundStyle(.primary)
-
-            // 오른쪽 정렬된 완료 버튼
-            HStack {
-                Spacer()
-
-                // 리퀴드 글래스 완료 버튼
-                Button(action: {
-                    Task {
-                        recordForm.validateInput()
-                        recordForm.submit()
-                        isShowingMindAnalyzerView.toggle()
-                    }
-                }) {
-                    Text("완료")
-                        .fontWeight(.semibold)
-                        .font(.subheadline)
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 8)
-                        .background(
-                            LinearGradient(
-                                colors: isSubmitEnabled
-                                    ? [Color.blue, Color.blue.opacity(0.8)]
-                                    : [Color.gray.opacity(0.3), Color.gray.opacity(0.2)],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            in: RoundedRectangle(cornerRadius: 18, style: .continuous)
-                        )
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                                .stroke(Color.white.opacity(isSubmitEnabled ? 0.5 : 0.2), lineWidth: 1)
-                        )
-                        .shadow(
-                            color: isSubmitEnabled
-                                ? Color.blue.opacity(0.3)
-                                : Color.clear,
-                            radius: 8,
-                            x: 0,
-                            y: 4
-                        )
+            Spacer()
+            Button {
+                Task {
+                    recordForm.validateInput()
+                    recordForm.submit()
+                    isShowingMindAnalyzerView.toggle()
                 }
-                .disabled(!isSubmitEnabled)
-                .animation(.easeInOut(duration: 0.2), value: isSubmitEnabled)
-                .padding(.trailing)
+            } label: {
+                ActionButtonLabel(text: "완료", type: .submit(enabled: isSubmitEnabled))
             }
         }
-        .padding(.vertical, 12)
-        .background(
-            .ultraThinMaterial,
-            in: RoundedRectangle(cornerRadius: 0)
-        )
+        .padding(.horizontal)
     }
-
-    // 오늘 날짜 포맷팅
-    private var formattedDate: String {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ko_KR")
-        formatter.dateFormat = "M월 d일 EEEE"
-        return formatter.string(from: Date())
-    }
-
-    // 제출 가능 여부 계산
-    private var isSubmitEnabled: Bool {
-        !recordForm.titleInput.trimmingCharacters(in: .whitespaces).isEmpty &&
-        !recordForm.textInput.trimmingCharacters(in: .whitespaces).isEmpty
-    }
-
-    private var bottomToolbar: some View {
+    
+    private var recordFormBottomBar: some View {
         HStack(spacing: 0) {
             Spacer()
             Button(action: {
@@ -278,7 +147,119 @@ struct RecordFormView: View {
             )
         }
     }
-
+    
+    private var titleInputCard: some View {
+        LiquidGlassCard {
+            TextField("제목", text: $recordForm.titleInput)
+                .font(.title3)
+                .padding()
+        }
+    }
+    
+    private var textInputCard: some View {
+        LiquidGlassCard {
+            ZStack(alignment: .topLeading) {
+                if recordForm.textInput.isEmpty {
+                    Text("글쓰기 시작…")
+                        .foregroundColor(.gray.opacity(0.5))
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 12)
+                        .allowsHitTesting(false)
+                }
+                
+                TextEditor(text: $recordForm.textInput)
+                    .scrollContentBackground(.hidden)
+                    .frame(minHeight: 300)
+                    .padding(.horizontal, 4)
+                    .padding(.vertical, 8)
+            }
+        }
+    }
+    
+    private var imagePreviewCard: some View {
+        Group {
+            if let imageData = recordForm.imageInput,
+               let uiImage = UIImage(data: imageData) {
+                
+                LiquidGlassCard {
+                    VStack(alignment: .leading, spacing: 12) {
+                        HStack {
+                            Image(systemName: "photo")
+                                .foregroundColor(.blue)
+                            Text("첨부된 이미지")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                            Spacer()
+                            Button {
+                                recordForm.imageInput = nil
+                            } label: {
+                                Image(systemName: "xmark.circle.fill")
+                                    .foregroundColor(.gray)
+                            }
+                        }
+                        .padding([.horizontal, .top], 16)
+                        
+                        Image(uiImage: uiImage)
+                            .resizable()
+                            .scaledToFit()
+                            .cornerRadius(12)
+                            .padding(.horizontal, 16)
+                            .padding(.bottom, 16)
+                    }
+                }
+            }
+        }
+    }
+    private var voicePreviewCard: some View {
+        Group {
+            if recordForm.voiceInput != nil {
+                LiquidGlassCard {
+                    HStack {
+                        Image(systemName: "waveform")
+                            .foregroundColor(.blue)
+                        
+                        Text("음성 녹음 첨부됨")
+                            .font(.subheadline)
+                        
+                        Spacer()
+                        
+                        Text(timeString(from: audioManager.recordingTime))
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        
+                        Button {
+                            audioManager.deleteRecording()
+                            recordForm.voiceInput = nil
+                        } label: {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundColor(.gray)
+                        }
+                    }
+                    .padding(16)
+                }
+            }
+        }
+    }
+    
+    
+    
+    
+    
+    // 오늘 날짜 포맷팅
+    private var formattedDate: String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.dateFormat = "M월 d일 EEEE"
+        return formatter.string(from: Date())
+    }
+    
+    // 제출 가능 여부 계산
+    private var isSubmitEnabled: Bool {
+        !recordForm.titleInput.trimmingCharacters(in: .whitespaces).isEmpty &&
+        !recordForm.textInput.trimmingCharacters(in: .whitespaces).isEmpty
+    }
+    
+    
     private func timeString(from timeInterval: TimeInterval) -> String {
         let minutes = Int(timeInterval) / 60
         let seconds = Int(timeInterval) % 60
@@ -308,23 +289,6 @@ fileprivate struct RecordFormPreview: View {
     }
 }
 
-// MARK: - 리퀴드 글래스 컴포넌트
-struct LiquidGlassCard<Content: View>: View {
-    @ViewBuilder var content: () -> Content
-
-    var body: some View {
-        content()
-            .background(
-                .ultraThinMaterial,
-                in: RoundedRectangle(cornerRadius: 28, style: .continuous)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 28, style: .continuous)
-                    .stroke(Color.white.opacity(0.4), lineWidth: 1)
-            )
-            .shadow(color: Color.black.opacity(0.08), radius: 18, x: 0, y: 10)
-    }
-}
 
 #Preview {
     RecordFormPreview()

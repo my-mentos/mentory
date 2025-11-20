@@ -51,10 +51,98 @@ struct TodayBoardView: View {
                             Text("\(userName)님, 일기를 작성해보아요!")
                                 .font(.system(size: 12))
                                 .foregroundColor(.gray)
-                                .frame(maxWidth: .infinity, alignment: .center)
-                        } else {
-                            Text("\(userName)님 \(count)번째 기록하셨네요!")
-                                .font(.system(size: 12))
+                                .lineSpacing(4)
+                                .multilineTextAlignment(.leading)
+                        }
+                        .padding(.vertical, 24)
+                        .padding(.horizontal, 20)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(
+                            RoundedRectangle(cornerRadius: 28)
+                                .fill(Color.white)
+                                //.shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
+                        )
+                        .transition(.scale(scale: 0.95).combined(with: .opacity))
+                    }
+                    
+                    // 기분 기록 카드
+                    VStack(spacing: 16) {
+                        // 이미지
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(Color(.systemTeal).opacity(0.5))
+                                .frame(width: 170, height: 170)
+                            
+                            // 실제 이미지를 사용한다면 아래에 넣으면 됨
+                            // Image("yourImageName")
+                            //   .resizable()
+                            //   .scaledToFit()
+                            //   .frame(width: 170, height: 170)
+                            Text("이미지")
+                                .foregroundColor(.white)
+                        }
+                        
+                        Text("오늘 기분을 기록해볼까요?")
+                            .font(.system(size: 16, weight: .medium))
+                        
+                        Button {
+                            // 기록하러가기 액션
+                            isShowingRecordFormView.toggle()
+                        } label: {
+                            Text("기록하러가기")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 14)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 24)
+                                        .fill(Color.blue)
+                                )
+                        }
+                        .fullScreenCover(isPresented: $isShowingRecordFormView) {
+                            RecordFormView(todayBoard.recordForm!)}
+                        .padding(.horizontal, 32)
+                    }
+                    .padding(.vertical, 24)
+                    .frame(maxWidth: .infinity)
+                    .background(
+                        RoundedRectangle(cornerRadius: 28)
+                            .fill(Color.white)
+                        //.shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
+                    )
+                    
+                    // 오늘의 행동 추천
+                    VStack(alignment: .leading, spacing: 16) {
+                        Text("오늘의 행동 추천?")
+                            .font(.system(size: 16, weight: .semibold))
+                        
+                        VStack(spacing: 12) {
+                            // 상단 프로그레스 바 영역
+                            HStack {
+                                ZStack {
+                                    Capsule()
+                                        .fill(Color.gray.opacity(0.2))
+                                        .frame(height: 10)
+                                    
+                                    GeometryReader { geo in
+                                        Capsule()
+                                            .fill(Color.gray.opacity(0.6))
+                                            .frame(width: geo.size.width * (7.0 / 9.0), height: 10)
+                                    }
+                                }
+                                .frame(height: 10)
+                                
+                                Button {
+                                    // 새로고침 액션
+                                } label: {
+                                    Image(systemName: "arrow.clockwise")
+                                        .foregroundColor(.gray)
+                                }
+                            }
+                            
+                            // 진행 텍스트
+                            Text("7/9")
+                                .font(.system(size: 12, weight: .semibold))
                                 .foregroundColor(.gray)
                                 .frame(maxWidth: .infinity, alignment: .center)
                         }
