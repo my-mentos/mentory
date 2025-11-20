@@ -9,3 +9,8 @@ Secrets.xcconfig
 
 .DS_Store
 .xcuserstate
+# Xcode user-specific files (prevent future merge conflicts)
+*.xcuserstate
+xcuserdata/
+*.xcscmblueprint
+*.xccheckout
