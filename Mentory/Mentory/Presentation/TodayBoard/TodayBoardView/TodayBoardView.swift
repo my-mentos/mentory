@@ -8,39 +8,23 @@ import SwiftUI
 import WebKit
 
 
-@MainActor @Observable
-final class TodayBoardViewModel {
-    // MARK: core
-    
-    
-    // MARK: state
-    
-    
-    // MARK: action
-    
-    
-    // MARK: value
-}
-
-
 // MARK: View
 struct TodayBoardView: View {
     // MARK: model
     @ObservedObject var todayBoard: TodayBoard
+    init(_ todayBoard: TodayBoard) {
+        self.todayBoard = todayBoard
+    }
+    
     
     // MARK: viewModel
     @State private var isShowingRecordFormView = false
     @State private var isShowingInformationView = false
     @State private var selections = [false, false, false]
-    @State private var actionRowEmpty = false
     var progress: Double {
         Double(selections.filter { $0 }.count) / 3.0
     }
-    
-    
-    init(_ todayBoard: TodayBoard) {
-        self.todayBoard = todayBoard
-    }
+    @State private var actionRowEmpty = false
     
     
     // MARK: body
@@ -67,7 +51,6 @@ struct TodayBoardView: View {
                         .padding(.top, 16)
                         
                         // 작은 설명 텍스트
-                        
                         let userName = todayBoard.owner?.userName ?? "이름없음"
                         let count = todayBoard.records.count
                         
