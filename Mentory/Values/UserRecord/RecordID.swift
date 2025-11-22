@@ -8,10 +8,11 @@ import Foundation
 
 
 // MARK: Value
-nonisolated struct RecordID: Sendable, Hashable {
+nonisolated
+public struct RecordID: Sendable, Hashable {
     // MARK: core
     let value: UUID
-    init(_ value: UUID = UUID()) {
+    public init(_ value: UUID = UUID()) {
         self.value = value
     }
 }

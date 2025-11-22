@@ -5,6 +5,7 @@
 //  Created by 김민우 on 11/18/25.
 //
 import Foundation
+import Values
 
 
 // MARK: Mock
@@ -27,5 +28,21 @@ struct MentoryDBMock: MentoryDBInterface {
         return await MainActor.run {
             model.userName
         }
+    }
+    
+    func fetchAll() async throws -> [RecordData] {
+        fatalError()
+    }
+    
+    func fetchToday() async throws -> [RecordData] {
+        fatalError()
+    }
+    
+    func fetchByDateRange(from: Date, to: Date) async throws -> [RecordData] {
+        fatalError()
+    }
+    
+    func delete(_ id: Values.RecordID) async throws {
+        fatalError()
     }
 }
