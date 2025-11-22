@@ -137,13 +137,15 @@ struct RecordFormTests {
                 recordForm.textInput = "테스트 내용"
             }
 
-            let initialCount = await todayBoard.records.count
+            let initialCount = await MainActor.run {
+                todayBoard.records.count
+            }
 
             // When
             await recordForm.submit()
 
             // Then
-            let newCount = await todayBoard.records.count
+            let newCount = await MainActor.run { todayBoard.records.count }
             #expect(newCount == initialCount + 1)
         }
 
@@ -181,13 +183,17 @@ struct RecordFormTests {
                 recordForm.textInput = "내용"
             }
 
-            let initialCount = await todayBoard.records.count
+            let initialCount = await MainActor.run {
+                todayBoard.records.count
+            }
 
             // When
             await recordForm.submit()
 
             // Then
-            let newCount = await todayBoard.records.count
+            let newCount = await MainActor.run {
+                todayBoard.records.count
+            }
             #expect(newCount == initialCount)
         }
 

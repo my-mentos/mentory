@@ -17,26 +17,26 @@ protocol MentoryDBFlowInterface: Sendable {
 
 
 
-// MARK: Domain
-struct MentoryDBFlow: MentoryDBFlowInterface {
-    // MARK: core
-    nonisolated let id: String = "mentoryDB"
-    nonisolated let nameKey = "mentoryDB.name"
-    
-    nonisolated let logger = Logger(subsystem: "MentoryiOS.MentoryDB", category: "Domain")
-    
-    
-    // MARK: flow
-    @concurrent
-    func updateName(_ newName: String) async throws -> Void {
-         UserDefaults.standard.set(newName, forKey: nameKey)
-    }
-    
-    @concurrent
-    func getName() async throws -> String? {
-        guard let name = UserDefaults.standard.string(forKey: nameKey) else {
-           return nil
-       }
-       return name
-    }
-}
+//// MARK: Domain
+//struct MentoryDBFlow: MentoryDBFlowInterface {
+//    // MARK: core
+//    nonisolated let id: String = "mentoryDB"
+//    nonisolated let nameKey = "mentoryDB.name"
+//    
+//    nonisolated let logger = Logger(subsystem: "MentoryiOS.MentoryDB", category: "Domain")
+//    
+//    
+//    // MARK: flow
+//    @concurrent
+//    func updateName(_ newName: String) async throws -> Void {
+//         UserDefaults.standard.set(newName, forKey: nameKey)
+//    }
+//    
+//    @concurrent
+//    func getName() async throws -> String? {
+//        guard let name = UserDefaults.standard.string(forKey: nameKey) else {
+//           return nil
+//       }
+//       return name
+//    }
+//}

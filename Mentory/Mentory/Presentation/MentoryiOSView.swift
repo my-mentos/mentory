@@ -15,13 +15,9 @@ struct MentoryiOSView: View {
         self.mentoryiOS = mentoryiOS
     }
     
-    @State private var selectedTab: Tab = .record
     
-    enum Tab {
-        case record
-        case statistics
-        case setting
-    }
+    // MARK: viewModel
+    @State private var selectedTab: Tab = .record
     
     
     // MARK: body
@@ -71,6 +67,14 @@ struct MentoryiOSView: View {
             await mentoryiOS.loadUserName()
             mentoryiOS.setUp()
         }
+    }
+    
+    
+    // MARK: value
+    enum Tab {
+        case record
+        case statistics
+        case setting
     }
     
     
