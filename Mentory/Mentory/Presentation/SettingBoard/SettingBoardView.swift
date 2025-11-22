@@ -4,8 +4,8 @@
 //
 //  Created by SJS on 11/17/25.
 //
-
 import SwiftUI
+import WebKit
 
 struct SettingBoardView: View {
     @ObservedObject var settingBoard: SettingBoard
@@ -63,17 +63,15 @@ struct SettingBoardView: View {
                     }
                 }
             }
-            .fullScreenCover(isPresented: $isShowingInformationView) {
-                NavigationStack {
-                    InformationView()
-                        .toolbar {
-                            ToolbarItem(placement: .topBarTrailing) {
-                                Button("닫기") {
-                                    isShowingInformationView = false
-                                }
+            .sheet(isPresented: $isShowingInformationView) {
+                WebView(url: settingBoard.informationURL)
+                    .toolbar {
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Button("닫기") {
+                                isShowingInformationView = false
                             }
                         }
-                }
+                    }
             }
         }
         .navigationDestination(isPresented: $isShowingPrivacyPolicy) {
@@ -452,6 +450,8 @@ struct SettingIcon: View {
     }
 }
 
+
+// MARK: Preview
 #Preview {
     let mentory = MentoryiOS()
     mentory.userName = "지석"
