@@ -71,7 +71,7 @@ struct MentoryiOSTests {
     
     struct SaveUserName {
         let mentoryiOS: MentoryiOS
-        let mentoryDB: any MentoryDBFlowInterface
+        let mentoryDB: any MentoryDBInterface
         init() async throws {
             self.mentoryiOS = await MentoryiOS()
             self.mentoryDB = mentoryiOS.mentoryDB
@@ -95,7 +95,7 @@ struct MentoryiOSTests {
     
     struct LoadUserName {
         let mentoryiOS: MentoryiOS
-        let mentoryDB: any MentoryDBFlowInterface
+        let mentoryDB: any MentoryDBInterface
         init() async throws {
             self.mentoryiOS = await MentoryiOS()
             self.mentoryDB = mentoryiOS.mentoryDB

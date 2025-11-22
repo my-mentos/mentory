@@ -9,25 +9,20 @@ import Foundation
 
 // MARK: value
 nonisolated
-struct RecordData: Sendable, Hashable, Codable {
+public struct RecordData: Sendable, Hashable, Codable {
     // MARK: core
-    let id: UUID
-    let createdAt: Date
+    public let id: UUID
+    public let createdAt: Date
     
-    let content: String
-    let emotion: Emotion
+    public let content: String
+    public let analyzedResult: String
+    public let emotion: Emotion
     
-    init(id: UUID = .init(), createdAt: Date, content: String, emotion: Emotion) {
+    public init(id: UUID, createdAt: Date, content: String, analyzedResult: String, emotion: Emotion) {
         self.id = id
         self.createdAt = createdAt
         self.content = content
+        self.analyzedResult = analyzedResult
         self.emotion = emotion
-    }
-    
-    
-    // MARK: value
-    nonisolated
-    enum Emotion: String, Codable {
-        case happy, sad, neutral, surprised, scared
     }
 }

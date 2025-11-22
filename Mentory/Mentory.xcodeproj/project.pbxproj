@@ -16,6 +16,8 @@
 		CE00288D2ECF906E003324B0 /* Values.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE0028872ECF906E003324B0 /* Values.framework */; };
 		CE00288E2ECF906E003324B0 /* Values.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CE0028872ECF906E003324B0 /* Values.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CE127F672ECB8858006A55E6 /* Secrets.xcconfig.sample in Resources */ = {isa = PBXBuildFile; fileRef = CE127F662ECB8858006A55E6 /* Secrets.xcconfig.sample */; };
+		CE26C2DD2ED1E385008668E0 /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = CE26C2DC2ED1E385008668E0 /* Collections */; };
+		CE26C2DF2ED1E385008668E0 /* DequeModule in Frameworks */ = {isa = PBXBuildFile; productRef = CE26C2DE2ED1E385008668E0 /* DequeModule */; };
 		CE2903302ECD9EDD00AC403C /* FirebaseAI in Frameworks */ = {isa = PBXBuildFile; productRef = CE29032F2ECD9EDD00AC403C /* FirebaseAI */; };
 		CE2903322ECD9EDD00AC403C /* FirebaseAILogic in Frameworks */ = {isa = PBXBuildFile; productRef = CE2903312ECD9EDD00AC403C /* FirebaseAILogic */; };
 		CEB755832ECB9FF900FCE15A /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = CEB755822ECB9FF900FCE15A /* Collections */; };
@@ -200,6 +202,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE26C2DD2ED1E385008668E0 /* Collections in Frameworks */,
+				CE26C2DF2ED1E385008668E0 /* DequeModule in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -356,6 +360,8 @@
 			);
 			name = MentoryDB;
 			packageProductDependencies = (
+				CE26C2DC2ED1E385008668E0 /* Collections */,
+				CE26C2DE2ED1E385008668E0 /* DequeModule */,
 			);
 			productName = MentoryDB;
 			productReference = CE0028742ECF8D3B003324B0 /* MentoryDB.framework */;
@@ -1249,6 +1255,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		CE26C2DC2ED1E385008668E0 /* Collections */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CEB755812ECB9FF900FCE15A /* XCRemoteSwiftPackageReference "swift-collections" */;
+			productName = Collections;
+		};
+		CE26C2DE2ED1E385008668E0 /* DequeModule */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CEB755812ECB9FF900FCE15A /* XCRemoteSwiftPackageReference "swift-collections" */;
+			productName = DequeModule;
+		};
 		CE29032F2ECD9EDD00AC403C /* FirebaseAI */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = CE29032E2ECD9EDD00AC403C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
