@@ -208,7 +208,7 @@ struct SettingBoardView: View {
                 .onAppear {
                     selectedDate = settingBoard.reminderTime
                 }
-                .onChange(of: selectedDate) { newDate in
+                .onChange(of: selectedDate, initial: false) { oldDate, newDate in
                     settingBoard.reminderTime = newDate
                     settingBoard.persistReminderTime()
                 }
@@ -236,15 +236,6 @@ struct SettingBoardView: View {
         }
         .presentationDetents([.height(320)])
     }
-    
-//    private var reminderTimeText: String {
-//        Self.reminderFormatter.string(from: settingBoard.reminderTime)
-//    }
-//    private static let reminderFormatter: DateFormatter = {
-//        let formatter = DateFormatter()
-//        formatter.dateFormat = "HH:mm"
-//        return formatter
-//    }()
     
     private var renameSheet: some View {
         NavigationStack {
