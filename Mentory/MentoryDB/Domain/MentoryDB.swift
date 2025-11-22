@@ -13,14 +13,12 @@ import OSLog
 // MARK: Object
 actor MentoryDB: Sendable {
     // MARK: core
-    init(id: String = "MentoryDB.UniqueKey.shared") {
-        self.id = id
-    }
+    init() { }
     
     nonisolated let logger = Logger(subsystem: "MentoryDB.MentoryDB", category: "Domain")
     static let container: ModelContainer = {
         do {
-            return try ModelContainer(for: MentoryDB.Model.self, DailyRecord.Model.self)
+            return try ModelContainer(for: MentoryDB.MentoryDBModel.self, DailyRecord.DailyRecordModel.self)
         } catch {
             fatalError("❌ MentoryDB ModelContainer 생성 실패: \(error)")
         }
@@ -28,18 +26,18 @@ actor MentoryDB: Sendable {
     
     
     // MARK: state
-    nonisolated public let id: String
+    nonisolated public let id: UUID = UUID(uuidString: "00000000-0000-0000-0000-000000000000")!
     
     func setName(_ newName: String) {
         let context = ModelContext(MentoryDB.container)
         let id = self.id
         
         // sharedUUID 에 해당하는 Model을 찾거나, 없으면 새로 생성
-       let descriptor = FetchDescriptor<Model>(
+       let descriptor = FetchDescriptor<MentoryDBModel>(
          predicate: #Predicate { $0.id == id }
        )
         
-        let model: Model
+        let model: MentoryDBModel
         
         do {
             if let existing = try context.fetch(descriptor).first {
@@ -47,7 +45,7 @@ actor MentoryDB: Sendable {
                 model = existing
             } else {
                 logger.debug("MentoryDB가 존재하지 않습니다. 새로운 MentoryDB를 생성합니다.")
-                model = Model(id: self.id, userName: newName)
+                model = MentoryDBModel(id: self.id, userName: newName)
             }
         } catch {
             logger.error("MentoryDB 조회 오류: \(error)")
@@ -70,7 +68,7 @@ actor MentoryDB: Sendable {
         let context = ModelContext(MentoryDB.container)
         let id = self.id
         
-        let descriptor = FetchDescriptor<Model>(
+        let descriptor = FetchDescriptor<MentoryDBModel>(
             predicate: #Predicate { $0.id == id }
         )
         
@@ -92,7 +90,7 @@ actor MentoryDB: Sendable {
         let context = ModelContext(MentoryDB.container)
         let id = self.id
         
-        let descriptor = FetchDescriptor<Model>(
+        let descriptor = FetchDescriptor<MentoryDBModel>(
             predicate: #Predicate {
                 $0.id == id
             }
@@ -110,6 +108,7 @@ actor MentoryDB: Sendable {
                     return model.toData()
                 }
             
+            logger.debug("모든 레코드 조회 성공 \(recordDatas.count)")
             return recordDatas
         } catch {
             logger.error("레코드 조회 오류: \(error)")
@@ -120,7 +119,7 @@ actor MentoryDB: Sendable {
         let context = ModelContext(MentoryDB.container)
         let id = self.id
         
-        let descriptor = FetchDescriptor<Model>(
+        let descriptor = FetchDescriptor<MentoryDBModel>(
             predicate: #Predicate { $0.id == id }
         )
         
@@ -139,6 +138,7 @@ actor MentoryDB: Sendable {
                 .sorted { $0.createdAt > $1.createdAt }
                 .map { $0.toData() }
             
+            logger.debug("오늘 레코드 조회 성공 \(recordDatas.count)")
             return recordDatas
         } catch {
             logger.error("TodayRecord 조회 오류: \(error)")
@@ -149,7 +149,7 @@ actor MentoryDB: Sendable {
         let context = ModelContext(MentoryDB.container)
         let id = self.id
         
-        let descriptor = FetchDescriptor<Model>(
+        let descriptor = FetchDescriptor<MentoryDBModel>(
             predicate: #Predicate { $0.id == id }
         )
         
@@ -175,7 +175,7 @@ actor MentoryDB: Sendable {
         let context = ModelContext(Self.container)
         let id = self.id
         
-        let descriptor = FetchDescriptor<Model>(
+        let descriptor = FetchDescriptor<MentoryDBModel>(
             predicate: #Predicate {
                 $0.id == id
             }
@@ -183,11 +183,13 @@ actor MentoryDB: Sendable {
         
         do {
             if let db = try context.fetch(descriptor).first {
-                db.createRecordQueue.append(recordData)
+                let ticket = RecordTicket(data: recordData)
+                
+                db.createRecordQueue.append(ticket)
                 logger.debug("RecordData를 큐에 추가했습니다. 현재 큐 크기: \(db.createRecordQueue.count)")
             } else {
                 logger.debug("MentoryDB가 존재하지 않습니다. 새로운 MentoryDB를 생성한 뒤 큐에 추가합니다.")
-                let newDb = Model(id: id, userName: nil)
+                let newDb = MentoryDBModel(id: id, userName: nil)
                 context.insert(newDb)
             }
             
@@ -204,7 +206,7 @@ actor MentoryDB: Sendable {
         let context = ModelContext(MentoryDB.container)
         let id = self.id
 
-        let descriptor = FetchDescriptor<Model>(
+        let descriptor = FetchDescriptor<MentoryDBModel>(
             predicate: #Predicate { $0.id == id }
         )
 
@@ -221,7 +223,7 @@ actor MentoryDB: Sendable {
 
             // 1) 새 레코드 생성
             let newModels = db.createRecordQueue.map { data in
-                DailyRecord.Model(
+                DailyRecord.DailyRecordModel(
                     id: data.id,
                     createdAt: data.createdAt,
                     content: data.content,
@@ -252,17 +254,46 @@ actor MentoryDB: Sendable {
     
     // MARK: value
     @Model
-    final class Model {
+    final class MentoryDBModel {
         // MARK: core
-        @Attribute(.unique) var id: String
+        @Attribute(.unique) var id: UUID
         var userName: String?
         
-        var createRecordQueue: [RecordData] = []
-        @Relationship var records: [DailyRecord.Model] = []
+        
+        @Relationship var createRecordQueue: [RecordTicket] = []
+        @Relationship var records: [DailyRecord.DailyRecordModel] = []
         
         init(id: ID, userName: String?) {
             self.id = id
             self.userName = userName
+        }
+    }
+    
+    @Model
+    final class RecordTicket {
+        // MARK: core
+        @Attribute(.unique) var id: UUID
+        var createdAt: Date
+        var content: String
+        var analyzedResult: String
+        var emotion: Emotion
+
+        init(data: RecordData) {
+            self.id = data.id
+            self.createdAt = data.createdAt
+            self.content = data.content
+            self.analyzedResult = data.analyzedResult
+            self.emotion = data.emotion
+        }
+
+        func toRecordData() -> RecordData {
+            .init(
+                id: id,
+                createdAt: createdAt,
+                content: content,
+                analyzedResult: analyzedResult,
+                emotion: emotion
+            )
         }
     }
 }

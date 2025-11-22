@@ -31,8 +31,8 @@ actor DailyRecord: Sendable {
         
         do {
             // 1) DailyRecord.Model 을 id 로 조회
-            let descriptor = FetchDescriptor<Model>(
-                predicate: #Predicate<Model> { $0.id == id }
+            let descriptor = FetchDescriptor<DailyRecordModel>(
+                predicate: #Predicate<DailyRecordModel> { $0.id == id }
             )
             
             if let target = try context.fetch(descriptor).first {
@@ -52,7 +52,7 @@ actor DailyRecord: Sendable {
     
     // MARK: value
     @Model
-    final class Model {
+    final class DailyRecordModel {
         // MARK: core
         @Attribute(.unique) var id: UUID
         var createdAt: Date
