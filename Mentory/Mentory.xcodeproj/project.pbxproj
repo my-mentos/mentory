@@ -138,6 +138,20 @@
 			);
 			target = 7B1337642ECD63A2009931A4 /* MentoryWidgetExtension */;
 		};
+		CE26C2D82ED1E082008668E0 /* Exceptions for "MentoryDB" folder in "Mentory" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Domain/DailyRecord.swift,
+			);
+			target = CE39BFBB2EC313F20090DF78 /* Mentory */;
+		};
+		CE26C2D92ED1E082008668E0 /* Exceptions for "MentoryDB" folder in "MentoryDB" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Domain/DailyRecord.swift,
+			);
+			target = CE0028732ECF8D3B003324B0 /* MentoryDB */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -156,6 +170,10 @@
 		};
 		CE0028752ECF8D3B003324B0 /* MentoryDB */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				CE26C2D82ED1E082008668E0 /* Exceptions for "MentoryDB" folder in "Mentory" target */,
+				CE26C2D92ED1E082008668E0 /* Exceptions for "MentoryDB" folder in "MentoryDB" target */,
+			);
 			path = MentoryDB;
 			sourceTree = "<group>";
 		};

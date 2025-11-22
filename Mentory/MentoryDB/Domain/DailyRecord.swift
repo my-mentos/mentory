@@ -8,16 +8,15 @@ import SwiftData
 import Foundation
 
 
-// MARK: Domain Interface
-protocol DailyRecordInterface: Sendable {
+// MARK: Object
+actor DailyRecord {
+    // MARK: core
     
-}
-
-
-// MARK: Domain
-nonisolated
-struct DailyRecord {
-    // MARK: flow
+    
+    // MARK: state
+    
+    
+    // MARK: action
     
     
     // MARK: value

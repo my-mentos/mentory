@@ -65,7 +65,6 @@ actor MentoryDB: Sendable {
             return
         }
     }
-    
     func getName() -> String? {
         let context = ModelContext(MentoryDB.container)
         let id = self.id
