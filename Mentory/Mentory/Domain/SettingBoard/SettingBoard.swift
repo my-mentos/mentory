@@ -22,7 +22,6 @@ final class SettingBoard: Sendable, ObservableObject {
     // MARK: state
     weak var owner: MentoryiOS?
     nonisolated let id = UUID()
-    public nonisolated let informationURL = URL(string: "https://www.notion.so/Mentory-Information-2b11c49e815f80c5873befe3b6847f70?source=copy_link")!
     
     private static let reminderTimeKey = "mentory.settingBoard.reminderTime"
     private var isApplyingSavedReminderTime = false

@@ -20,16 +20,6 @@ struct SettingBoardView: View {
     
     @FocusState private var isRenameFieldFocused: Bool
     
-    private static let reminderFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm"
-        return formatter
-    }()
-    
-    private var userName: String {
-        settingBoard.owner?.userName ?? "사용자"
-    }
-    
     var body: some View {
         NavigationStack{
             ZStack {
@@ -64,7 +54,7 @@ struct SettingBoardView: View {
                 }
             }
             .sheet(isPresented: $isShowingInformationView) {
-                WebView(url: settingBoard.informationURL)
+                WebView(url: settingBoard.owner!.informationURL)
                     .toolbar {
                         ToolbarItem(placement: .topBarTrailing) {
                             Button("닫기") {
@@ -100,6 +90,16 @@ struct SettingBoardView: View {
         .task {
             settingBoard.loadSavedReminderTime()
         }
+    }
+    
+    private static let reminderFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        return formatter
+    }()
+    
+    private var userName: String {
+        settingBoard.owner?.userName ?? "사용자"
     }
     
     private var header: some View {

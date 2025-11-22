@@ -5,6 +5,7 @@
 //  Created by JAY on 11/14/25.
 //
 import SwiftUI
+import WebKit
 
 
 @MainActor @Observable
@@ -257,9 +258,8 @@ struct TodayBoardView: View {
                 }
             }
         }
-        .fullScreenCover(isPresented: $isShowingInformationView) {
-            NavigationStack {
-                InformationView()
+        .sheet(isPresented: $isShowingInformationView) {
+            WebView(url: todayBoard.owner!.informationURL)
                     .toolbar {
                         ToolbarItem(placement: .topBarTrailing) {
                             Button("닫기") {
@@ -267,8 +267,8 @@ struct TodayBoardView: View {
                             }
                         }
                     }
-                }
-            }
+                
+        }
         .task {
             await todayBoard.loadTodayRecords()
         }
