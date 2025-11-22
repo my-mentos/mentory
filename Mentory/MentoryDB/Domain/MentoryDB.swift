@@ -6,6 +6,7 @@
 //
 import Foundation
 import SwiftData
+import Values
 import OSLog
 
 
@@ -87,6 +88,87 @@ actor MentoryDB: Sendable {
         }
     }
     
+    func getAllRecords() async -> [RecordData] {
+        let context = ModelContext(MentoryDB.container)
+        
+        let descriptor = FetchDescriptor<Model>(
+            predicate: #Predicate {
+                $0.id == self.id
+            }
+        )
+        
+        do {
+            guard let db = try context.fetch(descriptor).first else {
+                logger.error("MentoryDB가 존재하지 않아 빈배열을 반환합니다.")
+                return []
+            }
+            
+            let recordModels = db.records.sorted { $0.createdAt > $1.createdAt }
+            let recordDatas = recordModels
+                .map { model in
+                    return model.toData()
+                }
+            
+            return recordDatas
+        } catch {
+            logger.error("레코드 조회 오류: \(error)")
+            return []
+        }
+    }
+    func getTodayRecordDatas() async -> [RecordData] {
+        let context = ModelContext(MentoryDB.container)
+        
+        let descriptor = FetchDescriptor<Model>(
+            predicate: #Predicate { $0.id == self.id }
+        )
+        
+        do {
+            guard let db = try context.fetch(descriptor).first else {
+                logger.error("DB가 존재하지 않아 빈 배열을 반환합니다.")
+                return []
+            }
+
+            let calendar = Calendar.current
+            let today = calendar.startOfDay(for: Date())
+            let tomorrow = calendar.date(byAdding: .day, value: 1, to: today)!
+
+            let recordDatas = db.records
+                .filter { $0.createdAt >= today && $0.createdAt < tomorrow }
+                .sorted { $0.createdAt > $1.createdAt }
+                .map { $0.toData() }
+            
+            return recordDatas
+        } catch {
+            logger.error("TodayRecord 조회 오류: \(error)")
+            return []
+        }
+    }
+    func getRecords(from: Date, to: Date) -> [RecordData] {
+        let context = ModelContext(MentoryDB.container)
+        
+        let descriptor = FetchDescriptor<Model>(
+            predicate: #Predicate { $0.id == self.id }
+        )
+        
+        do {
+            guard let db = try context.fetch(descriptor).first else {
+                logger.error("DB가 존재하지 않아 빈 배열을 반환합니다.")
+                return []
+            }
+
+            return db.records.filter {
+                $0.createdAt >= from && $0.createdAt <= to
+            }
+            .sorted { $0.createdAt > $1.createdAt }
+            .map { $0.toData() }
+
+        } catch {
+            logger.error("날짜 범위 조회 오류: \(error)")
+            return []
+        }
+    }
+    
+    
     
     // MARK: value
     @Model
@@ -95,7 +177,7 @@ actor MentoryDB: Sendable {
         @Attribute(.unique) var id: String
         var userName: String
         
-        var records: [DailyRecord.Model] = []
+        @Relationship var records: [DailyRecord.Model] = []
         
         init(id: ID, userName: String) {
             self.id = id
