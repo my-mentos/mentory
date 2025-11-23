@@ -202,6 +202,28 @@ struct RecordFormTests {
             
         }
     }
+    
+    struct RemoveForm {
+        let mentoryiOS: MentoryiOS
+        let recordForm: RecordForm
+        init() async throws {
+            self.mentoryiOS = await MentoryiOS()
+            self.recordForm = try await getRecordFormForTest(mentoryiOS)
+        }
+        
+        @Test func deleteRecordForm() async throws {
+            // given
+            let todayBoard = try #require(await recordForm.owner)
+            
+            try await #require(todayBoard.recordForm != nil)
+            
+            // when
+            await recordForm.removeForm()
+            
+            // then
+            await #expect(todayBoard.recordForm == nil)
+        }
+    }
 }
 
 // MARK: Helpers

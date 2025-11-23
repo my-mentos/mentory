@@ -4,7 +4,6 @@
 //
 //  Created by 구현모 on 11/14/25.
 //
-
 import Foundation
 import Combine
 import OSLog
@@ -23,6 +22,7 @@ final class RecordForm: Sendable, ObservableObject {
     // MARK: state
     nonisolated let id = UUID()
     weak var owner: TodayBoard?
+    
     @Published var mindAnalyzer: MindAnalyzer? = nil
 
     @Published var titleInput: String = ""
@@ -36,10 +36,6 @@ final class RecordForm: Sendable, ObservableObject {
     
     
     // MARK: action
-    func setUpAnalyzer() {
-        
-    }
-    
     func validateInput() {
         // capture
         let currentTitleInput = self.titleInput
@@ -82,7 +78,11 @@ final class RecordForm: Sendable, ObservableObject {
     }
     
     func removeForm() {
+        // capture
+        let todayBoard = self.owner
         
+        // mutate
+        todayBoard?.recordForm = nil
     }
     
 
