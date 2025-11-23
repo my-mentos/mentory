@@ -67,36 +67,24 @@ struct OnboardingView: View {
             Spacer()
             
             // 닉네임 입력 필드
-            TextField("이름(닉네임)을 적어주세요.", text: $onboarding.nameInput)
-                .focused($isEditing)
-                .padding()
-                .frame(height: 60)
-                .background(Color(white: 0.95))
-                .cornerRadius(16)
-                .padding(.horizontal, 30)
-                .padding(.bottom, 16)
+            NameInputField(
+                label: "이름(닉네임)을 적어주세요",
+                name: $onboarding.nameInput,
+                isFocused: $isEditing)
             
             // 계속 버튼
-            Button(action: {
-                Task {
-                    onboarding.validateInput()
-                    onboarding.next()
-                    if let mentoryiOS = onboarding.owner {
-                        await mentoryiOS.saveUserName()
+            NextButton(
+                labelText: "계속",
+                disabled: onboarding.nameInput.isEmpty,
+                action: {
+                    Task {
+                        await onboarding.validateInput()
+                        await onboarding.next()
+                        if let mentoryiOS = await onboarding.owner {
+                            await mentoryiOS.saveUserName()
+                        }
                     }
-                }
-            }) {
-                Text("계속")
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 60)
-                    .background(onboarding.nameInput.isEmpty ? Color.gray : Color.blue)
-                    .cornerRadius(16)
-            }
-            .disabled(onboarding.nameInput.isEmpty)
-            .padding(.horizontal, 30)
-            .padding(.bottom, 40)
+                })
         }
         .background(Color.white)
     }
@@ -122,13 +110,6 @@ fileprivate struct CharacterGroup: View {
     let leftLabel: String
     let rightImage: String
     let rightLabel: String
-    
-    init(leftImage: String, leftLabel: String, rightImage: String, rightLabel: String) {
-        self.leftImage = leftImage
-        self.leftLabel = leftLabel
-        self.rightImage = rightImage
-        self.rightLabel = rightLabel
-    }
     
     var body: some View {
         HStack(spacing: 40) {
@@ -157,6 +138,46 @@ fileprivate struct CharacterGroup: View {
             }
         }
         .padding(.top, 40)
+        .padding(.bottom, 40)
+    }
+}
+
+fileprivate struct NameInputField: View {
+    let label: String
+    @Binding var name: String
+    var isFocused: FocusState<Bool>.Binding
+    
+    var body: some View {
+        VStack(spacing: 16) {
+            TextField(label, text: $name)
+                .focused(isFocused)
+                .padding()
+                .frame(height: 60)
+                .background(Color(white: 0.95))
+                .cornerRadius(16)
+                .padding(.horizontal, 30)
+                .padding(.bottom, 16)
+        }
+    }
+}
+
+fileprivate struct NextButton: View {
+    let labelText: String
+    let disabled: Bool
+    let action: @Sendable () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            Text(labelText)
+                .font(.system(size: 18, weight: .semibold))
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity)
+                .frame(height: 60)
+                .background(disabled ? Color.gray : Color.blue)
+                .cornerRadius(16)
+        }
+        .disabled(disabled)
+        .padding(.horizontal, 30)
         .padding(.bottom, 40)
     }
 }
