@@ -31,6 +31,7 @@ final class TodayBoard: Sendable, ObservableObject {
     @Published var isFetchedTodayString: Bool = false
     @Published var actionKeyWordItems: [(String, Bool)] = []
     
+    
     // MARK: action
     func fetchTodayString() async {
         // capture

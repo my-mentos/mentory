@@ -7,6 +7,7 @@
 
 import Testing
 import Foundation
+import Values
 @testable import Mentory
 
 
@@ -54,6 +55,36 @@ struct TodayBoardTests {
             
             // then
             await #expect(todayBoard.todayString == oldString)
+        }
+    }
+    
+    struct LoadTodayRecords {
+        let mentory: MentoryiOS
+        let todayBoard: TodayBoard
+        let mentoryDB: any MentoryDBInterface
+        init() async throws {
+            self.mentory = await MentoryiOS()
+            self.todayBoard = try await getTodayBoardForTest(mentory)
+            self.mentoryDB = mentory.mentoryDB
+        }
+        
+        @Test func updateRecords() async throws {
+            // given
+            let recordData = RecordData(id: .init(),
+                                        createdAt: .now,
+                                        content: "SAMPLE_CONTENT",
+                                        analyzedResult: "SAMPLE_RESULT",
+                                        emotion: .neutral)
+            
+            try await mentoryDB.saveRecord(recordData)
+            
+            try await #require(todayBoard.records.count == 0)
+            
+            // when
+            await todayBoard.loadTodayRecords()
+            
+            // then
+            await #expect(todayBoard.records.count == 1)
         }
     }
 }
