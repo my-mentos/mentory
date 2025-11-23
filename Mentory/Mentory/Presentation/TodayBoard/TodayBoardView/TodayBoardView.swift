@@ -94,9 +94,6 @@ struct TodayBoardView: View {
                     }
         }
         .task {
-            todayBoard.setUpForm()
-        }
-        .task {
             await todayBoard.fetchTodayString()
             await todayBoard.loadTodayRecords()
         }
@@ -272,6 +269,7 @@ fileprivate struct RecordStatCard<Content: View>: View {
                 .map { ($0, $0 != nil)}
             
             for await (form, isPresent) in stream {
+                print("전달되 값: \(isPresent)")
                 self.recordForm = form
                 self.showFullScreenCover = isPresent
             }

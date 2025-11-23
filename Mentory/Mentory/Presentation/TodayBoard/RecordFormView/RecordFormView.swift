@@ -88,7 +88,10 @@ struct RecordFormView: View {
             
             SubmitButton(
                 recordForm: recordForm,
-                label: "완료"
+                label: "완료",
+                destination: { mindAnalyzer in
+                    MindAnalyzerView(mindAnalyzer)
+                }
             )
         }
         .padding(.horizontal)
@@ -289,9 +292,10 @@ fileprivate struct TodayDate: View {
     }
 }
 
-fileprivate struct SubmitButton: View {
+fileprivate struct SubmitButton<Content: View>: View {
     @ObservedObject var recordForm: RecordForm
     let label: String
+    @ViewBuilder let destination: (MindAnalyzer) -> Content
     
     @State var isSubmitEnabled: Bool = false
     @State var mindAnalyzer: MindAnalyzer? = nil
@@ -306,7 +310,11 @@ fileprivate struct SubmitButton: View {
         } label: {
             ActionButtonLabel(text: "완료", usage: isSubmitEnabled ? .submitEnabled : .submitDisabled)
         }.disabled(!isSubmitEnabled)
-        
+            .fullScreenCover(isPresented: $showMindAnalyzerView, content: {
+                if let mindAnalyzer {
+                    destination(mindAnalyzer)
+                } 
+            })
             .task {
                 let stream = recordForm.$mindAnalyzer.values
                     .map { ($0, $0 != nil) }

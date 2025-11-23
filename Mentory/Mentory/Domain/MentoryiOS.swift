@@ -88,10 +88,7 @@ final class MentoryiOS: Sendable, ObservableObject {
         self.userName = userNameFromDB
         self.onboardingFinished = true
 
-        let todayBoard = TodayBoard(owner: self)
-        self.todayBoard = todayBoard
-        todayBoard.recordForm = RecordForm(owner: todayBoard)
-
+        self.todayBoard = TodayBoard(owner: self)
         self.settingBoard = SettingBoard(owner: self)
     }
     

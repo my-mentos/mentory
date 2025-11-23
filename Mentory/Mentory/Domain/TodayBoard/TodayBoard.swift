@@ -34,6 +34,8 @@ final class TodayBoard: Sendable, ObservableObject {
     
     // MARK: action
     func setUpForm() {
+        logger.debug("TodayBoard.setUp 호출")
+        
         // capture
         guard self.recordForm == nil else {
             logger.error("이미 TodayBoard에 RecordForm이 존재합니다.")
