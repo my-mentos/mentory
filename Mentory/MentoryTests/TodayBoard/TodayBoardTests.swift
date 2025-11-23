@@ -18,7 +18,19 @@ struct TodayBoardTests {
         let mentoryiOS: MentoryiOS
         let todayBoard: TodayBoard
         init() async throws {
-            self.
+            self.mentoryiOS = await MentoryiOS()
+            self.todayBoard = try await getTodayBoardForTest(mentoryiOS)
+        }
+        
+        @Test func createRecordForm() async throws {
+            // given
+            try await #require(todayBoard.recordForm == nil)
+            
+            // when
+            await todayBoard.setUpForm()
+            
+            // then
+            await #expect(todayBoard.recordForm != nil)
         }
     }
     struct FetchTodayString {
