@@ -6,6 +6,7 @@
 //
 import SwiftUI
 import WebKit
+import Combine
 
 
 // MARK: View
@@ -266,14 +267,15 @@ fileprivate struct RecordStatCard<Content: View>: View {
                 }
             }
         }
-        .onReceive(todayBoard.$recordForm) { recordForm in
-            if recordForm == nil {
-                self.showFullScreenCover = false
-                self.recordForm = recordForm
-            } else {
-                self.showFullScreenCover = true
-                self.recordForm = recordForm
+        .task {
+            let stream = todayBoard.$recordForm.values
+                .map { ($0, $0 != nil)}
+            
+            for await (form, isPresent) in stream {
+                self.recordForm = form
+                self.showFullScreenCover = isPresent
             }
+            
         }
     }
 }
