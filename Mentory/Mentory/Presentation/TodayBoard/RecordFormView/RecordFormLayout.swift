@@ -8,10 +8,10 @@ import SwiftUI
 
 
 // MARK: Layout
-struct RecordFormLayout<Content: View>: View {
-    @ViewBuilder let topBar: () -> Content
-    @ViewBuilder let main: () -> Content
-    @ViewBuilder let bottomBar: () -> Content
+struct RecordFormLayout<TopBar: View, Main: View, BottomBar: View>: View {
+    @ViewBuilder let topBar: () -> TopBar
+    @ViewBuilder let main: () -> Main
+    @ViewBuilder let bottomBar: () -> BottomBar
     
     var body: some View {
         ZStack {

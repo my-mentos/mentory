@@ -30,32 +30,19 @@ struct RecordFormView: View {
     
     // MARK: - Body
     var body: some View {
-        ZStack {
-            Color(.systemGroupedBackground)
-                .ignoresSafeArea()
-            VStack(spacing: 0) {
-                
-                recordFormTopBar
-                
-                ScrollView {
-                    VStack(spacing: 16) {
-                        titleInputCard
-                        textInputCard
-                        imagePreviewCard
-                        voicePreviewCard
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 16)
-                    .padding(.bottom, 80)
-                }
-                Spacer()
-            }
-            VStack {
-                Spacer()
-                recordFormBottomBar
-            }
-        }
-        .ignoresSafeArea(.keyboard, edges: .bottom)
+        RecordFormLayout(
+            topBar: {
+                self.recordFormTopBar
+            },
+            main: {
+                self.titleInputCard
+                self.textInputCard
+                self.imagePreviewCard
+                self.voicePreviewCard
+            },
+            bottomBar: {
+                self.recordFormBottomBar
+            })
         .task {
             // 기록 시작 시간 설정
             recordForm.startTime = Date()
