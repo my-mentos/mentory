@@ -7,19 +7,85 @@
 import SwiftUI
 import WebKit
 import OSLog
+import Combine
+
+// MARK: Object
+class SettingBoardViewModel: ObservableObject {
+    // MARK: core
+    
+    // MARK: state
+    @Published var showingReminderPicker = false
+    @Published var selectedDate: Date = Date()
+    @Published var isShowingRenameSheet = false
+    @Published var isShowingTermsOfService = false
+    @Published var isShowingDataDeletionAlert = false
+    @Published var isShowingInformationView = false
+    @Published var isShowingPrivacyPolicy = false
+    @Published var isShowingLicenseInfo = false
+    
+    // MARK: action
+    
+    func openRenameSheet() {
+        isShowingRenameSheet = true
+    }
+    
+    func closeRenameSheet() {
+        isShowingRenameSheet = false
+    }
+
+    //이걸여기서 해도되는지 묻기
+//    func setReminderTime(settingBoard: SettingBoard) {
+//        selectedDate = settingBoard.reminderTime
+//    }
+//    
+//    func updateReminderTime(newDate: Date, settingBoard: SettingBoard) {
+//        selectedDate = newDate
+//        settingBoard.reminderTime = newDate
+//        settingBoard.persistReminderTime()
+//    }
+    
+    func openReminderPicker() {
+        showingReminderPicker = true
+    }
+    
+    func closeReminderPicker() {
+        showingReminderPicker = false
+    }
+    
+    func openInformationView() {
+        isShowingInformationView = true
+    }
+    
+    func closeInformationView() {
+        isShowingInformationView = false
+    }
+    
+    //왜 close없어도..?
+    func openPrivacyPolicy() {
+        isShowingPrivacyPolicy = true
+    }
+    func openLicenseInfo() {
+        isShowingLicenseInfo = true
+    }
+    func openTermsOfService() {
+        isShowingTermsOfService = true
+    }
+    
+    
+    func openDataDeletionAlert() {
+        isShowingDataDeletionAlert = true
+    }
+    
+    
+    // MARK: value
+    
+}
 
 
 // MARK: View
 struct SettingBoardView: View {
     @ObservedObject var settingBoard: SettingBoard
-    @State private var showingReminderPicker = false
-    @State private var selectedDate: Date = Date()
-    @State private var isShowingRenameSheet = false
-    @State private var isShowingTermsOfService = false
-    @State private var isShowingDataDeletionAlert = false
-    @State private var isShowingInformationView = false
-    @State private var isShowingPrivacyPolicy = false
-    @State private var isShowingLicenseInfo = false
+    @ObservedObject var settingBoardViewModel: SettingBoardViewModel
     
     @FocusState private var isRenameFieldFocused: Bool
     
@@ -40,25 +106,25 @@ struct SettingBoardView: View {
                     .padding(.vertical, 28)
                 }
             }
-            .sheet(isPresented: $isShowingRenameSheet) {
+            .sheet(isPresented: $settingBoardViewModel.isShowingRenameSheet) {
                 renameSheet
             }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        isShowingInformationView = true
+                        settingBoardViewModel.openInformationView()
                     } label: {
                         Image(systemName: "info.circle")
                             .font(.system(size: 18, weight: .semibold))
                     }
                 }
             }
-            .sheet(isPresented: $isShowingInformationView) {
+            .sheet(isPresented: $settingBoardViewModel.isShowingInformationView) {
                 WebView(url: settingBoard.owner!.informationURL)
                     .toolbar {
                         ToolbarItem(placement: .topBarTrailing) {
                             Button("닫기") {
-                                isShowingInformationView = false
+                                settingBoardViewModel.closeInformationView()
                             }
                         }
                     }
@@ -66,7 +132,7 @@ struct SettingBoardView: View {
         }
         .alert(
             "데이터를 삭제하시겠습니까?",
-            isPresented: $isShowingDataDeletionAlert,
+            isPresented: $settingBoardViewModel.isShowingDataDeletionAlert,
             actions: {
                 Button("삭제", role: .destructive) {
                     settingBoard.confirmDataDeletion()
@@ -109,7 +175,7 @@ struct SettingBoardView: View {
                 // 도메인에는 편집값 초기화만 맡기고
                 settingBoard.startRenaming()
                 // 시트 표시 여부는 View 상태로 관리
-                isShowingRenameSheet = true
+                settingBoardViewModel.openRenameSheet()
             }
             
             SettingRow(
@@ -134,9 +200,9 @@ struct SettingBoardView: View {
                 value: settingBoard.formattedReminderTime(),
                 showDivider: false
             ) {
-                showingReminderPicker = true
+                settingBoardViewModel.openReminderPicker()
             }
-            .sheet(isPresented: $showingReminderPicker) {
+            .sheet(isPresented: $settingBoardViewModel.showingReminderPicker) {
                 reminderPickerSheet
             }
         }
@@ -150,9 +216,9 @@ struct SettingBoardView: View {
                 title: "개인정보 처리 방침",
                 showDivider: true
             ){
-                isShowingPrivacyPolicy = true
+                settingBoardViewModel.openPrivacyPolicy()
             }
-            .navigationDestination(isPresented: $isShowingPrivacyPolicy) {
+            .navigationDestination(isPresented: $settingBoardViewModel.isShowingPrivacyPolicy) {
                 PrivacyPolicyView()
             }
             
@@ -162,9 +228,9 @@ struct SettingBoardView: View {
                 title: "라이센스 정보",
                 showDivider: true
             ){
-                isShowingLicenseInfo = true
+                settingBoardViewModel.openLicenseInfo()
             }
-            .navigationDestination(isPresented: $isShowingLicenseInfo) {
+            .navigationDestination(isPresented: $settingBoardViewModel.isShowingLicenseInfo) {
                 LicenseInfoView()
             }
             
@@ -174,9 +240,9 @@ struct SettingBoardView: View {
                 title: "이용 약관",
                 showDivider: false
             ){
-                isShowingTermsOfService = true
+                settingBoardViewModel.openTermsOfService()
             }
-            .navigationDestination(isPresented: $isShowingTermsOfService) {
+            .navigationDestination(isPresented: $settingBoardViewModel.isShowingTermsOfService) {
                 TermsOfServiceView()
             }
         }
@@ -191,7 +257,7 @@ struct SettingBoardView: View {
                 titleColor: .red,
                 showDivider: false
             ) {
-                isShowingDataDeletionAlert = true
+                settingBoardViewModel.openDataDeletionAlert()
             }
         }
     }
@@ -201,21 +267,21 @@ struct SettingBoardView: View {
             VStack(spacing: 16) {
                 DatePicker(
                     "알림 시간",
-                    selection: $selectedDate,
+                    selection: $settingBoardViewModel.selectedDate,
                     displayedComponents: .hourAndMinute
                 )
                 .datePickerStyle(.wheel)
                 .labelsHidden()
                 .onAppear {
-                    selectedDate = settingBoard.reminderTime
+                    settingBoardViewModel.selectedDate = settingBoard.reminderTime
                 }
-                .onChange(of: selectedDate, initial: false) { oldDate, newDate in
+                .onChange(of: settingBoardViewModel.selectedDate, initial: false) { oldDate, newDate in
                     settingBoard.reminderTime = newDate
                     settingBoard.persistReminderTime()
                 }
                 
                 Button("완료") {
-                    showingReminderPicker = false
+                    settingBoardViewModel.closeReminderPicker()
                 }
                 .font(.system(size: 16, weight: .semibold))
                 .frame(maxWidth: .infinity)
@@ -230,7 +296,7 @@ struct SettingBoardView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("닫기") {
-                        showingReminderPicker = false
+                        settingBoardViewModel.closeReminderPicker()
                     }
                 }
             }
@@ -258,7 +324,7 @@ struct SettingBoardView: View {
                 ToolbarItem(placement: .topBarLeading) {
                     Button("취소") {
                         settingBoard.cancelRenaming()
-                        isShowingRenameSheet = false
+                        settingBoardViewModel.openRenameSheet()
                     }
                 }
                 ToolbarItem(placement: .topBarTrailing) {
@@ -267,7 +333,7 @@ struct SettingBoardView: View {
                             await settingBoard.commitRename()
                             // 도메인에서 더 이상 sheet 상태를 모르므로
                             // 저장 후 sheet 닫기는 View에서 처리
-                            isShowingRenameSheet = false
+                            settingBoardViewModel.closeRenameSheet()
                         }
                     }
                     .disabled(isRenameSaveDisabled)
@@ -448,7 +514,7 @@ fileprivate struct SettingBoardPreview: View {
     
     var body: some View {
         if let settingBoard = mentoryiOS.settingBoard {
-            SettingBoardView(settingBoard: settingBoard)
+            SettingBoardView(settingBoard: settingBoard, settingBoardViewModel: SettingBoardViewModel())
         } else {
             ProgressView("프리뷰 준비 중")
                 .task {

@@ -96,7 +96,7 @@ struct MentoryiOSView: View {
     @ViewBuilder
     private var SettingTab: some View {
         if let settingBoard = mentoryiOS.settingBoard {
-            SettingBoardView(settingBoard: settingBoard)
+            SettingBoardView(settingBoard: settingBoard, settingBoardViewModel: SettingBoardViewModel())
                 .tabItem {
                     Image(systemName: "gearshape")
                     Text("설정")
