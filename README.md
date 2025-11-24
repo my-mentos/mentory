@@ -103,8 +103,7 @@
       <td>
         <ul>
           <li><strong>SwiftUI + MVVM</strong></li>
-          <li><strong>Combine</strong></li>
-          <li><strong>Swift Concurrency(Swift 6)</strong></li>
+          <li><strong>Swift Concurrency</strong></li>
         </ul>
       </td>
     </tr>
@@ -120,8 +119,8 @@
       <td>🎤 음성 처리</td>
       <td>
         <ul>
-          <li><strong>AVFoundation</strong></li>
           <li><strong>Speech Framework</strong></li>
+          <li><strong>AVFoundation</strong></li>
         </ul>
       </td>
     </tr>
@@ -129,13 +128,14 @@
       <td>🤖 LLM</td>
       <td>
         <ul>
-          <li><strong>ESTSOFT Alan LLM API</strong></li>
+          <li><strong>ESTSOFT Alan API</strong></li>
           <li><strong>Firebase AI Logic</strong></li>
         </ul>
       </td>
     </tr>
   </tbody>
 </table>
+
 
 ---
 
@@ -148,56 +148,46 @@
     <td align="center" width="120">
       <img src="https://img.shields.io/badge/-26.1+-147EFB?style=for-the-badge&logo=xcode&logoColor=white" alt="Xcode">
     </td>
-    <td>
-      <b>Xcode 26.1 이상</b>
-    </td>
+    <td><b>Xcode 26.1 이상</b></td>
   </tr>
   <tr>
     <td align="center" width="120">
       <img src="https://img.shields.io/badge/-18.0+-000000?style=for-the-badge&logo=ios&logoColor=white" alt="iOS">
     </td>
-    <td>
-      <b>iOS 18.0 이상</b> (시뮬레이터 또는 실제 디바이스)
-    </td>
+    <td><b>iOS 18.0 이상</b></td>
   </tr>
   <tr>
     <td align="center" width="120">
       <img src="https://img.shields.io/badge/-6.0-FA7343?style=for-the-badge&logo=swift&logoColor=white" alt="Swift">
     </td>
-    <td>
-      <b>Swift 6.0</b>
-    </td>
+    <td><b>Swift 6.0</b></td>
   </tr>
 </table>
 
 ### 설치
 
-1. 저장소를 클론합니다.
-   ```bash
-   git clone https://github.com/EST-iOS4/Mentory-iOS.git
-   cd Mentory-iOS
-   ```
+```bash
+git clone https://github.com/EST-iOS4/Mentory-iOS.git
+cd Mentory-iOS
+```
 
 ### 환경 설정
 
-1. 저장소 루트에 있는 `Secrets.xcconfig.sample`을 복사하여 `Secrets.xcconfig`를 생성합니다.
-   ```bash
-   cp Secrets.xcconfig.sample Secrets.xcconfig
-   ```
-2. 새로 생성된 `Secrets.xcconfig`에 Alan API 키 등 민감한 값을 채웁니다.
-   ```
-   ALAN_API_KEY = your_api_key_here
-   ```
-   해당 파일은 `.gitignore`에 포함되어 있으니 저장소에 커밋되지 않습니다.
+```bash
+git clone https://github.com/EST-iOS4/Mentory-iOS.git
+cd Mentory-iOS
+```
+
+- `Secrets.xcconfig`에 Alan API Key 등 민감한 값 입력  
+- 해당 파일은 `.gitignore` 처리됨
 
 ### 실행
 
-1. Xcode에서 `Mentory/Mentory.xcodeproj`를 엽니다.
-   ```bash
-   open Mentory/Mentory.xcodeproj
-   ```
-2. 타겟 디바이스를 선택합니다 (시뮬레이터 또는 실제 디바이스).
-3. `Cmd + R`을 눌러 앱을 빌드하고 실행합니다.
+```bash
+open Mentory/Mentory.xcodeproj
+```
+
+Xcode에서 타겟 선택 → `Cmd + R` 실행
 
 ## 소프트웨어 디자인
 
