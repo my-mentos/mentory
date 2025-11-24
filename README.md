@@ -148,6 +148,7 @@ Mentory는 STT와 LLM을 활용해 사용자의 감정을 기록·분석하고 �
 - [WatchConnectivity 이해하기](docs/watchos/watchconnectivity.md)
 - [Widget Extension 개념 이해하기](docs/Widget-Extension/README.md)
 - [Firebase AI 사용하기](docs/firebase-ai/README.md)
+- [APNs 기본 개념 이해하기](docs/APNs/README.md)
 - 브랜치 전략, TBD(Trunk-Based Development)
 
 ## 트러블슈팅 문서
