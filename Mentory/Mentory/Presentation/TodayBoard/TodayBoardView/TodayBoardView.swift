@@ -6,6 +6,7 @@
 //
 import SwiftUI
 import WebKit
+import Combine
 
 
 // MARK: View
@@ -36,6 +37,7 @@ struct TodayBoardView: View {
             
             // 환영 인사 헤더
             GreetingHeader(
+                todayBoard: todayBoard,
                 userName: mentoryiOS.userName ?? "익명",
                 recordCount: todayBoard.records.count
             )
@@ -48,11 +50,12 @@ struct TodayBoardView: View {
             
             // 기분 기록 카드
             RecordStatCard(
-                image: "greeting",
-                content: "SSS",
+                todayBoard: todayBoard,
+                imageName: "greeting",
+                content: "오늘 기분을 기록해볼까요?",
                 navLabel: "기록하러 가기",
-                navDestination: {
-                    RecordFormView(todayBoard.recordForm!)
+                navDestination: { recordForm in
+                    RecordFormView(recordForm: recordForm)
                 }
             )
             
@@ -80,8 +83,6 @@ struct TodayBoardView: View {
                 }
             }
         }
-        .animation(.spring(response: 0.6, dampingFraction: 0.8),
-                   value: todayBoard.todayString != nil)
         .sheet(isPresented: $isShowingInformationView) {
             WebView(url: todayBoard.owner!.informationURL)
                     .toolbar {
@@ -146,26 +147,27 @@ fileprivate struct Title: View {
 }
 
 fileprivate struct GreetingHeader: View {
+    @ObservedObject var todayBoard: TodayBoard
     let userName: String
     let recordCount: Int
-    init(userName: String, recordCount: Int) {
-        self.userName = userName
-        self.recordCount = recordCount
-    }
     
     var body: some View {
         // 작은 설명 텍스트
-        if recordCount == 0 {
-            Text("\(userName)님, 일기를 작성해보세요!")
-                .font(.system(size: 12))
-                .foregroundColor(.gray)
-                .frame(maxWidth: .infinity, alignment: .center)
-        } else {
-            Text("\(userName)님 \(recordCount)번째 기록하셨네요!")
-                .font(.system(size: 12))
-                .foregroundColor(.gray)
-                .frame(maxWidth: .infinity, alignment: .center)
-        }
+        Group{
+            if recordCount == 0 {
+                Text("\(userName)님, 일기를 작성해보세요!")
+                    .font(.system(size: 12))
+                    .foregroundColor(.gray)
+                    .frame(maxWidth: .infinity, alignment: .center)
+            } else {
+                Text("\(userName)님 \(recordCount)번째 기록하셨네요!")
+                    .font(.system(size: 12))
+                    .foregroundColor(.gray)
+                    .frame(maxWidth: .infinity, alignment: .center)
+            }
+        }.animation(
+            .spring(response: 0.6, dampingFraction: 0.8),
+            value: todayBoard.todayString != nil)
     }
 }
 
@@ -200,23 +202,14 @@ fileprivate struct PopupCard: View {
 }
 
 fileprivate struct RecordStatCard<Content: View>: View {
+    @ObservedObject var todayBoard: TodayBoard
     @State var showFullScreenCover: Bool = false
     
     let imageName: String
     let content: String
     let navLabel: String
-    let navDestination: Content
+    @ViewBuilder let navDestination: (RecordForm) -> Content
     
-    
-    init(image: String,
-         content: String,
-         navLabel: String,
-         @ViewBuilder navDestination: () -> Content) {
-        self.imageName = image
-        self.content = content
-        self.navLabel = navLabel
-        self.navDestination = navDestination()
-    }
     
     var body: some View {
         LiquidGlassCard {
@@ -233,7 +226,7 @@ fileprivate struct RecordStatCard<Content: View>: View {
                     .font(.system(size: 16, weight: .medium))
                 
                 Button {
-                    showFullScreenCover = true
+                    todayBoard.setUpForm()
                 } label: {
                     Text(self.navLabel)
                         .font(.system(size: 16, weight: .semibold))
@@ -265,8 +258,19 @@ fileprivate struct RecordStatCard<Content: View>: View {
             .padding(.vertical, 24)
             .frame(maxWidth: .infinity)
             .fullScreenCover(isPresented: $showFullScreenCover) {
-                navDestination
+                if let recordForm = todayBoard.recordForm {
+                    navDestination(recordForm)
+                }
             }
+        }
+        .task {
+            let stream = todayBoard.$recordForm.values
+                .map { $0 != nil }
+            
+            for await isPresent in stream {
+                self.showFullScreenCover = isPresent
+            }
+            
         }
     }
 }

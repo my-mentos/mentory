@@ -7,12 +7,46 @@
 
 import Testing
 import Foundation
+import Values
 @testable import Mentory
 
 
 // MARK: Tests
 @Suite("TodayBoard")
 struct TodayBoardTests {
+    struct SetUpForm {
+        let mentoryiOS: MentoryiOS
+        let todayBoard: TodayBoard
+        init() async throws {
+            self.mentoryiOS = await MentoryiOS()
+            self.todayBoard = try await getTodayBoardForTest(mentoryiOS)
+        }
+        
+        @Test func createRecordForm() async throws {
+            // given
+            try await #require(todayBoard.recordForm == nil)
+            
+            // when
+            await todayBoard.setUpForm()
+            
+            // then
+            await #expect(todayBoard.recordForm != nil)
+        }
+        
+        @Test func whenAlreadySetUp() async throws {
+            // given
+            await todayBoard.setUpForm()
+            
+            let recordForm = try #require(await todayBoard.recordForm)
+            
+            // when
+            await todayBoard.setUpForm()
+            
+            // then
+            await #expect(todayBoard.recordForm?.id == recordForm.id)
+        }
+    }
+    
     struct FetchTodayString {
         let mentory: MentoryiOS
         let todayBoard: TodayBoard
@@ -54,6 +88,36 @@ struct TodayBoardTests {
             
             // then
             await #expect(todayBoard.todayString == oldString)
+        }
+    }
+    
+    struct LoadTodayRecords {
+        let mentory: MentoryiOS
+        let todayBoard: TodayBoard
+        let mentoryDB: any MentoryDBInterface
+        init() async throws {
+            self.mentory = await MentoryiOS()
+            self.todayBoard = try await getTodayBoardForTest(mentory)
+            self.mentoryDB = mentory.mentoryDB
+        }
+        
+        @Test func updateRecords() async throws {
+            // given
+            let recordData = RecordData(id: .init(),
+                                        createdAt: .now,
+                                        content: "SAMPLE_CONTENT",
+                                        analyzedResult: "SAMPLE_RESULT",
+                                        emotion: .neutral)
+            
+            try await mentoryDB.saveRecord(recordData)
+            
+            try await #require(todayBoard.records.count == 0)
+            
+            // when
+            await todayBoard.loadTodayRecords()
+            
+            // then
+            await #expect(todayBoard.records.count == 1)
         }
     }
 }

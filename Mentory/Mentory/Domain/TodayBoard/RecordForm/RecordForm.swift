@@ -4,7 +4,6 @@
 //
 //  Created by 구현모 on 11/14/25.
 //
-
 import Foundation
 import Combine
 import OSLog
@@ -17,13 +16,14 @@ final class RecordForm: Sendable, ObservableObject {
     init(owner: TodayBoard) {
         self.owner = owner
     }
+    nonisolated private let logger = Logger(subsystem: "MentoryiOS.TodayBoard.RecordForm", category: "Domain")
     
     
     // MARK: state
     nonisolated let id = UUID()
-    nonisolated private let logger = Logger(subsystem: "MentoryiOS.TodayBoard.RecordForm", category: "Domain")
     weak var owner: TodayBoard?
-    var mindAnalyzer: MindAnalyzer? = nil
+    
+    @Published var mindAnalyzer: MindAnalyzer? = nil
 
     @Published var titleInput: String = ""
     @Published var textInput: String = ""
@@ -55,7 +55,6 @@ final class RecordForm: Sendable, ObservableObject {
             self.validationResult = .none
         }
     }
-    
     func submit() {
         if titleInput.isEmpty {
             logger.error("RecordForm의 titleInput에는 값이 존재해야 합니다. 현재 값이 비어있습니다.")
@@ -77,6 +76,15 @@ final class RecordForm: Sendable, ObservableObject {
         // MindAnalyzer에게 분석 요청
         self.mindAnalyzer = MindAnalyzer(owner: self)
     }
+    
+    func removeForm() {
+        // capture
+        let todayBoard = self.owner!
+        
+        // mutate
+        todayBoard.recordForm = nil
+    }
+    
 
     // MARK: value
     nonisolated struct Record: Identifiable, Sendable, Hashable {

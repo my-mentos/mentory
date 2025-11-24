@@ -28,7 +28,7 @@ final class MentoryiOS: Sendable, ObservableObject {
     
     // MARK: state
     nonisolated let id: UUID = UUID()
-    public nonisolated let informationURL = URL(string: "https://www.notion.so/Mentory-Information-2b11c49e815f80c5873befe3b6847f70?source=copy_link")!
+    public nonisolated let informationURL = URL(string: "https://nice-asp-f94.notion.site/Mentory-Information-2b11c49e815f80c5873befe3b6847f70?source=copy_link")!
     
     @Published var userName: String? = nil
     func getGreetingText() -> String {
@@ -88,10 +88,7 @@ final class MentoryiOS: Sendable, ObservableObject {
         self.userName = userNameFromDB
         self.onboardingFinished = true
 
-        let todayBoard = TodayBoard(owner: self)
-        self.todayBoard = todayBoard
-        todayBoard.recordForm = RecordForm(owner: todayBoard)
-
+        self.todayBoard = TodayBoard(owner: self)
         self.settingBoard = SettingBoard(owner: self)
     }
     

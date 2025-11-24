@@ -4,18 +4,23 @@
 //
 //  Created by JAY, 구현모 on 11/17/25.
 //
+import Foundation
 import SwiftUI
+import OSLog
+import Collections
+import AsyncAlgorithms
+@preconcurrency import Combine
 
 
 // MARK: View
 struct RecordFormView: View {
-    // MARK: model
+    nonisolated let logger = Logger(subsystem: "MentoryiOS.RecordForm", category: "Presentation")
+    
+    // MARK: core
     @ObservedObject var recordForm: RecordForm
     
     
     // MARK: viewModel
-    @Environment(\.dismiss) var closeRecordFormView
-    
     @State private var cachedTextForAnalysis: String = ""
     @State private var isShowingMindAnalyzerView = false
     
@@ -26,10 +31,7 @@ struct RecordFormView: View {
     // 오디오 관련
     @State private var microphone = Microphone.shared
     @State private var showingAudioRecorder = false
-
-    init(_ recordForm: RecordForm) {
-        self.recordForm = recordForm
-    }
+    
     
     // MARK: - Body
     var body: some View {
@@ -64,33 +66,33 @@ struct RecordFormView: View {
         .fullScreenCover(isPresented: $isShowingMindAnalyzerView) {
             MindAnalyzerView(recordForm.mindAnalyzer!) {
                 // MindAnalyzerView에서 확인 버튼을 누르면 RecordFormView도 닫기
-                closeRecordFormView()
+                // dismiss가 구현되어야 한다.
+                recordForm.removeForm()
             }
         }
     }
     
     private var recordFormTopBar: some View {
         HStack {
-            Button {
-                closeRecordFormView()
-            } label: {
-                ActionButtonLabel(text: "취소", usage: .cancel)
-            }
-            Spacer()
-            Text(formattedDate)
-                .font(.headline)
-                .foregroundStyle(.primary)
+            CancelButton(
+                label: "취소",
+                action: {
+                    recordForm.removeForm()
+                })
+            
             Spacer()
             
-            Button {
-                Task {
-                    recordForm.validateInput()
-                    recordForm.submit()
-                    isShowingMindAnalyzerView.toggle()
+            TodayDate()
+            
+            Spacer()
+            
+            SubmitButton(
+                recordForm: recordForm,
+                label: "완료",
+                destination: { mindAnalyzer in
+                    MindAnalyzerView(mindAnalyzer)
                 }
-            } label: {
-                ActionButtonLabel(text: "완료", usage: isSubmitEnabled ? .submitEnabled : .submitDisabled)
-            }.disabled(!isSubmitEnabled)
+            )
         }
         .padding(.horizontal)
     }
@@ -252,12 +254,30 @@ struct RecordFormView: View {
             }
         }
     }
+    private func timeString(from timeInterval: TimeInterval) -> String {
+        let minutes = Int(timeInterval) / 60
+        let seconds = Int(timeInterval) % 60
+        return String(format: "%02d:%02d", minutes, seconds)
+    }
+}
+
+
+// MARK: Component
+fileprivate struct CancelButton: View {
+    let label: String
+    let action: () -> Void
     
-    
-    
-    
-    
-    // 오늘 날짜 포맷팅
+    var body: some View {
+        Button {
+            action()
+        } label: {
+            ActionButtonLabel(text: self.label,
+                              usage: .cancel)
+        }
+    }
+}
+
+fileprivate struct TodayDate: View {
     private var formattedDate: String {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ko_KR")
@@ -265,17 +285,52 @@ struct RecordFormView: View {
         return formatter.string(from: Date())
     }
     
-    // 제출 가능 여부 계산
-    private var isSubmitEnabled: Bool {
-        !recordForm.titleInput.trimmingCharacters(in: .whitespaces).isEmpty &&
-        !recordForm.textInput.trimmingCharacters(in: .whitespaces).isEmpty
+    var body: some View {
+        Text(formattedDate)
+            .font(.headline)
+            .foregroundStyle(.primary)
     }
+}
+
+fileprivate struct SubmitButton<Content: View>: View {
+    @ObservedObject var recordForm: RecordForm
+    let label: String
+    @ViewBuilder let destination: (MindAnalyzer) -> Content
     
+    @State var isSubmitEnabled: Bool = false
+    @State var showMindAnalyzerView: Bool = false
     
-    private func timeString(from timeInterval: TimeInterval) -> String {
-        let minutes = Int(timeInterval) / 60
-        let seconds = Int(timeInterval) % 60
-        return String(format: "%02d:%02d", minutes, seconds)
+    var body: some View {
+        Button {
+            Task {
+                recordForm.validateInput()
+                recordForm.submit()
+            }
+        } label: {
+            ActionButtonLabel(text: "완료", usage: isSubmitEnabled ? .submitEnabled : .submitDisabled)
+        }.disabled(!isSubmitEnabled)
+            .fullScreenCover(isPresented: $showMindAnalyzerView, content: {
+                if let mindAnalyzer = recordForm.mindAnalyzer {
+                    destination(mindAnalyzer)
+                }
+            })
+            .task {
+                let stream = recordForm.$mindAnalyzer.values
+                    .map { $0 != nil }
+                
+                for await isPresented in stream {
+                    self.showMindAnalyzerView = isPresented
+                }
+            }
+            .task {
+                let titleInputStream = recordForm.$titleInput.values
+                let textInputStream = recordForm.$textInput.values
+                
+                for await (title, text) in zip(titleInputStream, textInputStream) {
+                    self.isSubmitEnabled = !title.trimmingCharacters(in: .whitespaces).isEmpty &&
+                    !text.trimmingCharacters(in: .whitespaces).isEmpty
+                }
+            }
     }
 }
 
@@ -287,7 +342,9 @@ fileprivate struct RecordFormPreview: View {
     var body: some View {
         if let todayBoard = mentoryiOS.todayBoard,
            let recordForm = todayBoard.recordForm {
-            RecordFormView(recordForm)
+            RecordFormView(
+                recordForm: recordForm,
+            )
         } else {
             ProgressView("프리뷰 로딩 중입니다.")
                 .task {
@@ -296,6 +353,9 @@ fileprivate struct RecordFormPreview: View {
                     let onboarding = mentoryiOS.onboarding!
                     onboarding.nameInput = "김철수"
                     onboarding.next()
+                    
+                    let todayBoard = mentoryiOS.todayBoard!
+                    todayBoard.setUpForm()
                 }
         }
     }

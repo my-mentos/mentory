@@ -31,7 +31,21 @@ final class TodayBoard: Sendable, ObservableObject {
     @Published var isFetchedTodayString: Bool = false
     @Published var actionKeyWordItems: [(String, Bool)] = []
     
+    
     // MARK: action
+    func setUpForm() {
+        logger.debug("TodayBoard.setUp 호출")
+        
+        // capture
+        guard self.recordForm == nil else {
+            logger.error("이미 TodayBoard에 RecordForm이 존재합니다.")
+            return
+        }
+        
+        // mutate
+        self.recordForm = RecordForm(owner: self)
+    }
+    
     func fetchTodayString() async {
         // capture
         guard isFetchedTodayString == false else {

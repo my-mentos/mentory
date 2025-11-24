@@ -11,6 +11,8 @@
 		69765AE42ECEADFF00776A5F /* MentoryWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 7B1337652ECD63A2009931A4 /* MentoryWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		7B1337682ECD63A2009931A4 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B1337672ECD63A2009931A4 /* WidgetKit.framework */; };
 		7B13376A2ECD63A2009931A4 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B1337692ECD63A2009931A4 /* SwiftUI.framework */; };
+		7BAE5F192ED3656D00BD1DDD /* Values.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE0028872ECF906E003324B0 /* Values.framework */; platformFilter = ios; };
+		7BAE5F1A2ED3656D00BD1DDD /* Values.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CE0028872ECF906E003324B0 /* Values.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CE00287A2ECF8D3B003324B0 /* MentoryDB.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE0028742ECF8D3B003324B0 /* MentoryDB.framework */; };
 		CE00287B2ECF8D3B003324B0 /* MentoryDB.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CE0028742ECF8D3B003324B0 /* MentoryDB.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CE00288D2ECF906E003324B0 /* Values.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE0028872ECF906E003324B0 /* Values.framework */; };
@@ -20,6 +22,7 @@
 		CE26C2DF2ED1E385008668E0 /* DequeModule in Frameworks */ = {isa = PBXBuildFile; productRef = CE26C2DE2ED1E385008668E0 /* DequeModule */; };
 		CE2903302ECD9EDD00AC403C /* FirebaseAI in Frameworks */ = {isa = PBXBuildFile; productRef = CE29032F2ECD9EDD00AC403C /* FirebaseAI */; };
 		CE2903322ECD9EDD00AC403C /* FirebaseAILogic in Frameworks */ = {isa = PBXBuildFile; productRef = CE2903312ECD9EDD00AC403C /* FirebaseAILogic */; };
+		CE6CB1422ED385AD00390FF3 /* AsyncAlgorithms in Frameworks */ = {isa = PBXBuildFile; productRef = CE6CB1412ED385AD00390FF3 /* AsyncAlgorithms */; };
 		CEB755832ECB9FF900FCE15A /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = CEB755822ECB9FF900FCE15A /* Collections */; };
 		CEB755852ECB9FF900FCE15A /* DequeModule in Frameworks */ = {isa = PBXBuildFile; productRef = CEB755842ECB9FF900FCE15A /* DequeModule */; };
 		CED16A5F2ECB7FCD00CF012B /* Secrets.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CED16A5E2ECB7FCD00CF012B /* Secrets.xcconfig */; };
@@ -39,6 +42,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 7B1337642ECD63A2009931A4;
 			remoteInfo = MentoryWidgetExtension;
+		};
+		7BAE5F1B2ED3656D00BD1DDD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CE39BFB42EC313F20090DF78 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CE0028862ECF906E003324B0;
+			remoteInfo = Values;
 		};
 		CE0028782ECF8D3B003324B0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -84,6 +94,17 @@
 				69765AE42ECEADFF00776A5F /* MentoryWidgetExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7BAE5F1D2ED3656D00BD1DDD /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				7BAE5F1A2ED3656D00BD1DDD /* Values.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		CE0027B62ECF528B003324B0 /* Embed Frameworks */ = {
@@ -204,6 +225,7 @@
 			files = (
 				CE26C2DD2ED1E385008668E0 /* Collections in Frameworks */,
 				CE26C2DF2ED1E385008668E0 /* DequeModule in Frameworks */,
+				7BAE5F192ED3656D00BD1DDD /* Values.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -224,6 +246,7 @@
 				CE00287A2ECF8D3B003324B0 /* MentoryDB.framework in Frameworks */,
 				CE2903302ECD9EDD00AC403C /* FirebaseAI in Frameworks */,
 				CE00288D2ECF906E003324B0 /* Values.framework in Frameworks */,
+				CE6CB1422ED385AD00390FF3 /* AsyncAlgorithms in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -350,10 +373,12 @@
 				CE0028702ECF8D3B003324B0 /* Sources */,
 				CE0028712ECF8D3B003324B0 /* Frameworks */,
 				CE0028722ECF8D3B003324B0 /* Resources */,
+				7BAE5F1D2ED3656D00BD1DDD /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				7BAE5F1C2ED3656D00BD1DDD /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				CE0028752ECF8D3B003324B0 /* MentoryDB */,
@@ -418,6 +443,7 @@
 				CEB755842ECB9FF900FCE15A /* DequeModule */,
 				CE29032F2ECD9EDD00AC403C /* FirebaseAI */,
 				CE2903312ECD9EDD00AC403C /* FirebaseAILogic */,
+				CE6CB1412ED385AD00390FF3 /* AsyncAlgorithms */,
 			);
 			productName = Mentory;
 			productReference = CE39BFBC2EC313F20090DF78 /* Mentory.app */;
@@ -489,6 +515,7 @@
 			packageReferences = (
 				CEB755812ECB9FF900FCE15A /* XCRemoteSwiftPackageReference "swift-collections" */,
 				CE29032E2ECD9EDD00AC403C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				CE6CB1402ED385AD00390FF3 /* XCRemoteSwiftPackageReference "swift-async-algorithms" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CE39BFBD2EC313F20090DF78 /* Products */;
@@ -608,6 +635,12 @@
 			target = 7B1337642ECD63A2009931A4 /* MentoryWidgetExtension */;
 			targetProxy = 69765AE52ECEADFF00776A5F /* PBXContainerItemProxy */;
 		};
+		7BAE5F1C2ED3656D00BD1DDD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilter = ios;
+			target = CE0028862ECF906E003324B0 /* Values */;
+			targetProxy = 7BAE5F1B2ED3656D00BD1DDD /* PBXContainerItemProxy */;
+		};
 		CE0028792ECF8D3B003324B0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = CE0028732ECF8D3B003324B0 /* MentoryDB */;
@@ -698,7 +731,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = 3X262XJF5T;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MentoryWidget/Info.plist;
@@ -709,7 +742,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 25.11;
 				PRODUCT_BUNDLE_IDENTIFIER = cloud.mandooplz.Mentory.MentoryWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -728,7 +761,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = 3X262XJF5T;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MentoryWidget/Info.plist;
@@ -739,7 +772,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 25.11;
 				PRODUCT_BUNDLE_IDENTIFIER = cloud.mandooplz.Mentory.MentoryWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1244,6 +1277,14 @@
 				minimumVersion = 12.6.0;
 			};
 		};
+		CE6CB1402ED385AD00390FF3 /* XCRemoteSwiftPackageReference "swift-async-algorithms" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-async-algorithms.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.0;
+			};
+		};
 		CEB755812ECB9FF900FCE15A /* XCRemoteSwiftPackageReference "swift-collections" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-collections.git";
@@ -1274,6 +1315,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CE29032E2ECD9EDD00AC403C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseAILogic;
+		};
+		CE6CB1412ED385AD00390FF3 /* AsyncAlgorithms */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CE6CB1402ED385AD00390FF3 /* XCRemoteSwiftPackageReference "swift-async-algorithms" */;
+			productName = AsyncAlgorithms;
 		};
 		CEB755822ECB9FF900FCE15A /* Collections */ = {
 			isa = XCSwiftPackageProductDependency;

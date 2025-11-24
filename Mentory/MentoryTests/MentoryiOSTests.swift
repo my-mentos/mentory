@@ -134,7 +134,10 @@ struct MentoryiOSTests {
             await mentoryiOS.loadUserName()
             
             // then
-            await #expect(mentoryiOS.todayBoard != nil)
+            let todayBoard = try #require(await mentoryiOS.todayBoard)
+            
+            await #expect(todayBoard.recordForm == nil)
+            await #expect(todayBoard.records.isEmpty)
         }
         @Test func createSettingBoard() async throws {
             // given

@@ -176,20 +176,6 @@ struct OnboardingTests {
             // then
             await #expect(mentoryiOS.todayBoard != nil)
         }
-        @Test func TodayBoard_createRecordForm() async throws {
-            // given
-            let testUserName = "TEST_USER_NAME"
-            await onboarding.setName(testUserName)
-            
-            try await #require(mentoryiOS.todayBoard == nil)
-            
-            // when
-            await onboarding.next()
-            
-            // then
-            let todayBoard = try #require(await mentoryiOS.todayBoard)
-            await #expect(todayBoard.recordForm != nil)
-        }
         @Test func MentoryiOS_createSettingBoard() async throws {
             // given
             await onboarding.setName("TEST_USER_NAME")
