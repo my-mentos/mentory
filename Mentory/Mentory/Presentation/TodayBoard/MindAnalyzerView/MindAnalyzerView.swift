@@ -32,7 +32,21 @@ struct MindAnalyzerView: View {
                 selection: $mindAnalyzer.selectedCharacter
             )
             
-            analyzerButton
+            AnalyzeButton(
+                iconName: mindAnalyzer.isAnalyzing ? "hourglass" : "paperplane",
+                label: mindAnalyzer.isAnalyzing ? "면담 요청 중" : "면담 요청하기",
+                isActive: !mindAnalyzer.isAnalyzing,
+                action: {
+                    Task {
+                        mindAnalyzer.isAnalyzing = true
+                        await mindAnalyzer.startAnalyzing()
+                        // MentoryRecord 생성 및 저장
+                        await mindAnalyzer.saveRecord()
+                        mindAnalyzer.isAnalyzing = false
+                    }
+                })
+            
+            
             analysisStatus
             resultSection
 
@@ -45,30 +59,30 @@ struct MindAnalyzerView: View {
         }
     }
     
-    private var analyzerButton: some View {
-        Button {
-            Task {
-                mindAnalyzer.isAnalyzing = true
-                await mindAnalyzer.startAnalyzing()
-                // MentoryRecord 생성 및 저장
-                await mindAnalyzer.saveRecord()
-                mindAnalyzer.isAnalyzing = false
-            }
-        } label: {
-            HStack(spacing: 8) {
-                Image(systemName: mindAnalyzer.isAnalyzing ? "hourglass" : "paperplane")
-                Text(mindAnalyzer.isAnalyzing ? "면담 요청 중" : "면담 요청하기")
-                    .fontWeight(.semibold)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 16)
-            .background(
-                RoundedRectangle(cornerRadius: 20, style: .continuous)
-                    .fill(mindAnalyzer.isAnalyzing == false ? Color.purple : Color.gray.opacity(0.35))
-            )
-            .foregroundColor(.white)
-        }
-    }
+//    private var analyzerButton: some View {
+//        Button {
+//            Task {
+//                mindAnalyzer.isAnalyzing = true
+//                await mindAnalyzer.startAnalyzing()
+//                // MentoryRecord 생성 및 저장
+//                await mindAnalyzer.saveRecord()
+//                mindAnalyzer.isAnalyzing = false
+//            }
+//        } label: {
+//            HStack(spacing: 8) {
+//                Image(systemName: mindAnalyzer.isAnalyzing ? "hourglass" : "paperplane")
+//                Text(mindAnalyzer.isAnalyzing ? "면담 요청 중" : "면담 요청하기")
+//                    .fontWeight(.semibold)
+//            }
+//            .frame(maxWidth: .infinity)
+//            .padding(.vertical, 16)
+//            .background(
+//                RoundedRectangle(cornerRadius: 20, style: .continuous)
+//                    .fill(mindAnalyzer.isAnalyzing == false ? Color.purple : Color.gray.opacity(0.35))
+//            )
+//            .foregroundColor(.white)
+//        }
+//    }
 
     private var confirmButton: some View {
         Button {
@@ -336,6 +350,29 @@ fileprivate struct CharacterPicker: View {
                 .shadow(color: isSelected ? Color.black.opacity(0.08) : Color.clear, radius: 10, y: 8)
             }
             .buttonStyle(.plain)
+        }
+    }
+}
+
+fileprivate struct AnalyzeButton: View {
+    let iconName: String
+    let label: String
+    let isActive: Bool
+    let action: () -> Void
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 8) {
+                Image(systemName: iconName)
+                Text(label)
+                    .fontWeight(.semibold)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 16)
+            .background(
+                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    .fill(self.isActive ? Color.purple : Color.gray.opacity(0.35))
+            )
+            .foregroundColor(.white)
         }
     }
 }
