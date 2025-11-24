@@ -34,6 +34,7 @@ struct ActionRow: View {
             Text(text.isEmpty ? " " : text)
                 .font(.system(size: 16))
                 .foregroundColor(.black.opacity(0.8))
+                .strikethrough(checked, color: .black.opacity(0.6))
             
             Spacer()
         }
