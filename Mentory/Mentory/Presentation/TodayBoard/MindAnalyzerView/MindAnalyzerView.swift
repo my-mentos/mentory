@@ -27,7 +27,11 @@ struct MindAnalyzerView: View {
                 description: "오늘의 감정을 가장 잘 표현해줄 멘토를 선택하면 맞춤 리포트를 보내드릴게요."
             )
             
-            characterList
+            CharacterPicker(
+                characters: MindAnalyzer.CharacterType.allCases,
+                selection: $mindAnalyzer.selectedCharacter
+            )
+            
             analyzerButton
             analysisStatus
             resultSection
@@ -39,13 +43,6 @@ struct MindAnalyzerView: View {
                 confirmButton
             }
         }
-    }
-    
-    private var characterList: some View {
-        CharacterPicker(
-            characters: MindAnalyzer.CharacterType.allCases,
-            selection: $mindAnalyzer.selectedCharacter
-        )
     }
     
     private var analyzerButton: some View {
