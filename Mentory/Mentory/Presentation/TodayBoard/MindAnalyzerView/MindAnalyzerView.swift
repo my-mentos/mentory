@@ -54,34 +54,17 @@ struct MindAnalyzerView: View {
                 mindType: mindAnalyzer.mindType
             )
             
-
-            // 분석 완료 후 확인 버튼
-            if let result = mindAnalyzer.analyzedResult,
-               result.isEmpty == false,
-               mindAnalyzer.isAnalyzing == false {
-                confirmButton
-            }
-        }
-    }
-    
-    private var confirmButton: some View {
-        Button {
-            let recordForm = mindAnalyzer.owner!
             
-            recordForm.removeForm()
-        } label: {
-            HStack(spacing: 8) {
-                Image(systemName: "checkmark.circle.fill")
-                Text("확인")
-                    .fontWeight(.semibold)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 16)
-            .background(
-                RoundedRectangle(cornerRadius: 20, style: .continuous)
-                    .fill(Color.blue)
+            ConfirmButton(
+                icon: "checkmark.circle.fill",
+                label: "확인",
+                isPresented: mindAnalyzer.isAnalyzing == false,
+                action: {
+                    let recordForm = mindAnalyzer.owner!
+                    
+                    recordForm.removeForm()
+                }
             )
-            .foregroundColor(.white)
         }
     }
 }
@@ -355,8 +338,28 @@ fileprivate struct AnalyzedResult: View {
 
 
 fileprivate struct ConfirmButton: View {
+    let icon: String
+    let label: String
+    let isPresented: Bool
+    let action: () -> Void
+    
     var body: some View {
-        
+        if isPresented {
+            Button(action: self.action){
+                HStack(spacing: 8) {
+                    Image(systemName: self.icon)
+                    Text(self.label)
+                        .fontWeight(.semibold)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 16)
+                .background(
+                    RoundedRectangle(cornerRadius: 20, style: .continuous)
+                        .fill(Color.blue)
+                )
+                .foregroundColor(.white)
+            }
+        }
     }
 }
 
