@@ -59,31 +59,6 @@ struct MindAnalyzerView: View {
         }
     }
     
-//    private var analyzerButton: some View {
-//        Button {
-//            Task {
-//                mindAnalyzer.isAnalyzing = true
-//                await mindAnalyzer.startAnalyzing()
-//                // MentoryRecord 생성 및 저장
-//                await mindAnalyzer.saveRecord()
-//                mindAnalyzer.isAnalyzing = false
-//            }
-//        } label: {
-//            HStack(spacing: 8) {
-//                Image(systemName: mindAnalyzer.isAnalyzing ? "hourglass" : "paperplane")
-//                Text(mindAnalyzer.isAnalyzing ? "면담 요청 중" : "면담 요청하기")
-//                    .fontWeight(.semibold)
-//            }
-//            .frame(maxWidth: .infinity)
-//            .padding(.vertical, 16)
-//            .background(
-//                RoundedRectangle(cornerRadius: 20, style: .continuous)
-//                    .fill(mindAnalyzer.isAnalyzing == false ? Color.purple : Color.gray.opacity(0.35))
-//            )
-//            .foregroundColor(.white)
-//        }
-//    }
-
     private var confirmButton: some View {
         Button {
             let recordForm = mindAnalyzer.owner!
@@ -359,6 +334,7 @@ fileprivate struct AnalyzeButton: View {
     let label: String
     let isActive: Bool
     let action: () -> Void
+    
     var body: some View {
         Button(action: action) {
             HStack(spacing: 8) {
@@ -374,6 +350,12 @@ fileprivate struct AnalyzeButton: View {
             )
             .foregroundColor(.white)
         }
+    }
+}
+
+fileprivate struct AnalyzeResult: View {
+    var body: some View {
+        
     }
 }
 
