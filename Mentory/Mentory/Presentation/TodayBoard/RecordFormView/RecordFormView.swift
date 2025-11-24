@@ -59,7 +59,11 @@ struct RecordFormView: View {
                     text: $recordForm.titleInput
                 )
                 
-                self.textInputCard
+                BodyField(
+                    prompt: "글쓰기 시작...",
+                    text: $recordForm.textInput
+                )
+                
                 self.imagePreviewCard
                 self.voicePreviewCard
             },
@@ -118,25 +122,23 @@ struct RecordFormView: View {
         }
     }
     
-    private var textInputCard: some View {
-        LiquidGlassCard {
-            ZStack(alignment: .topLeading) {
-                if recordForm.textInput.isEmpty {
-                    Text("글쓰기 시작…")
-                        .foregroundColor(.gray.opacity(0.5))
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 12)
-                        .allowsHitTesting(false)
-                }
-                
-                TextEditor(text: $recordForm.textInput)
-                    .scrollContentBackground(.hidden)
-                    .frame(minHeight: 300)
-                    .padding(.horizontal, 4)
-                    .padding(.vertical, 8)
-            }
-        }
-    }
+//    private var textInputCard: some View {
+//        LiquidGlassCard {
+//            ZStack(alignment: .topLeading) {
+//                if recordForm.textInput.isEmpty {
+//                    Text("글쓰기 시작…")
+//                        .foregroundColor(.gray.opacity(0.5))
+//                        .padding()
+//                        .allowsHitTesting(false)
+//                }
+//                
+//                TextEditor(text: $recordForm.textInput)
+//                    .scrollContentBackground(.hidden)
+//                    .frame(minHeight: 300)
+//                    .padding()
+//            }
+//        }
+//    }
     
     private var imagePreviewCard: some View {
         Group {
@@ -357,6 +359,29 @@ fileprivate struct TitleField: View {
             TextField(prompt, text: $text)
                 .font(.title3)
                 .padding()
+        }
+    }
+}
+
+fileprivate struct BodyField: View {
+    let prompt: String
+    @Binding var text: String
+    
+    var body: some View {
+        LiquidGlassCard {
+            ZStack(alignment: .topLeading) {
+                if text.isEmpty {
+                    Text("글쓰기 시작…")
+                        .foregroundColor(.gray.opacity(0.5))
+                        .padding()
+                        .allowsHitTesting(false)
+                }
+                
+                TextEditor(text: $text)
+                    .scrollContentBackground(.hidden)
+                    .frame(minHeight: 300)
+                    .padding()
+            }
         }
     }
 }
