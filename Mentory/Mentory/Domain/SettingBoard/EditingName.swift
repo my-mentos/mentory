@@ -24,9 +24,25 @@ final class EditingName: Sendable, ObservableObject{
     nonisolated let id = UUID()
     weak var owner: SettingBoard?
     @Published var currentEditingName: String
+    @Published var isSubmitDisabled: Bool = false
     
     
     // MARK: action
+    func validate() {
+        // capture
+        let newName = currentEditingName.trimmingCharacters(in: .whitespacesAndNewlines)
+        let currentName = owner?.owner!.userName ?? ""
+        
+        // mutate
+        if newName.isEmpty || newName == currentName {
+            isSubmitDisabled = true
+            return
+        }
+        isSubmitDisabled = false
+        
+    }
+
+    
     func submit() async {
         // capture
         let newName = currentEditingName.trimmingCharacters(in: .whitespacesAndNewlines)

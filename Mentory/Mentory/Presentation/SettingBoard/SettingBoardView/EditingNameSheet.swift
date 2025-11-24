@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import Combine
 
 // MARK: View
 struct EditingNameSheet: View {
@@ -46,6 +47,12 @@ struct EditingNameSheet: View {
             .autocorrectionDisabled()
             .textInputAutocapitalization(.never)
             .focused($nameTextFieldFocused)
+            .task {
+                let stream = editingName.$currentEditingName.values
+                for await _ in stream {
+                    editingName.validate()
+                }
+            }
     }
     
     @ViewBuilder
@@ -73,7 +80,7 @@ struct EditingNameSheet: View {
                 Task { await editingName.submit() }
                 closeEditingNameSheet()
             }
-            .disabled(isRenameSaveDisabled)
+            .disabled(editingName.isSubmitDisabled)
         }
     }
     
@@ -81,17 +88,5 @@ struct EditingNameSheet: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
             nameTextFieldFocused = true
         }
-    }
-    
-    
-    
-    
-    
-    
-    //TODO: refactoring 가능한지
-    private var isRenameSaveDisabled: Bool {
-        let trimmed = editingName.currentEditingName.trimmingCharacters(in: .whitespacesAndNewlines)
-        let currentName = editingName.owner?.owner!.userName ?? ""
-        return trimmed.isEmpty || trimmed == currentName
     }
 }
