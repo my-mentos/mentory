@@ -51,9 +51,9 @@
       <td>🏗️ 아키텍처</td>
       <td>
         <ul>
-          <li><strong>SwiftUI</strong> - 선언형 UI 프레임워크</li>
-          <li><strong>MVVM</strong> - Combine 기반 반응형 아키텍처</li>
-          <li><strong>Swift Concurrency</strong> - async/await 및 Task 기반 비동기 처리 (Swift 6)</li>
+          <li><strong>SwiftUI + MVVM</strong></li>
+          <li><strong>Combine</strong></li>
+          <li><strong>Swift Concurrency(Swift 6)</strong></li>
         </ul>
       </td>
     </tr>
@@ -61,7 +61,7 @@
       <td>💾 데이터 관리</td>
       <td>
         <ul>
-          <li><strong>SwiftData</strong> - 안전한 로컬 데이터 영속화 및 백업</li>
+          <li><strong>SwiftData</strong></li>
         </ul>
       </td>
     </tr>
@@ -69,8 +69,8 @@
       <td>🎤 음성 처리</td>
       <td>
         <ul>
-          <li><strong>AVFoundation</strong> -</li>
-          <li><strong>Speech Framework</strong> - iOS 기본 음성 인식 및 전사(STT)</li>
+          <li><strong>AVFoundation</strong></li>
+          <li><strong>Speech Framework</strong></li>
         </ul>
       </td>
     </tr>
@@ -78,15 +78,8 @@
       <td>🤖 LLM</td>
       <td>
         <ul>
-          <li><strong>ESTSOFT Alan LLM API</strong> - 감정 분석 및 맞춤형 조언 생성</li>
-        </ul>
-      </td>
-    </tr>
-    <tr>
-      <td>📊 헬스케어 연동</td>
-      <td>
-        <ul>
-          <li><strong>HealthKit</strong> - 건강 데이터 확장 및 통합</li>
+          <li><strong>ESTSOFT Alan LLM API</strong></li>
+          <li><strong>Firebase AI Logic</strong></li>
         </ul>
       </td>
     </tr>
