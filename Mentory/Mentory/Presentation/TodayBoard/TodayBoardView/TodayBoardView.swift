@@ -75,7 +75,13 @@ struct TodayBoardView: View {
                             ActionRow(
                                 checked: Binding(
                                     get: { todayBoard.actionKeyWordItems[index].1 },
-                                    set: { todayBoard.actionKeyWordItems[index].1 = $0 }
+                                    set: { newValue in
+                                        todayBoard.actionKeyWordItems[index].1 = newValue
+                                        // 체크 상태 변경 시 DB에 실시간 업데이트
+                                        Task {
+                                            await todayBoard.updateActionCompletion()
+                                        }
+                                    }
                                 ),
                                 text: todayBoard.actionKeyWordItems[index].0
                             )
