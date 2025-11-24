@@ -13,12 +13,14 @@ import Collections
 @MainActor
 final class DailyRecordModel: Sendable {
     // MARK: core
-    init(owner: MentoryDBModel? = nil, createAt: Date, content: String, analyzedContent: String, emotion: Emotion) {
+    init(owner: MentoryDBModel? = nil, createAt: Date, content: String, analyzedContent: String, emotion: Emotion, actionTexts: [String] = [], actionCompletionStatus: [Bool] = []) {
         self.owner = owner
         self.createAt = createAt
         self.content = content
         self.analyzedContent = analyzedContent
         self.emotion = emotion
+        self.actionTexts = actionTexts
+        self.actionCompletionStatus = actionCompletionStatus
     }
     
     
@@ -32,8 +34,12 @@ final class DailyRecordModel: Sendable {
     var analyzedContent: String
     
     var emotion: Emotion
-    
-    
+
+    // 행동 추천 (무조건 3개)
+    var actionTexts: [String]
+    var actionCompletionStatus: [Bool]
+
+
     // MARK: action
     func delete() {
         fatalError()

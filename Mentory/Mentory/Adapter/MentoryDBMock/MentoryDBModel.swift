@@ -28,7 +28,9 @@ final class MentoryDBModel: Sendable {
                            createdAt: $0.createAt,
                            content: $0.content,
                            analyzedResult: $0.analyzedContent,
-                           emotion: $0.emotion)
+                           emotion: $0.emotion,
+                           actionTexts: $0.actionTexts,
+                           actionCompletionStatus: $0.actionCompletionStatus)
             }
     }
     func getTodayRecords() -> [RecordData] {
@@ -41,7 +43,9 @@ final class MentoryDBModel: Sendable {
                            createdAt: $0.createAt,
                            content: $0.content,
                            analyzedResult: $0.analyzedContent,
-                           emotion: $0.emotion)
+                           emotion: $0.emotion,
+                           actionTexts: $0.actionTexts,
+                           actionCompletionStatus: $0.actionCompletionStatus)
             }
     }
     func getRecords(from: Date, to: Date) -> [RecordData] {
@@ -55,7 +59,9 @@ final class MentoryDBModel: Sendable {
                            createdAt: $0.createAt,
                            content: $0.content,
                            analyzedResult: $0.analyzedContent,
-                           emotion: $0.emotion)
+                           emotion: $0.emotion,
+                           actionTexts: $0.actionTexts,
+                           actionCompletionStatus: $0.actionCompletionStatus)
             }
     }
     
@@ -71,13 +77,25 @@ final class MentoryDBModel: Sendable {
                 createAt: data.createdAt,
                 content: data.content,
                 analyzedContent: data.analyzedResult,
-                emotion: data.emotion
+                emotion: data.emotion,
+                actionTexts: data.actionTexts,
+                actionCompletionStatus: data.actionCompletionStatus
             )
             
             records.append(newRecord)
         }
     }
-    
-    
+
+    func updateActionCompletion(recordId: UUID, completionStatus: [Bool]) {
+        guard let record = records.first(where: { $0.id == recordId }) else {
+            print("레코드 ID \(recordId)를 찾을 수 없습니다.")
+            return
+        }
+
+        record.actionCompletionStatus = completionStatus
+        print("레코드 \(recordId)의 행동 추천 완료 상태가 업데이트되었습니다.")
+    }
+
+
     // MARK: value
 }

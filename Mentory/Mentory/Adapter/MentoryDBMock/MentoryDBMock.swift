@@ -38,7 +38,14 @@ struct MentoryDBMock: MentoryDBInterface {
             model.createDailyRecords()
         }
     }
-    
+
+    @concurrent
+    func updateActionCompletion(recordId: UUID, completionStatus: [Bool]) async throws {
+        await MainActor.run {
+            model.updateActionCompletion(recordId: recordId, completionStatus: completionStatus)
+        }
+    }
+
     @concurrent
     func fetchAll() async throws -> [RecordData] {
         await MainActor.run {
