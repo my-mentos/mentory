@@ -14,28 +14,31 @@ struct RecordFormLayout<TopBar: View, Main: View, BottomBar: View>: View {
     @ViewBuilder let bottomBar: () -> BottomBar
     
     var body: some View {
-        ZStack {
-            Color(.systemGroupedBackground)
-                .ignoresSafeArea()
-            VStack(spacing: 0) {
-                
-                self.topBar()
-                
-                ScrollView {
-                    VStack(spacing: 16) {
-                        self.main()
+        NavigationStack {
+            ZStack {
+                Color(.systemGroupedBackground)
+                    .ignoresSafeArea()
+                VStack(spacing: 0) {
+                    
+                    self.topBar()
+                    
+                    ScrollView {
+                        VStack(spacing: 16) {
+                            self.main()
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.top, 16)
+                        .padding(.bottom, 80)
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 16)
-                    .padding(.bottom, 80)
+                    Spacer()
                 }
-                Spacer()
             }
-            VStack {
-                Spacer()
-                self.bottomBar()
+            .toolbar {
+                ToolbarItemGroup(placement: .bottomBar) {
+                    self.bottomBar()
+                }
             }
-        }
         .ignoresSafeArea(.keyboard, edges: .bottom)
+    }
     }
 }
