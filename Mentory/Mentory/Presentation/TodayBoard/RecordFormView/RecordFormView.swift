@@ -77,6 +77,9 @@ struct RecordFormView: View {
                 .fontWeight(.medium)
                 .foregroundStyle(recordForm.imageInput != nil ? .blue : .primary)
         }
+        .sheet(isPresented: $showingImagePicker) {
+            PhotosPicker(imageData: $recordForm.imageInput)
+        }
         
         Button(action: {
             showingCamera = true
@@ -85,6 +88,9 @@ struct RecordFormView: View {
                 .font(.title2)
                 .fontWeight(.medium)
                 .foregroundStyle(recordForm.imageInput != nil ? .blue : .primary)
+        }
+        .sheet(isPresented: $showingCamera) {
+            ImagePicker(imageData: $recordForm.imageInput, sourceType: .camera)
         }
         
         Button(action: {
@@ -95,70 +101,18 @@ struct RecordFormView: View {
                 .fontWeight(.medium)
                 .foregroundStyle(recordForm.voiceInput != nil ? .blue : .primary)
         }
+        .sheet(isPresented: $showingAudioRecorder) {
+            RecordingSheet(
+                onComplete: { url in
+                    recordForm.voiceInput = url
+                    showingAudioRecorder = false
+                },
+                onCancel: {
+                    showingAudioRecorder = false
+                }
+            )
+        }
     }
-//    private var recordFormBottomBar: some View {
-//        HStack(spacing: 0) {
-////            Spacer()
-//            Button(action: {
-//                showingImagePicker = true
-//            }) {
-//                Image(systemName: "photo")
-//                    .font(.title2)
-//                    .fontWeight(.medium)
-//                    .foregroundStyle(recordForm.imageInput != nil ? .blue : .primary)
-//            }
-////            Spacer()
-//            Button(action: {
-//                showingCamera = true
-//            }) {
-//                Image(systemName: "camera")
-//                    .font(.title2)
-//                    .fontWeight(.medium)
-//                    .foregroundStyle(recordForm.imageInput != nil ? .blue : .primary)
-//            }
-////            Spacer()
-//            Button(action: {
-//                showingAudioRecorder = true
-//            }) {
-//                Image(systemName: "waveform")
-//                    .font(.title2)
-//                    .fontWeight(.medium)
-//                    .foregroundStyle(recordForm.voiceInput != nil ? .blue : .primary)
-//            }
-////            Spacer()
-//        }
-//        .padding(.vertical, 16)
-//        .padding(.horizontal, 20)
-//        .background(
-//            .ultraThinMaterial,
-//            in: RoundedRectangle(cornerRadius: 28, style: .continuous)
-//        )
-//        .overlay(
-//            RoundedRectangle(cornerRadius: 28, style: .continuous)
-//                .stroke(Color.white.opacity(0.3), lineWidth: 1)
-//        )
-//        .shadow(color: Color.black.opacity(0.08), radius: 18, x: 0, y: -4)
-//        .padding(.horizontal, 16)
-//        .padding(.bottom, 16)
-//        .sheet(isPresented: $showingImagePicker) {
-//            PhotosPicker(imageData: $recordForm.imageInput)
-//        }
-//        .sheet(isPresented: $showingCamera) {
-//            ImagePicker(imageData: $recordForm.imageInput, sourceType: .camera)
-//        }
-//        .sheet(isPresented: $showingAudioRecorder) {
-//            RecordingSheet(
-//                onComplete: { url in
-//                    recordForm.voiceInput = url
-//                    showingAudioRecorder = false
-//                },
-//                onCancel: {
-//                    showingAudioRecorder = false
-//                }
-//            )
-//        }
-//    }
-    
     private var titleInputCard: some View {
         LiquidGlassCard {
             TextField("제목", text: $recordForm.titleInput)
