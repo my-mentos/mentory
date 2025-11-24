@@ -12,7 +12,6 @@ import Values
 struct MindAnalyzerView: View {
     // MARK: model
     @ObservedObject var mindAnalyzer: MindAnalyzer
-
     init(_ mindAnalyzer: MindAnalyzer) {
         self.mindAnalyzer = mindAnalyzer
     }
@@ -39,9 +38,10 @@ struct MindAnalyzerView: View {
                 action: {
                     Task {
                         mindAnalyzer.isAnalyzing = true
+                        
                         await mindAnalyzer.startAnalyzing()
-                        // MentoryRecord 생성 및 저장
                         await mindAnalyzer.saveRecord()
+                        
                         mindAnalyzer.isAnalyzing = false
                     }
                 })
@@ -69,26 +69,6 @@ struct MindAnalyzerView: View {
     }
 }
 
-
-
-fileprivate struct StatusBadge: View {
-    let text: String
-    
-    var body: some View {
-        HStack(spacing: 10) {
-            Image(systemName: "sparkles")
-                .foregroundColor(.purple)
-            Text(text)
-                .font(.subheadline)
-        }
-        .padding(14)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .fill(Color(.secondarySystemBackground))
-        )
-    }
-}
 
 
 
@@ -145,33 +125,6 @@ fileprivate extension Emotion {
         case .slightlyPleasant: return "🙂"
         case .pleasant: return "😄"
         case .veryPleasant: return "🤩"
-        }
-    }
-}
-
-extension MindAnalyzer.CharacterType: CaseIterable {
-    static var allCases: [MindAnalyzer.CharacterType] { [.A, .B] }
-}
-
-fileprivate extension MindAnalyzer.CharacterType {
-    var displayName: String {
-        switch self {
-        case .A: return "냉스 처리스키"
-        case .B: return "알렉산더 지방스"
-        }
-    }
-    
-    var description: String {
-        switch self {
-        case .A: return "냉철한 분석가 초록이가 감정 분석을 도와드릴게요!"
-        case .B: return "감성적인 조력자 지방이가 따뜻하게 답해드릴게요!"
-        }
-    }
-    
-    var imageName: String {
-        switch self {
-        case .A: return "bunsuk"
-        case .B: return "gureum"
         }
     }
 }
@@ -334,7 +287,27 @@ fileprivate struct AnalyzedResult: View {
             )
         }
     }
+    private struct StatusBadge: View {
+        let text: String
+
+        var body: some View {
+            HStack(spacing: 10) {
+                Image(systemName: "sparkles")
+                    .foregroundColor(.purple)
+                Text(text)
+                    .font(.subheadline)
+            }
+            .padding(14)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(
+                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    .fill(Color(.secondarySystemBackground))
+            )
+        }
+    }
 }
+
+
 
 
 fileprivate struct ConfirmButton: View {

@@ -197,9 +197,30 @@ final class MindAnalyzer: Sendable, ObservableObject {
     
     
     // MARK: value
-    enum CharacterType: Sendable {
+    enum CharacterType: Sendable, CaseIterable {
         case A
         case B
+        
+        var displayName: String {
+            switch self {
+            case .A: return "냉스 처리스키"
+            case .B: return "알렉산더 지방스"
+            }
+        }
+        
+        var description: String {
+            switch self {
+            case .A: return "냉철한 분석가 초록이가 감정 분석을 도와드릴게요!"
+            case .B: return "감성적인 조력자 지방이가 따뜻하게 답해드릴게요!"
+            }
+        }
+        
+        var imageName: String {
+            switch self {
+            case .A: return "bunsuk"
+            case .B: return "gureum"
+            }
+        }
     }
 
     enum RiskLevel: String, Sendable, Codable {
