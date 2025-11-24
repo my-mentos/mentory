@@ -18,8 +18,9 @@ struct RecordFormView: View {
     
     // MARK: core
     @ObservedObject var recordForm: RecordForm
-    
-    
+    @Environment(\.dismiss) var dismiss
+
+
     // MARK: viewModel
     @State private var cachedTextForAnalysis: String = ""
     @State private var isShowingMindAnalyzerView = false
@@ -66,8 +67,8 @@ struct RecordFormView: View {
         .fullScreenCover(isPresented: $isShowingMindAnalyzerView) {
             MindAnalyzerView(recordForm.mindAnalyzer!) {
                 // MindAnalyzerView에서 확인 버튼을 누르면 RecordFormView도 닫기
-                // dismiss가 구현되어야 한다.
                 recordForm.removeForm()
+                dismiss()
             }
         }
     }
@@ -318,6 +319,7 @@ fileprivate struct SubmitButton<Content: View>: View {
             } message: {
                 Text("일기를 제출하면 수정할 수 없습니다.\n제출하시겠습니까?")
             }
+            .keyboardShortcut(.defaultAction)
             .fullScreenCover(isPresented: $showMindAnalyzerView, content: {
                 if let mindAnalyzer = recordForm.mindAnalyzer {
                     destination(mindAnalyzer)
