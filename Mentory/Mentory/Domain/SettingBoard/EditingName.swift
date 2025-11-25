@@ -41,6 +41,7 @@ final class EditingName: Sendable, ObservableObject{
             isSubmitDisabled = false
             return
         }
+        isSubmitDisabled = true
     }
 
     
