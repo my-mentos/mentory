@@ -173,11 +173,19 @@ fileprivate struct SubmitButton<Content: View>: View {
                 Text("일기를 제출하면 수정할 수 없습니다.\n제출하시겠습니까?")
             }
             .keyboardShortcut(.defaultAction)
-            .fullScreenCover(isPresented: $showMindAnalyzerView, content: {
+        
+            .navigationDestination(isPresented: $showMindAnalyzerView, destination: {
                 if let mindAnalyzer = recordForm.mindAnalyzer {
                     destination(mindAnalyzer)
                 }
             })
+        
+//            .fullScreenCover(isPresented: $showMindAnalyzerView, content: {
+//                if let mindAnalyzer = recordForm.mindAnalyzer {
+//                    destination(mindAnalyzer)
+//                }
+//            })
+        
             .task {
                 let stream = recordForm.$mindAnalyzer.values
                     .map { $0 != nil }
