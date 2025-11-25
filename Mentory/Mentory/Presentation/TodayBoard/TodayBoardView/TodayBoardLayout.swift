@@ -10,23 +10,19 @@ import WebKit
 
 
 // MARK: Layout
-struct TodayBoardLayout<Content:View>: View {
-    let content: Content
+struct TodayBoardLayout<Content: View, navDestination: View>: View {
+    @ViewBuilder let navDestination: () -> navDestination
+    @ViewBuilder let content: () -> Content
 
     @State private var isShowingInformationView = false
-
-    init(@ViewBuilder content: () -> Content) {
-        self.content = content()
-    }
     
     var body: some View {
         NavigationStack {
             ZStack {
                 GrayBackground()
-                
                 ScrollView {
                     VStack(alignment: .leading, spacing: 24) {
-                        self.content
+                        self.content()
                     }
                     .padding(.horizontal, 24)
                     .padding(.bottom, 40)
@@ -35,6 +31,7 @@ struct TodayBoardLayout<Content:View>: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
+                        // action을 인자로 받도록
                         isShowingInformationView = true
                     } label: {
                         Image(systemName: "info.circle")
@@ -43,14 +40,8 @@ struct TodayBoardLayout<Content:View>: View {
                 }
             }
             .sheet(isPresented: $isShowingInformationView) {
-                WebView(url: MentoryiOS().informationURL)
-                    .toolbar {
-                        ToolbarItem(placement: .topBarTrailing) {
-                            Button("닫기") {
-                                isShowingInformationView = false
-                            }
-                        }
-                    }
+                // 웹 뷰 전체를 인자로 받도록
+                self.navDestination()
             }
         }
     }

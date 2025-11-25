@@ -23,7 +23,12 @@ struct TodayBoardView: View {
 
     // MARK: body
     var body: some View {
-        TodayBoardLayout {
+        TodayBoardLayout(
+            navDestination: {
+                WebView(url: todayBoard.owner!.informationURL)
+            }
+        )
+        {
             // 상단 타이틀
             Title("기록")
             
