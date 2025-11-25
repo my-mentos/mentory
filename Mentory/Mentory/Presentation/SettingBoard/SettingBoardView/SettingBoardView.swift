@@ -27,7 +27,7 @@ class SettingBoardViewModel: ObservableObject {
     
     @Published var isShowingDataDeletionAlert = false
     // MARK: action
-
+    
     
     // MARK: value
     
@@ -39,74 +39,47 @@ struct SettingBoardView: View {
     @ObservedObject var settingBoard: SettingBoard
     @ObservedObject var settingBoardViewModel: SettingBoardViewModel
     
-    
     var body: some View {
-        NavigationStack{
+        NavigationStack {
             ZStack {
+                // 1) 배경
                 Color(.systemGray6)
                     .ignoresSafeArea()
                 
+                // 2) 화면에 보이는 Row들
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 28) {
-                        header
-                        primarySettingsSection
-                        legalSection
-                        dataDeletionSection
+                        HeaderRow
+                        SettingSection {
+                            EditingNameRow
+                            AppSettingsRow
+                            ReminderToggleRow
+                            ReminderTimeRow
+                        }
+                        SettingSection {
+                            PrivacyPolicyRow
+                            LicenseInfoRow
+                            TermsOfServiceRow
+                        }
+                        SettingSection {
+                            DataDeletionRow
+                        }
                     }
                     .padding(.horizontal, 20)
                     .padding(.vertical, 28)
                 }
             }
-            .sheet(isPresented: $settingBoardViewModel.isShowingEditingNameSheet, onDismiss: {
-                Task {
-                    await settingBoard.editingName?.cancel()
-                }
-            }) {
-                EditingNameSheet(editingName: settingBoard.editingName!)
-            }
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        settingBoardViewModel.isShowingInformationView = true
-                    } label: {
-                        Image(systemName: "info.circle")
-                            .font(.system(size: 18, weight: .semibold))
-                    }
-                }
-            }
-            .sheet(isPresented: $settingBoardViewModel.isShowingInformationView) {
-                WebView(url: settingBoard.owner!.informationURL)
-                    .toolbar {
-                        ToolbarItem(placement: .topBarTrailing) {
-                            Button("닫기") {
-                                settingBoardViewModel.isShowingInformationView = false
-                            }
-                        }
-                    }
-            }
         }
-        .alert(
-            "데이터를 삭제하시겠습니까?",
-            isPresented: $settingBoardViewModel.isShowingDataDeletionAlert,
-            actions: {
-                Button("삭제", role: .destructive) {
-                    settingBoard.confirmDataDeletion()
-                }
-                Button("취소", role: .cancel) {
-                }
-            },
-            message: {
-                Text("삭제를 누르면 멘토리 데이터가 모두 제거됩니다.")
-            }
-        )
-        .task {
-            settingBoard.loadSavedReminderTime()
-        }
+        .modifier(LoadSavedReminderTime(dm: settingBoard))
+        
+        .modifier(HeaderActionModifier(vm: settingBoardViewModel, dm: settingBoard))
+        .modifier(EditingNameActionMofiier(vm: settingBoardViewModel, dm: settingBoard))
     }
     
     
-    
-    private var header: some View {
+    // MARK: ViewBuilder 모음
+    @ViewBuilder
+    private var HeaderRow: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(alignment: .top) {
                 Text("설정")
@@ -117,111 +90,234 @@ struct SettingBoardView: View {
                 .font(.system(size: 20, weight: .bold))
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-    }
-    
-    private var primarySettingsSection: some View {
-        SettingSection {
-            SettingRow(
-                iconName: "person.text.rectangle",
-                iconBackground: Color.orange,
-                title: "이름 변경",
-                showDivider: true
-            ) {
-                // 도메인에는 편집값 초기화만 맡기고
-                //settingBoard.startRenaming()
-                // 시트 표시 여부는 View 상태로 관리
-                Task {
-                    settingBoard.setUpEditingName()
-                    settingBoardViewModel.isShowingEditingNameSheet = true
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    settingBoardViewModel.isShowingInformationView = true
+                } label: {
+                    Image(systemName: "info.circle")
+                        .font(.system(size: 18, weight: .semibold))
                 }
-                
-            }
-            
-            SettingRow(
-                iconName: "app.badge.fill",
-                iconBackground: Color.blue,
-                title: "앱 설정",
-                showDivider: true
-            )
-            
-            SettingToggleRow(
-                iconName: "bell.fill",
-                iconBackground: Color.red,
-                title: "알림 설정",
-                isOn: $settingBoard.isReminderOn,
-                showDivider: true
-            )
-            
-            SettingValueRow(
-                iconName: "clock.fill",
-                iconBackground: Color.purple,
-                title: "알림 시간",
-                value: settingBoard.formattedReminderTime(),
-                showDivider: false
-            ) {
-                settingBoardViewModel.isShowingReminderPickerSheet = true
-            }
-            .sheet(isPresented: $settingBoardViewModel.isShowingReminderPickerSheet) {
-                reminderPickerSheet
             }
         }
     }
     
-    private var legalSection: some View {
-        SettingSection {
-            SettingRow(
-                iconName: "lock.fill",
-                iconBackground: Color.gray,
-                title: "개인정보 처리 방침",
-                showDivider: true
-            ){
-                settingBoardViewModel.isShowingPrivacyPolicyView = true
-            }
-            .navigationDestination(isPresented: $settingBoardViewModel.isShowingPrivacyPolicyView) {
-                PrivacyPolicyView()
-            }
-            
-            SettingRow(
-                iconName: "doc.text.fill",
-                iconBackground: Color.green,
-                title: "라이센스 정보",
-                showDivider: true
-            ){
-                settingBoardViewModel.isShowingLicenseInfoView = true
-            }
-            .navigationDestination(isPresented: $settingBoardViewModel.isShowingLicenseInfoView) {
-                LicenseInfoView()
-            }
-            
-            SettingRow(
-                iconName: "book.fill",
-                iconBackground: Color.blue.opacity(0.8),
-                title: "이용 약관",
-                showDivider: false
-            ){
-                settingBoardViewModel.isShowingTermsOfServiceView = true
-            }
-            .navigationDestination(isPresented: $settingBoardViewModel.isShowingTermsOfServiceView) {
-                TermsOfServiceView()
+    @ViewBuilder
+    private var EditingNameRow: some View {
+        SettingRow(
+            iconName: "person.text.rectangle",
+            iconBackground: Color.orange,
+            title: "이름 변경",
+            showDivider: false
+        ) {
+            Task {
+                settingBoard.setUpEditingName()
+                settingBoardViewModel.isShowingEditingNameSheet = true
             }
         }
     }
     
-    private var dataDeletionSection: some View {
-        SettingSection {
-            SettingRow(
-                iconName: "trash.fill",
-                iconBackground: Color.red.opacity(0.85),
-                title: "데이터 삭제",
-                titleColor: .red,
-                showDivider: false
-            ) {
-                settingBoardViewModel.isShowingDataDeletionAlert = true
-            }
+    @ViewBuilder
+    private var AppSettingsRow: some View {
+        SettingRow(
+            iconName: "app.badge.fill",
+            iconBackground: Color.blue,
+            title: "앱 설정",
+            showDivider: false
+        ) {}
+    }
+    
+    @ViewBuilder
+    private var ReminderToggleRow: some View {
+        SettingToggleRow(
+            iconName: "bell.fill",
+            iconBackground: Color.red,
+            title: "알림 설정",
+            isOn: $settingBoard.isReminderOn,
+            showDivider: false
+        )
+        
+    }
+    
+    @ViewBuilder
+    private var ReminderTimeRow: some View {
+        SettingValueRow(
+            iconName: "clock.fill",
+            iconBackground: Color.purple,
+            title: "알림 시간",
+            value: settingBoard.formattedReminderTime(),
+            showDivider: false
+        ) {
+            settingBoardViewModel.isShowingReminderPickerSheet = true
         }
     }
     
-    private var reminderPickerSheet: some View {
+    
+    @ViewBuilder
+    private var PrivacyPolicyRow: some View {
+        SettingRow(
+            iconName: "lock.fill",
+            iconBackground: Color.gray,
+            title: "개인정보 처리 방침",
+            showDivider: false
+        ) {
+            settingBoardViewModel.isShowingPrivacyPolicyView = true
+        }
+    }
+    
+    @ViewBuilder
+    private var LicenseInfoRow: some View {
+        SettingRow(
+            iconName: "doc.text.fill",
+            iconBackground: Color.green,
+            title: "라이센스 정보",
+            showDivider: false
+        ) {
+            settingBoardViewModel.isShowingLicenseInfoView = true
+        }
+    }
+    
+    @ViewBuilder
+    private var TermsOfServiceRow: some View {
+        SettingRow(
+            iconName: "book.fill",
+            iconBackground: Color.blue.opacity(0.8),
+            title: "이용 약관",
+            showDivider: false
+        ) {
+            settingBoardViewModel.isShowingTermsOfServiceView = true
+        }
+    }
+    
+    @ViewBuilder
+    private var DataDeletionRow: some View {
+        SettingRow(
+            iconName: "trash.fill",
+            iconBackground: Color.red.opacity(0.85),
+            title: "데이터 삭제",
+            titleColor: .red,
+            showDivider: false
+        ) {
+            settingBoardViewModel.isShowingDataDeletionAlert = true
+        }
+    }
+    
+    
+    
+    // MARK: Modifier 모음
+    struct HeaderActionModifier: ViewModifier {
+        @ObservedObject var vm: SettingBoardViewModel
+        let dm: SettingBoard
+        
+        func body(content: Content) -> some View {
+            content
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button {
+                            vm.isShowingInformationView = true
+                        } label: {
+                            Image(systemName: "info.circle")
+                        }
+                    }
+                }
+                .sheet(isPresented: $vm.isShowingInformationView) {
+                    WebView(url: dm.owner!.informationURL)
+                }
+        }
+    }
+    
+    struct EditingNameActionMofiier: ViewModifier {
+        @ObservedObject var vm: SettingBoardViewModel
+        let dm: SettingBoard
+        
+        func body(content: Content) -> some View {
+            content
+                .sheet(isPresented: $vm.isShowingEditingNameSheet, onDismiss: {
+                    Task {
+                        await dm.editingName?.cancel()
+                    }
+                }) {
+                    EditingNameSheet(editingName: dm.editingName!)
+                }
+        }
+    }
+    
+    struct ReminderTimeActionModifier: ViewModifier {
+        @ObservedObject var vm: SettingBoardViewModel
+        let dm: SettingBoard
+        
+        func body(content: Content) -> some View {
+            content
+                .sheet(isPresented: $vm.isShowingReminderPickerSheet) {
+                    //ReminderPickerSheet
+                }
+        }
+    }
+    
+    struct PrivacyPolicyActionModifier: ViewModifier {
+        @ObservedObject var vm: SettingBoardViewModel
+        func body(content: Content) -> some View {
+            content
+                .navigationDestination(isPresented: $vm.isShowingPrivacyPolicyView) {
+                    PrivacyPolicyView()
+                }
+        }
+    }
+    
+    struct LicenseInfoActionModifier: ViewModifier {
+        @ObservedObject var vm: SettingBoardViewModel
+        func body(content: Content) -> some View {
+            content
+                .navigationDestination(isPresented: $vm.isShowingLicenseInfoView) {
+                    LicenseInfoView()
+                }
+        }
+    }
+    
+    struct TermsOfServiceActionModifier: ViewModifier {
+        @ObservedObject var vm: SettingBoardViewModel
+        func body(content: Content) -> some View {
+            content
+                .navigationDestination(isPresented: $vm.isShowingTermsOfServiceView) {
+                    TermsOfServiceView()
+                }
+        }
+    }
+    
+    struct DataDeletionActionModifier: ViewModifier {
+        @ObservedObject var vm: SettingBoardViewModel
+        let dm: SettingBoard
+        func body(content: Content) -> some View {
+            content
+                .alert(
+                    "데이터를 삭제하시겠습니까?",
+                    isPresented: $vm.isShowingDataDeletionAlert,
+                    actions: {
+                        Button("삭제", role: .destructive) {
+                            dm.confirmDataDeletion()
+                        }
+                        Button("취소", role: .cancel) {
+                        }
+                    },
+                    message: {
+                        Text("삭제를 누르면 멘토리 데이터가 모두 제거됩니다.")
+                    }
+                )
+        }
+    }
+    
+    struct LoadSavedReminderTime: ViewModifier {
+        let dm: SettingBoard
+        func body(content: Content) -> some View {
+            content
+                .task {
+                    dm.loadSavedReminderTime()
+                }
+        }
+    }
+    
+    
+    private var ReminderPickerSheet: some View {
         NavigationStack {
             VStack(spacing: 16) {
                 DatePicker(
@@ -262,9 +358,9 @@ struct SettingBoardView: View {
         }
         .presentationDetents([.height(320)])
     }
-    
 }
 
+// MARK: SettingBoard Components
 struct SettingRow: View {
     var iconName: String
     var iconBackground: Color
@@ -279,6 +375,7 @@ struct SettingRow: View {
             Button(action: action) {
                 HStack(spacing: 16) {
                     SettingIcon(systemName: iconName, background: iconBackground)
+                    
                     VStack(alignment: .leading, spacing: 4) {
                         Text(title)
                             .foregroundColor(titleColor)
@@ -306,7 +403,34 @@ struct SettingRow: View {
         }
     }
 }
-
+struct SettingToggleRow: View {
+    var iconName: String
+    var iconBackground: Color
+    var title: String
+    @Binding var isOn: Bool
+    var showDivider: Bool
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack(spacing: 16) {
+                SettingIcon(systemName: iconName, background: iconBackground)
+                Text(title)
+                    .foregroundColor(.primary)
+                Spacer()
+                Toggle("", isOn: $isOn)
+                    .labelsHidden()
+                    .tint(.green)
+            }
+            .padding(.vertical, 12)
+            .padding(.horizontal, 16)
+            
+            if showDivider {
+                Divider()
+                    .padding(.leading, 56)
+            }
+        }
+    }
+}
 struct SettingValueRow: View {
     var iconName: String
     var iconBackground: Color
@@ -341,65 +465,6 @@ struct SettingValueRow: View {
         }
     }
 }
-
-struct SettingToggleRow: View {
-    var iconName: String
-    var iconBackground: Color
-    var title: String
-    @Binding var isOn: Bool
-    var showDivider: Bool
-    
-    var body: some View {
-        VStack(spacing: 0) {
-            HStack(spacing: 16) {
-                SettingIcon(systemName: iconName, background: iconBackground)
-                Text(title)
-                    .foregroundColor(.primary)
-                Spacer()
-                Toggle("", isOn: $isOn)
-                    .labelsHidden()
-                    .tint(.green)
-            }
-            .padding(.vertical, 12)
-            .padding(.horizontal, 16)
-            
-            if showDivider {
-                Divider()
-                    .padding(.leading, 56)
-            }
-        }
-    }
-}
-
-struct SettingSection<Content: View>: View {
-    @ViewBuilder var content: () -> Content
-    
-    var body: some View {
-        SettingCard {
-            VStack(spacing: 0) {
-                content()
-            }
-        }
-    }
-}
-
-struct SettingCard<Content: View>: View {
-    @ViewBuilder var content: () -> Content
-    
-    var body: some View {
-        content()
-            .background(
-                .ultraThinMaterial,
-                in: RoundedRectangle(cornerRadius: 28, style: .continuous)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 28, style: .continuous)
-                    .stroke(Color.white.opacity(0.4))
-            )
-            .shadow(color: Color.black.opacity(0.08), radius: 18, x: 0, y: 10)
-    }
-}
-
 struct SettingIcon: View {
     var systemName: String
     var background: Color
@@ -416,6 +481,20 @@ struct SettingIcon: View {
         .frame(width: 40)
     }
 }
+
+struct SettingSection<Content: View>: View {
+    @ViewBuilder var content: () -> Content
+    
+    var body: some View {
+        LiquidGlassCard {
+            VStack(spacing: 0) {
+                content()
+            }
+        }
+    }
+}
+
+
 
 
 // MARK: Preview

@@ -33,7 +33,7 @@ struct LiquidGlassCard<Content: View>: View {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .stroke(Color.white.opacity(0.4), lineWidth: 1)
+                    .stroke(Color.white.opacity(0.4))
             )
             .shadow(color: Color.black.opacity(0.08),
                     radius: shadowRadius, x: 0, y: 10)
