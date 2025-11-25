@@ -55,7 +55,12 @@ struct AlanLLM: AlanLLMInterface {
             }
             
             guard httpResponse.statusCode == 200 else {
-                logger.error("HTTP 오류: 상태 코드 \(httpResponse.statusCode)")
+                logger.error("HTTP 오류: 상태 코드 \(httpResponse.statusCode) - \(httpResponse) ")
+                if let bodyString = String(data: data, encoding: .utf8) {
+                    logger.error("HTTP 오류 응답 바디: \(bodyString, privacy: .public)")
+                } else {
+                    logger.error("HTTP 오류 응답 바디 디코딩 실패")
+                }
                 throw AlanLLM.Error.httpError(statusCode: httpResponse.statusCode)
             }
             
