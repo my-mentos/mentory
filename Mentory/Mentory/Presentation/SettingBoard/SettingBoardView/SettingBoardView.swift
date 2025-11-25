@@ -73,10 +73,7 @@ struct SettingBoardView: View {
             }
         }
     }
-    func openAppSpecificSettings() {
-        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
-        UIApplication.shared.open(url)
-    }
+    
     
     // MARK: ViewBuilder 모음
     @ViewBuilder
@@ -136,7 +133,8 @@ struct SettingBoardView: View {
             title: "앱 설정",
             showDivider: false
         ) {
-            openAppSpecificSettings()
+            guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+            UIApplication.shared.open(url)
         }
     }
     
