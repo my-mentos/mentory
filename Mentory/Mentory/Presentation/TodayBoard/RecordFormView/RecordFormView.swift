@@ -18,7 +18,7 @@ struct RecordFormView: View {
     nonisolated let logger = Logger(subsystem: "MentoryiOS.RecordForm", category: "Presentation")
     @ObservedObject var recordForm: RecordForm
     
-
+    
     // MARK: - Body
     var body: some View {
         RecordFormLayout(
@@ -154,7 +154,7 @@ fileprivate struct SubmitButton<Content: View>: View {
     @State var isSubmitEnabled: Bool = false
     @State var showMindAnalyzerView: Bool = false
     @State var showingSubmitAlert: Bool = false
-
+    
     var body: some View {
         Button {
             showingSubmitAlert = true
@@ -260,10 +260,31 @@ fileprivate struct BodyField: View {
                     .scrollContentBackground(.hidden)
                     .frame(minHeight: 300)
                     .padding()
+                    .toolbar {
+                        ToolbarItemGroup(placement: .keyboard) {
+                            Spacer()
+                            Button("완료") {
+                                dismissKeyboard()
+                            }
+                        }
+                    }
+                
             }
         }
     }
 }
+
+extension View {
+    func dismissKeyboard() {
+        UIApplication.shared.sendAction(
+            #selector(UIResponder.resignFirstResponder),
+            to: nil,
+            from: nil,
+            for: nil
+        )
+    }
+}
+
 
 fileprivate struct ImageButton: View {
     @ObservedObject var model: RecordForm
