@@ -34,6 +34,26 @@ final class TodayBoard: Sendable, ObservableObject {
     
     
     // MARK: action
+    func getIndicator() -> String {
+        // 모든 레코드에서 행동 추천 수 합산
+        let totalActions = records.reduce(0) { $0 + $1.actionTexts.count }
+        let completedActions = records.reduce(0) { sum, record in
+            sum + record.actionCompletionStatus.filter { $0 }.count
+        }
+        return "\(completedActions)/\(totalActions)"
+    }
+
+    func getProgress() -> Double {
+        // 모든 레코드에서 행동 완료율 계산
+        let totalActions = records.reduce(0) { $0 + $1.actionTexts.count }
+        guard totalActions > 0 else { return 0 }
+        let completedActions = records.reduce(0) { sum, record in
+            sum + record.actionCompletionStatus.filter { $0 }.count
+        }
+        return Double(completedActions) / Double(totalActions)
+    }
+
+
     func setUpForm() {
         logger.debug("TodayBoard.setUp 호출")
         

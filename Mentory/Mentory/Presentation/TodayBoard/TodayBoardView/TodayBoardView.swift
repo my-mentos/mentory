@@ -23,10 +23,6 @@ struct TodayBoardView: View {
     
     // MARK: viewModel
     @State private var isShowingInformationView = false
-    @State private var selections = [false, false, false]
-    var progress: Double {
-        Double(selections.filter { $0 }.count) / 3.0
-    }
     @State private var actionRowEmpty = false
     
     
@@ -302,25 +298,6 @@ fileprivate struct SuggestionCard<Content: View>: View {
     let header: String = "오늘은 이런 행동 어떨까요?"
     let content: Content
 
-    var counter: String {
-        // 모든 레코드에서 행동 추천 수 합산
-        let totalActions = todayBoard.records.reduce(0) { $0 + $1.actionTexts.count }
-        let completedActions = todayBoard.records.reduce(0) { sum, record in
-            sum + record.actionCompletionStatus.filter { $0 }.count
-        }
-        return "\(completedActions)/\(totalActions)"
-    }
-
-    var progress: Double {
-        // 모든 레코드에서 행동 완료율 계산
-        let totalActions = todayBoard.records.reduce(0) { $0 + $1.actionTexts.count }
-        guard totalActions > 0 else { return 0 }
-        let completedActions = todayBoard.records.reduce(0) { sum, record in
-            sum + record.actionCompletionStatus.filter { $0 }.count
-        }
-        return Double(completedActions) / Double(totalActions)
-    }
-
     init(todayBoard: TodayBoard, @ViewBuilder content: () -> Content) {
         self.todayBoard = todayBoard
         self.content = content()
@@ -335,8 +312,8 @@ fileprivate struct SuggestionCard<Content: View>: View {
                         .font(.system(size: 17, weight: .semibold))
                         .foregroundStyle(.primary)
                     Spacer()
-                    
-                    Text(counter)
+
+                    Text(todayBoard.getIndicator())
                         .font(.system(size: 12, weight: .semibold))
                         .foregroundColor(.gray)
                         .frame(alignment: .trailing)
@@ -363,9 +340,9 @@ fileprivate struct SuggestionCard<Content: View>: View {
                                         endPoint: .bottomTrailing
                                     )
                                 )
-                                .frame(width: geo.size.width * progress)
+                                .frame(width: geo.size.width * todayBoard.getProgress())
                                 .shadow(color: .purple.opacity(0.3), radius: 3, x: 0, y: 1)
-                                .animation(.spring(response: 0.6, dampingFraction: 0.7), value: progress)
+                                .animation(.spring(response: 0.6, dampingFraction: 0.7), value: todayBoard.getProgress())
                         }
                     }
                     .frame(height: 10)
