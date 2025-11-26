@@ -18,15 +18,15 @@ final class TodayBoard: Sendable, ObservableObject {
     init(owner: MentoryiOS) {
         self.owner = owner
     }
-
-
+    
+    
     // MARK: state
     nonisolated let id = UUID()
     weak var owner: MentoryiOS?
-
+    
     @Published var recordForm: RecordForm? = nil
     @Published var records: [RecordData] = []
-
+    
     @Published var todayString: String? = nil
     @Published var isFetchedTodayString: Bool = false
     @Published var actionKeyWordItems: [(String, Bool)] = []
@@ -42,7 +42,7 @@ final class TodayBoard: Sendable, ObservableObject {
         }
         return "\(completedActions)/\(totalActions)"
     }
-
+    
     func getProgress() -> Double {
         // 모든 레코드에서 행동 완료율 계산
         let totalActions = records.reduce(0) { $0 + $1.actionTexts.count }
@@ -52,8 +52,8 @@ final class TodayBoard: Sendable, ObservableObject {
         }
         return Double(completedActions) / Double(totalActions)
     }
-
-
+    
+    
     func setUpForm() {
         logger.debug("TodayBoard.setUp 호출")
         
@@ -67,14 +67,14 @@ final class TodayBoard: Sendable, ObservableObject {
         self.recordForm = RecordForm(owner: self)
     }
     
-    func loadTodayMentorMessage() async {
+    func fetchTodayString() async {
         // capture
         guard isFetchedTodayString == false else {
             logger.error("오늘의 명언이 이미 fetch되었습니다.")
             return
         }
         let alanLLM = owner!.alanLLM
-
+        
         // process
         let contentFromAlanLLM: String?
         do {
@@ -95,15 +95,91 @@ final class TodayBoard: Sendable, ObservableObject {
             logger.error("오늘의 명언 fetch 실패: \(error.localizedDescription)")
             return
         }
-
+        
         // mutate
         self.todayString = contentFromAlanLLM
         self.isFetchedTodayString = true
     }
+    
+    func loadTodayMentorMessage() async {
+        // capture
+        let alanLLM = owner!.alanLLM
+        let mentoryDB = owner!.mentoryDB
+        
+        do {
+            // DB에서 최근 멘토메세지 가져오기
+            let lastMessage = try await mentoryDB.fetchMentorMessage()
+            logger.debug("DB 최근 멘토메세지: \(lastMessage.message) - 날짜: \(lastMessage.createdAt)")
+            
+            // 1.DB에 저장된 멘토메세지 없는 경우(nil)
+            guard !lastMessage.message.isEmpty else {
+                logger.debug("DB 저장값없음")
+                
+                // 1-1.새 멘토메세지 AlanLLM 호출
+                let question = AlanLLM.Question("동기부여가 될만한 명언을 한가지를 말해줘!")
+                let response = try await alanLLM.question(question)
+                let content = response.content
+                
+                // 1-2.멘토메세지 저장할 랜덤 캐릭터 선택
+                let character = Bool.random() ? "Nangcheol" : "Gureum"
+                
+                // 1-3.DB에 새 멘토메세지 저장
+                try await mentoryDB.saveMentorMessage(content, character)
+                logger.debug("최초 멘토메세지 저장 완료")
+                
+                // 1-4.저장 후 최신 멘토메세지 재조회
+                let updatedMessage = try await mentoryDB.fetchMentorMessage()
+                logger.debug("mentoryDB에 저장된 최근 message내용: \(updatedMessage.message), 날짜: \(updatedMessage.createdAt), 캐릭터: \(updatedMessage.characterType.title)")
+                
+                self.todayString = updatedMessage.message
+                self.isFetchedTodayString = true
+                return
+            }
+            
+            // 2.최근 멘토메세지 생성일 == 오늘이라면 저장된 message사용
+            guard !Calendar.current.isDateInToday(lastMessage.createdAt) else {
+                logger.debug("멘토메세지가 최신화되어있음 message내용: \(lastMessage.message)")
+                self.todayString = lastMessage.message
+                self.isFetchedTodayString = true
+                return
+            }
+            
+            // 2-1.최근 멘토메세지 생성일 != 오늘이라면 새로운 명언 생성
+            logger.debug("멘토메세지 최신화 아님 AlanLLM 요청 시작")
+            
+            let question = AlanLLM.Question("동기부여가 될만한 명언을 한가지를 말해줘!")
+            let response = try await alanLLM.question(question)
+            let content = response.content
+            
+            logger.debug("AlanLLM 응답 성공: \(content)")
+            
+            // 2-2.멘토메세지에 저장할 랜덤 캐릭터 선택
+            let character = Bool.random() ? "Nangcheol" : "Gureum"
+            
+            // 2-3.DB에 새 멘토메세지 저장
+            try await mentoryDB.saveMentorMessage(content, character)
+            logger.debug("TodayBoard에서 saveMentorMessage() 호출완료/ 새로운 멘토메세지 저장")
+            
+            // 2-4. DB에서 최신 멘토메세지 다시 가져오기
+            let updatedMessage = try await mentoryDB.fetchMentorMessage()
+            logger.debug("최신 멘토메세지 업데이트: \(updatedMessage.message), 캐릭터: \(updatedMessage.characterType.title)")
+            
+            // mutate
+            self.todayString = updatedMessage.message
+            self.isFetchedTodayString = true
+            
+        } catch {
+            logger.error("오늘의 명언 처리 실패: \(error.localizedDescription)")
+            return
+        }
+    }
+    
+    
+    
     func loadTodayRecords() async {
         // capture
         let mentoryDB = owner!.mentoryDB
-
+        
         // process
         let todayRecords: [RecordData]
         
@@ -117,7 +193,7 @@ final class TodayBoard: Sendable, ObservableObject {
         
         // mutate
         self.records = todayRecords
-
+        
         // 가장 최근 레코드의 행동 추천을 actionKeyWordItems에 로드
         if let lastRecord = todayRecords.max(by: { $0.createdAt < $1.createdAt }) {
             self.actionKeyWordItems = zip(lastRecord.actionTexts, lastRecord.actionCompletionStatus).map { ($0, $1) }
@@ -125,7 +201,7 @@ final class TodayBoard: Sendable, ObservableObject {
             logger.debug("가장 최근 레코드의 행동 추천 \(lastRecord.actionTexts.count)개 로드")
         }
     }
-
+    
     func updateActionCompletion() async {
         // capture
         guard let recordId = latestRecordId else {
@@ -134,7 +210,7 @@ final class TodayBoard: Sendable, ObservableObject {
         }
         let mentoryDB = owner!.mentoryDB
         let completionStatus = actionKeyWordItems.map { $0.1 }
-
+        
         // process
         do {
             try await mentoryDB.updateActionCompletion(recordId: recordId, completionStatus: completionStatus)
