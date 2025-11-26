@@ -23,7 +23,7 @@ actor MentoryDB: Sendable {
             fatalError("❌ MentoryDB ModelContainer 생성 실패: \(error)")
         }
     }()
-
+    
     
     
     // MARK: state
@@ -34,9 +34,9 @@ actor MentoryDB: Sendable {
         let id = self.id
         
         // sharedUUID 에 해당하는 Model을 찾거나, 없으면 새로 생성
-       let descriptor = FetchDescriptor<MentoryDBModel>(
-         predicate: #Predicate { $0.id == id }
-       )
+        let descriptor = FetchDescriptor<MentoryDBModel>(
+            predicate: #Predicate { $0.id == id }
+        )
         
         let model: MentoryDBModel
         
@@ -129,11 +129,11 @@ actor MentoryDB: Sendable {
                 logger.error("DB가 존재하지 않아 빈 배열을 반환합니다.")
                 return []
             }
-
+            
             let calendar = Calendar.current
             let today = calendar.startOfDay(for: Date())
             let tomorrow = calendar.date(byAdding: .day, value: 1, to: today)!
-
+            
             let recordDatas = db.records
                 .filter { $0.createdAt >= today && $0.createdAt < tomorrow }
                 .sorted { $0.createdAt > $1.createdAt }
@@ -159,13 +159,13 @@ actor MentoryDB: Sendable {
                 logger.error("DB가 존재하지 않아 빈 배열을 반환합니다.")
                 return []
             }
-
+            
             return db.records.filter {
                 $0.createdAt >= from && $0.createdAt <= to
             }
             .sorted { $0.createdAt > $1.createdAt }
             .map { $0.toData() }
-
+            
         } catch {
             logger.error("날짜 범위 조회 오류: \(error)")
             return []
@@ -201,58 +201,115 @@ actor MentoryDB: Sendable {
         }
     }
     
-    func getMentorMessage() {
-        let context = ModelContext(MentoryDB.container)
-        
-    }
-    
-    func setMentorMessage() {
-        let context = ModelContext(MentoryDB.container)
-    }
-    
-    
     func updateActionCompletion(recordId: UUID, completionStatus: [Bool]) async {
         let context = ModelContext(MentoryDB.container)
-
+        
         let descriptor = FetchDescriptor<DailyRecord.DailyRecordModel>(
             predicate: #Predicate<DailyRecord.DailyRecordModel> { $0.id == recordId }
         )
-
+        
         do {
             guard let record = try context.fetch(descriptor).first else {
                 logger.error("레코드 ID \(recordId)를 찾을 수 없습니다.")
                 return
             }
-
+            
             record.actionCompletionStatus = completionStatus
             try context.save()
-
+            
             logger.debug("레코드 \(recordId)의 행동 추천 완료 상태가 업데이트되었습니다.")
         } catch {
             logger.error("행동 추천 완료 상태 업데이트 실패: \(error)")
         }
     }
-
+    
+    
+    func getMentorMessage() -> MessageData {
+        let context = ModelContext(MentoryDB.container)
+        let id = self.id
+        
+        let descriptor = FetchDescriptor<MentoryDBModel>(
+            predicate: #Predicate { $0.id == id }
+        )
+        
+        do {
+            guard let db = try context.fetch(descriptor).first else {
+                logger.error("DB가 존재하지 않아 기본값을 반환합니다.")
+                return MessageData(
+                    id: UUID(),
+                    createdAt: .distantPast,
+                    message: "",
+                    characterType: .Nangcheol
+                )
+            }
+            
+            //그동안 저장된 명언 전체 로그찍어보기
+            logger.debug("all Messages Mapped:\(db.messages.sorted { $0.createdAt>$1.createdAt }.map { $0.toMessageData() })")
+            return db.messages
+                .max { $0.createdAt < $1.createdAt }!
+                .toMessageData()
+            
+        } catch {
+            logger.error("DB fetch error → 기본값 반환")
+            return MessageData(
+                id: UUID(),
+                createdAt: .distantPast,
+                message: "",
+                characterType: .Nangcheol
+            )
+        }
+    }
+    func setMentorMessage(message: String, characterType: String) {
+        let context = ModelContext(MentoryDB.container)
+        let id = self.id
+        
+        let descriptor = FetchDescriptor<MentoryDBModel>(
+            predicate: #Predicate { $0.id == id }
+        )
+        do {
+            guard let db = try context.fetch(descriptor).first else {
+                logger.error("DB가 존재하지 않아 메세지를 저장할수 없습니다.")
+                return
+            }
+            let type = CharacterType(rawValue: characterType) ?? .Nangcheol
+            let newMessage = MentorMessage.MentorMessageModel(
+                id: UUID(),
+                createdAt: Date(),
+                message: message,
+                characterType: type
+            )
+            
+            db.messages.append(newMessage)
+            try context.save()
+            logger.debug("MentoryDB에 새로운 멘토 메시지를 저장했습니다.")
+            
+        } catch {
+            logger.error("MentoryDB 저장 오류: \(error)")
+            return
+        }
+    }
+    
+    
     // MARK: action
     func createDailyRecords() async {
         let context = ModelContext(MentoryDB.container)
         let id = self.id
-
+        
         let descriptor = FetchDescriptor<MentoryDBModel>(
             predicate: #Predicate { $0.id == id }
         )
-
+        
         do {
             guard let db = try context.fetch(descriptor).first else {
                 logger.error("DB가 존재하지 않아 큐를 플러시할 수 없습니다.")
                 return
             }
-
+            
             guard db.createRecordQueue.isEmpty == false else {
                 logger.debug("큐에 변환할 RecordData가 없습니다.")
                 return
             }
-
+            
             // 1) 새 레코드 생성
             let newModels = db.createRecordQueue.map { data in
                 DailyRecord.DailyRecordModel(
@@ -265,20 +322,20 @@ actor MentoryDB: Sendable {
                     actionCompletionStatus: data.actionCompletionStatus
                 )
             }
-
+            
             // 2) 관계 추가 (insert는 SwiftData가 자동 처리)
             for model in newModels {
                 db.records.append(model)
             }
-
+            
             // 3) 큐 비우기
             db.createRecordQueue.removeAll()
-
+            
             // 4) 단일 save()로 트랜잭션 처리
             try context.save()
-
+            
             logger.debug("RecordData \(newModels.count)개를 DailyRecord로 변환했습니다.")
-
+            
         } catch {
             logger.error("큐 플러시 중 오류 발생: \(error.localizedDescription)")
         }
@@ -298,6 +355,8 @@ actor MentoryDB: Sendable {
         
         @Relationship var createRecordQueue: [RecordTicket] = []
         @Relationship var records: [DailyRecord.DailyRecordModel] = []
+
+        @Relationship var messages: [MentorMessage.MentorMessageModel] = []
         
         init(id: ID, userName: String?) {
             self.id = id
@@ -315,7 +374,7 @@ actor MentoryDB: Sendable {
         var emotion: Emotion
         var actionTexts: [String]
         var actionCompletionStatus: [Bool]
-
+        
         init(data: RecordData) {
             self.id = data.id
             self.createdAt = data.createdAt
@@ -325,7 +384,7 @@ actor MentoryDB: Sendable {
             self.actionTexts = data.actionTexts
             self.actionCompletionStatus = data.actionCompletionStatus
         }
-
+        
         func toRecordData() -> RecordData {
             .init(
                 id: id,
@@ -338,6 +397,7 @@ actor MentoryDB: Sendable {
             )
         }
     }
+   
 }
 
 
