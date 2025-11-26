@@ -148,15 +148,26 @@ struct SettingBoardView: View {
             showDivider: false
         )
         .onChange(of: settingBoard.isReminderOn, initial: false) { oldValue, newValue in
-            Task {
-                if newValue {
-                    await settingBoard.turnReminderOn()
-                } else {
-                    await settingBoard.turnReminderOff()
+            if newValue {
+                settingBoard.turnReminderOn()
+                
+                Task {
+                    guard let owner = settingBoard.owner else {
+                        return
+                    }
+                    await owner.reminderCenter.requestAuthorizationIfNeeded()
+                }
+            } else {
+                settingBoard.turnReminderOff()
+                
+                Task {
+                    guard let owner = settingBoard.owner else { return }
+                    await owner.reminderCenter.cancelAllWeeklyReminders()
                 }
             }
         }
     }
+
 
     
     @ViewBuilder
