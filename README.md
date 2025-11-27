@@ -1,13 +1,13 @@
 <!-- 프로젝트 개요 -->
 <div align="center">
   <a href="https://github.com/EST-iOS4/Mentory">
-    <img src="./mentory-icon.png" alt="Logo" width="150" height="150">
+    <img src="./mentory-icon.png" alt="Logo" width="110" height="110">
   </a>
 
   <h3>Mentory</h3>
 
   <p>
-    텍스트·음성·사진 기반 감정 기록을 분석하여, AI가 감정과 사고 패턴을 파악하고 개인화된 리프레이밍 조언을 제공하는 멘탈 케어 앱
+    매일매일 사용자의 감정을 기록하고 LLM을 통해 이를 분석하여 적절한 활동을 추천해주는 멘탈 케어 앱
   </p>
 
   <p>
@@ -18,13 +18,14 @@
 
   <p>
     <img src="https://img.shields.io/badge/SwiftUI-F05138?style=for-the-badge&logo=swift&logoColor=white" />
+    <img src="https://img.shields.io/badge/Combine-333333?style=for-the-badge&logo=swift&logoColor=white" />
     <img src="https://img.shields.io/badge/Swift%206-FA7343?style=for-the-badge&logo=swift&logoColor=white" />
   </p>
 </div>
 
 ## 목차
-- [앱 주요 기능](#앱-주요-기능)
-- [스크린샷](#스크린샷)
+
+- [목차](#목차)
 - [사용 기술](#사용-기술)
 - [시작하기](#시작하기)
   - [필요 조건](#필요-조건)
@@ -32,59 +33,9 @@
   - [환경 설정](#환경-설정)
   - [실행](#실행)
 - [소프트웨어 디자인](#소프트웨어-디자인)
-- [프로젝트 구조](#프로젝트-구조)
 - [개발 문서](#개발-문서)
 - [트러블슈팅 문서](#트러블슈팅-문서)
 - [팀원](#팀원)
-
-
----
-
-## 앱 주요 기능
-
-### ✏️ 감정 기록 (텍스트 / 음성 / 사진)
-- 텍스트로 감정 기록
-- 음성 입력 → 자동 텍스트 변환
-- 사진 기반 상황 단서 감지
-
-### 🧠 AI 감정 분석 & 사고 패턴 탐지
-- ESTsoft Alan API 기반 감정/사고 패턴 분석
-- Firebase AI Logic 기반 개인화 조언
-
-### 👥 AI 분석 스타일 선택
-- **냉철한 분석 캐릭터** (직설적·해결 중심)
-- **따뜻한 분석 캐릭터** (공감 기반 리프레이밍)
-
-### 📊 감정 변화 통계
-- 일/주/월 감정 변화 그래프 제공
-- 자주 등장하는 감정·사고 패턴 시각화
-
-### 🔔 감정 기록 알림(Reminder)
-- 원하는 시간에 기록 리마인드
-- UserNotificationCenter 기반
-
-### ⌚ WatchOS & Widget 지원
-- WatchOS에서 빠르게 감정 기록
-- 홈 위젯에서 기록/확인
-
----
-
-## 스크린샷
-> 실제 화면 캡처본을 아래 이미지 자리에 넣기
-
-<div align="center">
-  <img width="240" alt="image" src="https://github.com/user-attachments/assets/d575e1c2-9296-4f9c-86a7-a19dd72ce242" />
-  <img width="240" alt="image" src="https://github.com/user-attachments/assets/e354d1a4-7e63-490d-b508-3320f72969b5" />
-  <img width="240" alt="image" src="https://github.com/user-attachments/assets/f8aa52b9-7296-4a04-a3c7-d99f8f816fa4" />
-</div>
-
-<div align="center" style="margin-top: 20px;">
-  <img width="240" alt="image" src="https://github.com/user-attachments/assets/e19a491b-c8d9-4177-9332-a1505aa48587" />
-  <img width="240" alt="image" src="https://github.com/user-attachments/assets/52e48fcf-6f25-4a74-936b-36bd641a5f46" />
-  <img width="240" alt="image" src="https://github.com/user-attachments/assets/d616b7f5-d5fb-49d5-9cc1-dd74a515df7c" />
-</div>
-
----
 
 ## 사용 기술
 
@@ -97,11 +48,12 @@
   </thead>
   <tbody>
     <tr>
-      <td>🏗️ 아키텍처</td>
+      <td >🏗️ 아키텍처</td>
       <td>
         <ul>
           <li><strong>SwiftUI + MVVM</strong></li>
-          <li><strong>Swift Concurrency</strong></li>
+          <li><strong>Combine</strong></li>
+          <li><strong>Swift Concurrency(Swift 6)</strong></li>
         </ul>
       </td>
     </tr>
@@ -117,8 +69,8 @@
       <td>🎤 음성 처리</td>
       <td>
         <ul>
-          <li><strong>Speech Framework</strong></li>
           <li><strong>AVFoundation</strong></li>
+          <li><strong>Speech Framework</strong></li>
         </ul>
       </td>
     </tr>
@@ -126,16 +78,13 @@
       <td>🤖 LLM</td>
       <td>
         <ul>
-          <li><strong>ESTSOFT Alan API</strong></li>
+          <li><strong>ESTSOFT Alan LLM API</strong></li>
           <li><strong>Firebase AI Logic</strong></li>
         </ul>
       </td>
     </tr>
   </tbody>
 </table>
-
-
----
 
 ## 시작하기
 
@@ -146,45 +95,56 @@
     <td align="center" width="120">
       <img src="https://img.shields.io/badge/-26.1+-147EFB?style=for-the-badge&logo=xcode&logoColor=white" alt="Xcode">
     </td>
-    <td><b>Xcode 26.1 이상</b></td>
+    <td>
+      <b>Xcode 26.1 이상</b>
+    </td>
   </tr>
   <tr>
-    <td align="center" width="120">
+    <td align="center" width="">
       <img src="https://img.shields.io/badge/-18.0+-000000?style=for-the-badge&logo=ios&logoColor=white" alt="iOS">
     </td>
-    <td><b>iOS 18.0 이상</b></td>
+    <td>
+      <b>iOS 18.0 이상</b> (시뮬레이터 또는 실제 디바이스)
+    </td>
   </tr>
   <tr>
     <td align="center" width="120">
       <img src="https://img.shields.io/badge/-6.0-FA7343?style=for-the-badge&logo=swift&logoColor=white" alt="Swift">
     </td>
-    <td><b>Swift 6.0</b></td>
+    <td>
+      <b>Swift 6.0</b>
+    </td>
   </tr>
 </table>
 
 ### 설치
 
-```bash
-git clone https://github.com/EST-iOS4/Mentory-iOS.git
-cd Mentory-iOS
-```
+1. 저장소를 클론합니다.
+   ```bash
+   git clone https://github.com/EST-iOS4/Mentory-iOS.git
+   cd Mentory-iOS
+   ```
 
 ### 환경 설정
 
-```bash
-cp Secrets.xcconfig.sample Secrets.xcconfig
-```
-
-- `Secrets.xcconfig`에 Alan API Key 등 민감한 값을 입력합니다.  
-- 해당 파일은 `.gitignore`로 관리되어 저장소에 커밋되지 않습니다.
+1. 저장소 루트에 있는 `Secrets.xcconfig.sample`을 복사하여 `Secrets.xcconfig`를 생성합니다.
+   ```bash
+   cp Secrets.xcconfig.sample Secrets.xcconfig
+   ```
+2. 새로 생성된 `Secrets.xcconfig`에 Alan API 키 등 민감한 값을 채웁니다.
+   ```
+   ALAN_API_KEY = your_api_key_here
+   ```
+   해당 파일은 `.gitignore`에 포함되어 있으니 저장소에 커밋되지 않습니다.
 
 ### 실행
 
-```bash
-open Mentory/Mentory.xcodeproj
-```
-
-Xcode에서 타겟 선택 → `Cmd + R` 실행
+1. Xcode에서 `Mentory/Mentory.xcodeproj`를 엽니다.
+   ```bash
+   open Mentory/Mentory.xcodeproj
+   ```
+2. 타겟 디바이스를 선택합니다 (시뮬레이터 또는 실제 디바이스).
+3. `Cmd + R`을 눌러 앱을 빌드하고 실행합니다.
 
 ## 소프트웨어 디자인
 
@@ -193,54 +153,6 @@ Xcode에서 타겟 선택 → `Cmd + R` 실행
 <p align="center">
   <img src="mentory.png" alt="소프트웨어 디자인 다이어그램">
 </p>
-
-## 프로젝트 구조
-
-```text
-Mentory/                          # 레포지토리 루트
-├─ Mentory/                       # Xcode 프로젝트 루트
-│  ├─ Mentory/                    # iOS 앱 타깃
-│  │  ├─ Domain/
-│  │  │  ├─ Onboarding/
-│  │  │  ├─ TodayBoard/
-│  │  │  └─ SettingBoard/
-│  │  ├─ Presentation/
-│  │  │  ├─ Onboarding/
-│  │  │  ├─ TodayBoard/
-│  │  │  ├─ SettingBoard/
-│  │  │  └─ Components/
-│  │  ├─ Adapter/
-│  │  │  ├─ AlanLLM/              # LLM 연동 어댑터
-│  │  │  ├─ AlanLLMMock/          # LLM 목 구현
-│  │  │  ├─ MentoryDB/            # DB 연동 어댑터
-│  │  │  └─ MentoryDBMock/        # DB 목 구현
-│  │  ├─ Service/
-│  │  │  ├─ ImagePicker/          # 이미지 선택 서비스
-│  │  │  └─ Microphone/           # 마이크/녹음 서비스
-│  │  ├─ TestSample/              # 예제/샘플 코드
-│  │  └─ Assets.xcassets/
-│  ├─ MentoryDB/                  # 데이터베이스 모듈
-│  │  ├─ Domain/
-│  │  └─ Presentation/             # DB 관련 UI (프로젝트 폴더명 기준)
-│  ├─ MentoryWidget/              # 위젯 타깃
-│  │  ├─ Presentation/
-│  │  └─ Assets.xcassets/
-│  ├─ MentoryWatch Watch App/     # watchOS 타깃
-│  │  ├─ Domain/
-│  │  └─ Presentation/
-│  └─ Values/                     # DomainValues 등 공통 값
-├─ docs/                          # 개발 문서
-│  ├─ write-issue/
-│  ├─ swiftui-combine-mvvm/
-│  ├─ mvvm-swift-concurrency/
-│  ├─ swiftdata/
-│  ├─ alan-api/
-│  ├─ firebase-ai/
-│  ├─ watchos/
-│  ├─ Widget-Extension/
-│  └─ troubleshooting/
-└─ mentory.png, mentory.drawio 등 도메인 다이어그램 파일
-```
 
 ## 개발 문서
 
@@ -253,12 +165,11 @@ Mentory/                          # 레포지토리 루트
 - [WatchConnectivity 이해하기](docs/watchos/watchconnectivity.md)
 - [Widget Extension 개념 이해하기](docs/Widget-Extension/README.md)
 - [Firebase AI 사용하기](docs/firebase-ai/README.md)
-- [APNs 기본 개념 이해하기](docs/APNs/README.md)
 - 브랜치 전략, TBD(Trunk-Based Development)
 
 ## 트러블슈팅 문서
 
-아래는 팀원별로 개발 과정에서 발생한 문제를 정리한 트러블슈팅 문서입니다.
+아래는 팀원별로 개발을 진행하며 겪은 문제에 대한 트러블슈팅 문서입니다. 새로운 문서를 추가하려면 `docs/troubleshooting/<이름-폴더>/YYYYMMDD-short-title.md` 형식으로 새 마크다운 파일을 만들고, 아래에 문서 참조를 추가하면 됩니다.
 
 1. 박재이
    - 작성된 문서 없음
@@ -267,7 +178,7 @@ Mentory/                          # 레포지토리 루트
 3. 구현모
    - [2025-11-17 앱 아이콘 설정](docs/troubleshooting/hyunmo/20251117-app-icon.md)
 4. 김민우
-   - 작성된 문서 없음
+   - [2024-09-18 음성 전사 중 앱 크래시](docs/troubleshooting/kim-minwoo/20240918-speech-transcript-crash.md)
 
 ## 팀원
 
