@@ -29,9 +29,6 @@
 - [사용 기술](#사용-기술)
 - [시작하기](#시작하기)
   - [필요 조건](#필요-조건)
-  - [설치](#설치)
-  - [환경 설정](#환경-설정)
-  - [실행](#실행)
 - [소프트웨어 디자인](#소프트웨어-디자인)
 - [개발 문서](#개발-문서)
 - [트러블슈팅 문서](#트러블슈팅-문서)
@@ -116,35 +113,6 @@
     </td>
   </tr>
 </table>
-
-### 설치
-
-1. 저장소를 클론합니다.
-   ```bash
-   git clone https://github.com/EST-iOS4/Mentory-iOS.git
-   cd Mentory-iOS
-   ```
-
-### 환경 설정
-
-1. 저장소 루트에 있는 `Secrets.xcconfig.sample`을 복사하여 `Secrets.xcconfig`를 생성합니다.
-   ```bash
-   cp Secrets.xcconfig.sample Secrets.xcconfig
-   ```
-2. 새로 생성된 `Secrets.xcconfig`에 Alan API 키 등 민감한 값을 채웁니다.
-   ```
-   ALAN_API_KEY = your_api_key_here
-   ```
-   해당 파일은 `.gitignore`에 포함되어 있으니 저장소에 커밋되지 않습니다.
-
-### 실행
-
-1. Xcode에서 `Mentory/Mentory.xcodeproj`를 엽니다.
-   ```bash
-   open Mentory/Mentory.xcodeproj
-   ```
-2. 타겟 디바이스를 선택합니다 (시뮬레이터 또는 실제 디바이스).
-3. `Cmd + R`을 눌러 앱을 빌드하고 실행합니다.
 
 ## 소프트웨어 디자인
 
