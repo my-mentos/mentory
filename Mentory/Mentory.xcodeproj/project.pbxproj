@@ -22,6 +22,12 @@
 		CE26C2DF2ED1E385008668E0 /* DequeModule in Frameworks */ = {isa = PBXBuildFile; productRef = CE26C2DE2ED1E385008668E0 /* DequeModule */; };
 		CE2903302ECD9EDD00AC403C /* FirebaseAI in Frameworks */ = {isa = PBXBuildFile; productRef = CE29032F2ECD9EDD00AC403C /* FirebaseAI */; };
 		CE2903322ECD9EDD00AC403C /* FirebaseAILogic in Frameworks */ = {isa = PBXBuildFile; productRef = CE2903312ECD9EDD00AC403C /* FirebaseAILogic */; };
+		CE4D8F312ED7F2F4002360A7 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = CE4D8F302ED7F2F4002360A7 /* .gitignore */; };
+		CE4D8F322ED7F2F4002360A7 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = CE4D8F302ED7F2F4002360A7 /* .gitignore */; };
+		CE4D8F332ED7F2F4002360A7 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = CE4D8F302ED7F2F4002360A7 /* .gitignore */; };
+		CE4D8F342ED7F2F4002360A7 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = CE4D8F302ED7F2F4002360A7 /* .gitignore */; };
+		CE4D8F352ED7F2F4002360A7 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = CE4D8F302ED7F2F4002360A7 /* .gitignore */; };
+		CE4D8F362ED7F2F4002360A7 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = CE4D8F302ED7F2F4002360A7 /* .gitignore */; };
 		CE6CB1422ED385AD00390FF3 /* AsyncAlgorithms in Frameworks */ = {isa = PBXBuildFile; productRef = CE6CB1412ED385AD00390FF3 /* AsyncAlgorithms */; };
 		CEB755832ECB9FF900FCE15A /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = CEB755822ECB9FF900FCE15A /* Collections */; };
 		CEB755852ECB9FF900FCE15A /* DequeModule in Frameworks */ = {isa = PBXBuildFile; productRef = CEB755842ECB9FF900FCE15A /* DequeModule */; };
@@ -143,6 +149,7 @@
 		CE0028872ECF906E003324B0 /* Values.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Values.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE127F662ECB8858006A55E6 /* Secrets.xcconfig.sample */ = {isa = PBXFileReference; lastKnownFileType = text; path = Secrets.xcconfig.sample; sourceTree = "<group>"; };
 		CE39BFBC2EC313F20090DF78 /* Mentory.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Mentory.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CE4D8F302ED7F2F4002360A7 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; name = .gitignore; path = ../.gitignore; sourceTree = SOURCE_ROOT; };
 		CE8EE8312EC5D1600006E5A4 /* MentoryTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MentoryTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CED16A5E2ECB7FCD00CF012B /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -274,6 +281,7 @@
 		CE39BFB32EC313F20090DF78 = {
 			isa = PBXGroup;
 			children = (
+				CE4D8F302ED7F2F4002360A7 /* .gitignore */,
 				7BEACE232ED44E5F00E2ADA9 /* MentoryWidgetExtension.entitlements */,
 				CE0027132ECF3EB8003324B0 /* Mentory.xctestplan */,
 				CED16A5E2ECB7FCD00CF012B /* Secrets.xcconfig */,
@@ -539,6 +547,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE4D8F342ED7F2F4002360A7 /* .gitignore in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -546,6 +555,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE4D8F322ED7F2F4002360A7 /* .gitignore in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -553,6 +563,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE4D8F312ED7F2F4002360A7 /* .gitignore in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -560,6 +571,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE4D8F332ED7F2F4002360A7 /* .gitignore in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -567,6 +579,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE4D8F352ED7F2F4002360A7 /* .gitignore in Resources */,
 				CED16A5F2ECB7FCD00CF012B /* Secrets.xcconfig in Resources */,
 				CE127F672ECB8858006A55E6 /* Secrets.xcconfig.sample in Resources */,
 			);
@@ -576,6 +589,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE4D8F362ED7F2F4002360A7 /* .gitignore in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
