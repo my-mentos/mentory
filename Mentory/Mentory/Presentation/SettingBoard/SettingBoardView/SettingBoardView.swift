@@ -8,6 +8,7 @@ import SwiftUI
 import WebKit
 import OSLog
 import Combine
+import UserNotifications
 
 // MARK: Object
 class SettingBoardViewModel: ObservableObject {
@@ -39,6 +40,8 @@ struct SettingBoardView: View {
     @ObservedObject var settingBoard: SettingBoard
     @ObservedObject var settingBoardViewModel: SettingBoardViewModel
     
+    @State private var notificationStatusText: String = "알림 상태를 확인 중이에요"
+    
     var body: some View {
         NavigationStack {
             ZStack {
@@ -52,7 +55,7 @@ struct SettingBoardView: View {
                         SettingSection {
                             EditingNameRow
                             AppSettingsRow
-                            ReminderToggleRow
+                            ReminderStatusRow
                             ReminderTimeRow
                         }
                         SettingSection {
@@ -70,6 +73,7 @@ struct SettingBoardView: View {
             }
             .task {
                 settingBoard.loadSavedReminderTime()
+                refreshNotificationStatus()
             }
         }
     }
@@ -139,12 +143,11 @@ struct SettingBoardView: View {
     }
     
     @ViewBuilder
-    private var ReminderToggleRow: some View {
-        SettingToggleRow(
+    private var ReminderStatusRow: some View {
+        SettingRow(
             iconName: "bell.fill",
             iconBackground: Color.red,
-            title: "알림 설정",
-            isOn: $settingBoard.isReminderOn,
+            title: "알림 상태: \(notificationStatusText)",
             showDivider: false
         )
         .onChange(of: settingBoard.isReminderOn, initial: false) { oldValue, newValue in
@@ -256,6 +259,26 @@ struct SettingBoardView: View {
                 Text("삭제를 누르면 멘토리 데이터가 모두 제거됩니다.")
             }
         )
+    }
+    
+    private func refreshNotificationStatus() {
+        Task {
+            let center = UNUserNotificationCenter.current()
+            let settings = await center.notificationSettings()
+            
+            await MainActor.run {
+                switch settings.authorizationStatus {
+                case .authorized, .provisional, .ephemeral:
+                    notificationStatusText = "알림이 허용된 상태예요"
+                case .denied:
+                    notificationStatusText = "알림이 꺼져 있어요 (설정 앱에서 변경 가능)"
+                case .notDetermined:
+                    notificationStatusText = "아직 알림 권한을 요청하지 않았어요"
+                @unknown default:
+                    notificationStatusText = "알림 상태를 알 수 없어요"
+                }
+            }
+        }
     }
     
     // 알림시간설정시트

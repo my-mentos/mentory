@@ -15,6 +15,7 @@ import OSLog
 final class MindAnalyzer: Sendable, ObservableObject {
     // MARK: core
     nonisolated let logger = Logger(subsystem: "MentoryiOS.MindAnalyzer", category: "Domain")
+    private let firebaseLLM = FirebaseLLM()
     init(owner: RecordForm) {
         self.owner = owner
     }
@@ -53,8 +54,6 @@ final class MindAnalyzer: Sendable, ObservableObject {
 
         let recordForm = self.owner!
         let todayBoard = recordForm.owner!
-        let mentoryiOS = todayBoard.owner!
-        let alanLLM = mentoryiOS.alanLLM
 
         
         // process
@@ -82,14 +81,15 @@ final class MindAnalyzer: Sendable, ObservableObject {
 
             원본 일기: \(textInput)
             """
-            let firstQuestion = AlanLLM.Question(firstPrompt)
-            let firstAnswer = try await alanLLM.question(firstQuestion)
+            let firstQuestion = FirebaseLLM.Question(firstPrompt)
+            let firstAnswer = try await firebaseLLM.question(firstQuestion)
 
-            // JSON 파싱
+            // JSON 파싱 (FirebaseLLM에서 코드블록 제거까지 끝낸 상태)
             guard let jsonData = firstAnswer.content.data(using: .utf8) else {
                 logger.error("1차 분석 결과를 Data로 변환 실패")
                 return
             }
+
 
             let decoder = JSONDecoder()
             firstResult = try decoder.decode(FirstAnalysisResult.self, from: jsonData)
@@ -105,14 +105,15 @@ final class MindAnalyzer: Sendable, ObservableObject {
         let secondResult: SecondAnalysisResult
         do {
             let secondPrompt = character.makeSecondAnalysisPrompt(firstResult: firstResult, diaryText: textInput)
-            let secondQuestion = AlanLLM.Question(secondPrompt)
-            let secondAnswer = try await alanLLM.question(secondQuestion)
+            let secondQuestion = FirebaseLLM.Question(secondPrompt)
+            let secondAnswer = try await firebaseLLM.question(secondQuestion)
 
             // JSON 파싱
             guard let jsonData = secondAnswer.content.data(using: .utf8) else {
                 logger.error("2차 분석 결과를 Data로 변환 실패")
                 return
             }
+
 
             let decoder = JSONDecoder()
             secondResult = try decoder.decode(SecondAnalysisResult.self, from: jsonData)

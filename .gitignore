@@ -1,6 +1,9 @@
 # Firebase
 GoogleInfo-Info.plist
 **/GoogleService-Info.plist
+GoogleService-Info.plist
+Mentory/GoogleService-Info.plist
+Mentory/Mentory/GoogleService-Info.plist
 
 # Secrets (ALAN API key)
 Config/Secrets.xcconfig
