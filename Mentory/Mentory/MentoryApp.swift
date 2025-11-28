@@ -6,7 +6,6 @@
 //
 import SwiftUI
 import SwiftData
-import FirebaseCore
 
 // MARK: App
 @main
@@ -14,10 +13,6 @@ struct MentoryApp: App {
     
     // MARK: model
     @State var mentoryiOS = MentoryiOS(.real)
-    
-    init() {
-        FirebaseApp.configure()
-    }
     
     // MARK: body
     var body: some Scene {
