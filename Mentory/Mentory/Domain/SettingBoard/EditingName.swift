@@ -16,21 +16,22 @@ final class EditingName: Sendable, ObservableObject{
     nonisolated let logger = Logger(subsystem: "MentoryiOS.RenameSheet", category: "Domain")
     init(owner: SettingBoard, userName: String) {
         self.owner = owner
-        self.currentEditingName = userName
+        self.nameInput = userName
     }
     
     
     // MARK: state
     nonisolated let id = UUID()
     weak var owner: SettingBoard?
-    @Published var currentEditingName: String
+    
+    @Published var nameInput: String
     @Published var isSubmitDisabled: Bool = false
     
     
     // MARK: action
     func validate() {
         // capture
-        let newName = currentEditingName.trimmingCharacters(in: .whitespacesAndNewlines)
+        let newName = nameInput.trimmingCharacters(in: .whitespacesAndNewlines)
         let currentName = owner?.owner!.userName ?? ""
         
         // process
@@ -44,10 +45,9 @@ final class EditingName: Sendable, ObservableObject{
         isSubmitDisabled = true
     }
 
-    
     func submit() async {
         // capture
-        let newName = currentEditingName.trimmingCharacters(in: .whitespacesAndNewlines)
+        let newName = nameInput.trimmingCharacters(in: .whitespacesAndNewlines)
         guard newName.isEmpty == false else {
             logger.error("입력된 이름이 비어 있어 저장을 건너뜁니다.")
             return

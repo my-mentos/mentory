@@ -4,10 +4,10 @@
 //
 //  Created by 김민우 on 11/18/25.
 //
-
-
 import SwiftUI
 
+
+// MARK: Component
 struct OnboardingDetailView: View {
     let title: String
     let subtitle: String

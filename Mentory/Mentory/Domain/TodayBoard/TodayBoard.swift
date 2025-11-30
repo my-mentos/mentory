@@ -26,25 +26,15 @@ final class TodayBoard: Sendable, ObservableObject {
     
     @Published var recordForm: RecordForm? = nil
     @Published var records: [RecordData] = []
-    @Published var mentorMessage: MessageData?
-    @Published var mentorMessageDate: Date?
-    
-    @Published var todayString: String? = nil
-    @Published var isFetchedTodayString: Bool = false
-    @Published var actionKeyWordItems: [(String, Bool)] = []
-    @Published var latestRecordId: UUID? = nil // 가장 최근 저장된 레코드 ID (행동 추천 업데이트용)
-    
-    
-    // MARK: action
     func getIndicator() -> String {
-        // 모든 레코드에서 행동 추천 수 합산
+        let records = self.records
+        
         let totalActions = records.reduce(0) { $0 + $1.actionTexts.count }
         let completedActions = records.reduce(0) { sum, record in
             sum + record.actionCompletionStatus.filter { $0 }.count
         }
         return "\(completedActions)/\(totalActions)"
     }
-    
     func getProgress() -> Double {
         // 모든 레코드에서 행동 완료율 계산
         let totalActions = records.reduce(0) { $0 + $1.actionTexts.count }
@@ -55,7 +45,17 @@ final class TodayBoard: Sendable, ObservableObject {
         return Double(completedActions) / Double(totalActions)
     }
     
+    @Published var mentorMessage: MessageData?
+    @Published var mentorMessageDate: Date?
     
+    @Published var todayString: String? = nil
+    @Published var isFetchedTodayString: Bool = false
+    
+    @Published var actionKeyWordItems: [(String, Bool)] = []
+    @Published var latestRecordId: UUID? = nil // 가장 최근 저장된 레코드 ID (행동 추천 업데이트용)
+    
+    
+    // MARK: action
     func setUpForm() {
         logger.debug("TodayBoard.setUp 호출")
         
@@ -68,7 +68,6 @@ final class TodayBoard: Sendable, ObservableObject {
         // mutate
         self.recordForm = RecordForm(owner: self)
     }
-    
     func fetchTodayString() async {
         // capture
         guard isFetchedTodayString == false else {
@@ -81,7 +80,7 @@ final class TodayBoard: Sendable, ObservableObject {
         let contentFromAlanLLM: String?
         do {
             // Alan API를 통해 오늘의 명언 또는 속담 요청
-            let question = AlanLLM.Question("오늘의 명언이나 속담을 하나만 짧게 알려줘. 명언이나 속담만 답변해줘.")
+            let question = AlanQuestion("오늘의 명언이나 속담을 하나만 짧게 알려줘. 명언이나 속담만 답변해줘.")
             let response = try await alanLLM.question(question)
             
             contentFromAlanLLM = response.content
@@ -96,13 +95,13 @@ final class TodayBoard: Sendable, ObservableObject {
         self.isFetchedTodayString = true
     }
     
-    // 데이터 쌓기 위한테스트용함수 추후 loadTodayMentorMessage()로 변경해야함
+    // 데이터 쌓기 위한테스트용 함수, 추후 loadTodayMentorMessage()로 변경해야함
     func loadTodayMentorMessageTest() async {
         let alanLLM = owner!.alanLLM
         let mentoryDB = owner!.mentoryDB
         do {
             let character: CharacterType = Bool.random() ? .Nangcheol : .Gureum
-            let question = AlanLLM.Question(character.question)
+            let question = AlanQuestion(character.question)
             let NewMessageFromAlanLLM: String?
             do {
                 //AlanLLM 호출
@@ -133,8 +132,6 @@ final class TodayBoard: Sendable, ObservableObject {
             logger.error("loadTodayMentorMessage()처리 실패: \(error.localizedDescription)")
         }
     }
-       
-    
     func loadTodayMentorMessage() async {
         // capture
         let alanLLM = owner!.alanLLM
@@ -157,7 +154,7 @@ final class TodayBoard: Sendable, ObservableObject {
             
             // 새 멘토메세지 받을 캐릭터 랜덤선정
             let character: CharacterType = Bool.random() ? .Nangcheol : .Gureum
-            let question = AlanLLM.Question(character.question)
+            let question = AlanQuestion(character.question)
             
             let NewMessageFromAlanLLM: String?
             do {
@@ -212,10 +209,10 @@ final class TodayBoard: Sendable, ObservableObject {
         if let lastRecord = todayRecords.max(by: { $0.createdAt < $1.createdAt }) {
             self.actionKeyWordItems = zip(lastRecord.actionTexts, lastRecord.actionCompletionStatus).map { ($0, $1) }
             self.latestRecordId = lastRecord.id
+            
             logger.debug("가장 최근 레코드의 행동 추천 \(lastRecord.actionTexts.count)개 로드")
         }
     }
-    
     func updateActionCompletion() async {
         // capture
         guard let recordId = latestRecordId else {
@@ -232,5 +229,7 @@ final class TodayBoard: Sendable, ObservableObject {
         } catch {
             logger.error("행동 추천 완료 상태 업데이트 실패: \(error)")
         }
+        
+        // mutate
     }
 }

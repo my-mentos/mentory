@@ -81,7 +81,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
 
             원본 일기: \(textInput)
             """
-            let firstQuestion = FirebaseLLM.Question(firstPrompt)
+            let firstQuestion = FirebaseQuestion(firstPrompt)
             let firstAnswer = try await firebaseLLM.question(firstQuestion)
 
             // JSON 파싱 (FirebaseLLM에서 코드블록 제거까지 끝낸 상태)
@@ -105,7 +105,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
         let secondResult: SecondAnalysisResult
         do {
             let secondPrompt = character.makeSecondAnalysisPrompt(firstResult: firstResult, diaryText: textInput)
-            let secondQuestion = FirebaseLLM.Question(secondPrompt)
+            let secondQuestion = FirebaseQuestion(secondPrompt)
             let secondAnswer = try await firebaseLLM.question(secondQuestion)
 
             // JSON 파싱

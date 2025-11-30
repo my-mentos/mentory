@@ -42,13 +42,13 @@ struct EditingNameSheet: View {
     
     @ViewBuilder
     private var nameTextField: some View {
-        TextField("새 이름을 입력하세요", text: $editingName.currentEditingName)
+        TextField("새 이름을 입력하세요", text: $editingName.nameInput)
             .textFieldStyle(.roundedBorder)
             .autocorrectionDisabled()
             .textInputAutocapitalization(.never)
             .focused($nameTextFieldFocused)
             .task {
-                let stream = editingName.$currentEditingName.values
+                let stream = editingName.$nameInput.values
                 for await _ in stream {
                     editingName.validate()
                 }

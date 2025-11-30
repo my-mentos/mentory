@@ -193,13 +193,18 @@ fileprivate struct SubmitButton<Content: View>: View {
                 }
             }
         
+        
+            .onReceive(recordForm.$textInput, perform: { _ in
+                recordForm.validateInput()
+            })
+            .onReceive(recordForm.$titleInput, perform: { _ in
+                recordForm.validateInput()
+            })
             .task {
-                let titleInputStream = recordForm.$titleInput.values
-                let textInputStream = recordForm.$textInput.values
+                let canProceedStream = recordForm.$canProceed.values
                 
-                for await (title, text) in zip(titleInputStream, textInputStream) {
-                    self.isSubmitEnabled = !title.trimmingCharacters(in: .whitespaces).isEmpty &&
-                    !text.trimmingCharacters(in: .whitespaces).isEmpty
+                for await canProceed in canProceedStream {
+                    self.isSubmitEnabled = canProceed
                 }
             }
     }

@@ -6,10 +6,11 @@
 //
 import Foundation
 import Collections
+import Values
 import OSLog
 
 
-// MARK: Model
+// MARK: Object
 @MainActor
 final class AlanLLMModel: Sendable {
     // MARK: core
@@ -39,8 +40,8 @@ final class AlanLLMModel: Sendable {
             .init(action: .init(name: "speak", speak: $0), content: $0)
         }
     }
-    var answerBox: [AlanLLM.Question.ID: AlanLLM.Answer] = [:]
-    var questionQueue: Deque<AlanLLM.Question> = []
+    var answerBox: [AlanQuestion.ID: AlanLLM.Answer] = [:]
+    var questionQueue: Deque<AlanQuestion> = []
     
     
     // MARK: action

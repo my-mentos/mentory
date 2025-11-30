@@ -4,30 +4,19 @@
 //
 //  Created by SJS on 11/27/25.
 //
-
 import Foundation
 import OSLog
 import FirebaseCore
 import FirebaseAI
+import Values
 
+
+
+
+
+// MARK: Domain
 struct FirebaseLLM: Sendable {
-
-    struct Question {
-        let content: String
-
-        init(_ content: String) {
-            self.content = content
-        }
-    }
-
-    struct Answer {
-        let content: String
-    }
-
-    enum Error: Swift.Error {
-        case emptyResponse
-    }
-
+    // MARK: core
     private let logger = Logger(subsystem: "MentoryiOS.FirebaseLLM", category: "Domain")
     private let model: GenerativeModel
 
@@ -40,8 +29,8 @@ struct FirebaseLLM: Sendable {
         self.model = ai.generativeModel(modelName: "gemini-2.5-flash-lite")
     }
 
-
-    func question(_ question: Question) async throws -> Answer {
+    // MARK: flow
+    func question(_ question: FirebaseQuestion) async throws -> FirebaseAnswer {
         logger.info("Firebase LLM 요청 시작")
 
         do {
@@ -53,31 +42,20 @@ struct FirebaseLLM: Sendable {
                 throw Error.emptyResponse
             }
 
-            // ```json 코드블록 감싸져 있으면 제거
-            let cleaned = Self.stripCodeFence(from: rawText)
-
-            logger.info("Firebase LLM 응답 성공: \(cleaned, privacy: .public)")
-            return Answer(content: cleaned)
+            let answer = FirebaseAnswer(rawText)
+            let cleanedAnswer = answer.removeCodeBlockFence()
+            logger.info("Firebase LLM 응답 성공: \(cleanedAnswer.content, privacy: .public)")
+            
+            return cleanedAnswer
         } catch {
             logger.error("Firebase LLM 오류: \(error.localizedDescription, privacy: .public)")
             throw error
         }
     }
-
-
-    // ```json ... ``` 같이 코드블록으로 감싸진 응답에서 앞뒤 ``` 제거
-    private static func stripCodeFence(from text: String) -> String {
-        var result = text.trimmingCharacters(in: .whitespacesAndNewlines)
-
-        if result.hasPrefix("```") {
-            if let firstNewline = result.range(of: "\n") {
-                result = String(result[firstNewline.upperBound...])
-            }
-            if let closingRange = result.range(of: "```", options: .backwards) {
-                result = String(result[..<closingRange.lowerBound])
-            }
-        }
-
-        return result.trimmingCharacters(in: .whitespacesAndNewlines)
+    
+    
+    // MARK: value
+    enum Error: Swift.Error {
+        case emptyResponse
     }
 }

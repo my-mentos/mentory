@@ -25,10 +25,11 @@ final class SettingBoard: Sendable, ObservableObject {
     
     private static let reminderTimeKey = "mentory.settingBoard.reminderTime"
     private var isApplyingSavedReminderTime = false
+    
     @Published var editingName: EditingName? = nil
+    
     @Published var isReminderOn: Bool = true
     @Published var reminderTime: Date = .now
-    
     func formattedReminderTime() -> String {
         self.reminderTime
             .formatted(
@@ -41,17 +42,18 @@ final class SettingBoard: Sendable, ObservableObject {
     
     // MARK: action
     func setUpEditingName() {
-        logger.debug("SettingBoard.setUpEditingName 호출")
-        
         // capture
         guard self.editingName == nil else {
             logger.error("이미 SettingBoard에 EditingName이 존재합니다.")
             return
         }
         
-        // mutate
-        self.editingName = EditingName(owner: self, userName: owner?.userName ?? "")
+        guard let userName = owner!.userName else {
+            fatalError("MentoryiOS의 userName이 nil입니다.")
+        }
         
+        // mutate
+        self.editingName = EditingName(owner: self, userName: userName)
     }
     
     func loadSavedReminderTime() {
@@ -67,21 +69,6 @@ final class SettingBoard: Sendable, ObservableObject {
         UserDefaults.standard.set(reminderTime, forKey: Self.reminderTimeKey)
         logger.info("알림 시간이 저장되었습니다: \(String(describing: self.reminderTime))")
     }
- 
-    // 데이터 삭제 버튼 탭 처리 (확인 Alert 노출)
-//    func requestDataDeletion() {
-//        logger.info("데이터 삭제 확인 Alert를 노출합니다.")
-//    }
-//    
-//    func cancelDataDeletion() {
-//        logger.info("데이터 삭제가 취소되었습니다.")
-//    }
-    
-    func confirmDataDeletion() {
-        logger.info("데이터 삭제를 진행합니다. 실제 삭제 로직은 추후 구현 예정")
-        // TODO: 추후 담당자가 삭제 로직 구현
-    }
-    
     
     
     

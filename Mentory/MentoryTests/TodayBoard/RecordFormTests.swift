@@ -28,16 +28,16 @@ struct RecordFormTests {
                 recordForm.textInput = "내용"
             }
             
-            try await #require(recordForm.validationResult == .none)
+            try await #require(recordForm.canProceed == false)
 
             // When
             await recordForm.validateInput()
 
             // Then
-            await #expect(recordForm.validationResult == .titleInputIsEmpty)
+            await #expect(recordForm.canProceed == false)
         }
         @Test func whenAllContentsAreEmpty() async throws {
-            // Given: 제목만 있고 모든 컨텐츠가 비어있음
+            // given
             await MainActor.run {
                 recordForm.titleInput = "제목"
                 recordForm.textInput = ""
@@ -45,60 +45,46 @@ struct RecordFormTests {
                 recordForm.voiceInput = nil
             }
             
-            try await #require(recordForm.validationResult == .none)
+            try await #require(recordForm.canProceed == false)
 
-            // When
+            // when
             await recordForm.validateInput()
 
-            // Then
-            await #expect(recordForm.validationResult == .contentsInputIsEmpty)
+            // then
+            await #expect(recordForm.canProceed == false)
         }
 
         // 성공 케이스
         @Test func whenTitleAndTextExist() async throws {
             // Given
             await MainActor.run {
-                recordForm.titleInput = "제목"
-                recordForm.textInput = "내용"
+                recordForm.titleInput = "SAMPLE_TITLE"
+                recordForm.textInput = "SAMPLE_TEXT"
             }
             
-            try await #require(recordForm.validationResult == .none)
+            try await #require(recordForm.canProceed == false)
 
             // When
             await recordForm.validateInput()
 
             // Then
-            await #expect(recordForm.validationResult == .none)
+            await #expect(recordForm.canProceed == true)
         }
-        @Test func whenTitleAndImageExist() async throws {
+        @Test func whenTextInputIsEmpty() async throws {
             // Given
             await MainActor.run {
                 recordForm.titleInput = "제목"
                 recordForm.imageInput = Data([0x00, 0x01, 0x02])
-            }
-            
-            try await #require(recordForm.validationResult == .none)
-
-            // When
-            await recordForm.validateInput()
-
-            // Then
-            await #expect(recordForm.validationResult == .none)
-        }
-        @Test func whenTitleAndVoiceExist() async throws {
-            // Given
-            await MainActor.run {
-                recordForm.titleInput = "제목"
                 recordForm.voiceInput = URL(string: "file:///path/to/voice.m4a")
             }
             
-            try await #require(recordForm.validationResult == .none)
+            try await #require(recordForm.canProceed == false)
 
             // When
             await recordForm.validateInput()
 
             // Then
-            await #expect(recordForm.validationResult == .none)
+            await #expect(recordForm.canProceed == false)
         }
         @Test func whenAllInputsExist() async throws {
             // Given
@@ -108,12 +94,14 @@ struct RecordFormTests {
                 recordForm.imageInput = Data([0x00, 0x01, 0x02])
                 recordForm.voiceInput = URL(string: "file:///path/to/voice.m4a")
             }
+            
+            try await #require(recordForm.canProceed == false)
 
             // When
             await recordForm.validateInput()
 
             // Then
-            await #expect(recordForm.validationResult == .none)
+            await #expect(recordForm.canProceed == true)
         }
     }
 

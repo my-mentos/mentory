@@ -5,6 +5,7 @@
 //  Created by 김민우 on 11/18/25.
 //
 import Foundation
+import Values
 
 
 // MARK: Mock
@@ -16,7 +17,7 @@ struct AlanLLMMock: AlanLLMInterface {
     
     // MARK: flow
     @concurrent
-    func question(_ question: AlanLLM.Question) async throws -> AlanLLM.Answer {
+    func question(_ question: AlanQuestion) async throws -> AlanLLM.Answer {
         return await MainActor.run {
             let alanLLM = model
             
@@ -27,10 +28,5 @@ struct AlanLLMMock: AlanLLMInterface {
             
             return myAnswer
         }
-    }
-    
-    @concurrent
-    func resetState(token: AlanLLM.AuthToken) async {
-        fatalError()
     }
 }

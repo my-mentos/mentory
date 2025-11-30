@@ -29,7 +29,8 @@ final class RecordForm: Sendable, ObservableObject {
     @Published var textInput: String = ""
     @Published var imageInput: Data? = nil
     @Published var voiceInput: URL? = nil
-    @Published var validationResult: ValidationResult = .none
+    
+    @Published var canProceed: Bool = false
     
     var startTime: Date? = nil // 기록 시작 시간 (RecordFormView가 열릴 때 설정됨)
     var completionTime: TimeInterval? = nil // 기록 완성까지 걸린 시간
@@ -38,26 +39,29 @@ final class RecordForm: Sendable, ObservableObject {
     // MARK: action
     func validateInput() {
         // capture
-        let currentTitleInput = self.titleInput
-        let currentTextInput = self.textInput
-        let currentImageInput = self.imageInput
-        let currentVoiceInput = self.voiceInput
+        let title = self.titleInput
+        guard title.isEmpty == false else {
+            logger.error("titleInput에는 값이 존재해야 합니다. 현재 값이 비어있습니다.")
+            return
+        }
+        
+        let text = self.textInput
+        guard text.isEmpty == false else {
+            logger.error("textInput에는 값이 존재해야 합니다. 현재 값이 비어있습니다.")
+            return
+        }
 
         // mutate
-        if currentTitleInput.isEmpty {
-            self.validationResult = .titleInputIsEmpty
-            return
-        } else if currentTextInput.isEmpty && currentVoiceInput == nil && currentImageInput == nil {
-            self.validationResult = .contentsInputIsEmpty
-            return
-        } else {
-            // 모든 검증 통과
-            self.validationResult = .none
-        }
+        self.canProceed = true
     }
     func submit() {
-        if titleInput.isEmpty {
+        // capture
+        guard titleInput.isEmpty == false else {
             logger.error("RecordForm의 titleInput에는 값이 존재해야 합니다. 현재 값이 비어있습니다.")
+            return
+        }
+        if titleInput.isEmpty {
+            
             return
         } else if textInput.isEmpty && voiceInput == nil && imageInput == nil {
             logger.error("RecordForm의 내용 입력이 비어있습니다. 텍스트, 이미지, 음성 중 하나 이상의 값이 필요합니다.")
@@ -73,7 +77,6 @@ final class RecordForm: Sendable, ObservableObject {
         }
 
         // mutate
-        // MindAnalyzer에게 분석 요청
         self.mindAnalyzer = MindAnalyzer(owner: self)
     }
     
@@ -103,11 +106,5 @@ final class RecordForm: Sendable, ObservableObject {
             self.image = image
             self.voice = voice
         }
-    }
-
-    nonisolated enum ValidationResult: String, Sendable, Hashable {
-        case none
-        case titleInputIsEmpty
-        case contentsInputIsEmpty
     }
 }
