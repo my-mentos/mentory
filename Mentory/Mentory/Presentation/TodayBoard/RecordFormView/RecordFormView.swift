@@ -192,6 +192,8 @@ fileprivate struct SubmitButton<Content: View>: View {
                     self.showMindAnalyzerView = isPresented
                 }
             }
+        
+        
             .onReceive(recordForm.$textInput, perform: { _ in
                 recordForm.validateInput()
             })
