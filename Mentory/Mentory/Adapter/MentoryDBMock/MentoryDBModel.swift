@@ -21,6 +21,11 @@ final class MentoryDBModel: Sendable {
     var createRecordQueue: Deque<RecordData> = []
     
     var records: [DailyRecordModel] = []
+    
+//    var messages: [MessageData] = []
+    
+    var messages: [MentorMessageModel] = []
+    
     func getAllRecords() -> [RecordData] {
         self.records
             .map {
@@ -96,6 +101,28 @@ final class MentoryDBModel: Sendable {
         print("레코드 \(recordId)의 행동 추천 완료 상태가 업데이트되었습니다.")
     }
 
+    func getMentorMessage() -> MessageData{
+        let latest = messages.max { $0.createdAt < $1.createdAt }!
 
+        let latestData = MessageData(
+            id: latest.id,
+            createdAt: latest.createdAt,
+            message: latest.message,
+            characterType: latest.characterType
+        )
+        return latestData
+        
+    }
+    func setMentorMessage(_ message: String, _ type: CharacterType) {
+        let newMessage = MentorMessageModel(
+            owner: self,
+            createdAt: Date(),
+            message: message,
+            characterType: type
+        )
+        
+        messages.append(newMessage)
+    }
+//
     // MARK: value
 }

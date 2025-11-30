@@ -11,6 +11,7 @@ import Values
 // MARK: Mock
 nonisolated
 struct MentoryDBMock: MentoryDBInterface {
+    
     // MARK: core
     nonisolated let model = MentoryDBModel()
     
@@ -64,6 +65,21 @@ struct MentoryDBMock: MentoryDBInterface {
     func fetchByDateRange(from: Date, to: Date) async throws -> [RecordData] {
         await MainActor.run {
             model.getRecords(from: from, to: to)
+        }
+    }
+    
+    @concurrent
+    func fetchMentorMessage() async throws -> Values.MessageData? {
+        return await MainActor.run {
+            model.getMentorMessage()
+        }
+        
+    }
+    
+    @concurrent
+    func saveMentorMessage(_ message: String, _ type: CharacterType) async throws {
+        await MainActor.run {
+            model.setMentorMessage(message, type)
         }
     }
 }

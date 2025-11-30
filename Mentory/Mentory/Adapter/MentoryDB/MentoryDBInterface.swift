@@ -21,4 +21,8 @@ protocol MentoryDBInterface: Sendable {
     func fetchAll() async throws -> [RecordData]
     func fetchToday() async throws -> [RecordData]
     func fetchByDateRange(from: Date, to: Date) async throws -> [RecordData]
+    
+    func fetchMentorMessage() async throws -> MessageData?
+    func saveMentorMessage(_ message: String, _ type: CharacterType) async throws -> Void
+    
 }
