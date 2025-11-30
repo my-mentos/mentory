@@ -30,7 +30,7 @@ struct FirebaseLLM: Sendable {
     }
 
     // MARK: flow
-    func question(_ question: FirebaseQuestion) async throws -> Answer {
+    func question(_ question: FirebaseQuestion) async throws -> FirebaseAnswer {
         logger.info("Firebase LLM 요청 시작")
 
         do {
@@ -46,7 +46,7 @@ struct FirebaseLLM: Sendable {
             let cleaned = Self.stripCodeFence(from: rawText)
 
             logger.info("Firebase LLM 응답 성공: \(cleaned, privacy: .public)")
-            return Answer(content: cleaned)
+            return FirebaseAnswer(cleaned)
         } catch {
             logger.error("Firebase LLM 오류: \(error.localizedDescription, privacy: .public)")
             throw error
@@ -72,17 +72,9 @@ struct FirebaseLLM: Sendable {
     
     
     // MARK: value
-//    struct Question {
+//    struct Answer {
 //        let content: String
-//
-//        init(_ content: String) {
-//            self.content = content
-//        }
 //    }
-
-    struct Answer {
-        let content: String
-    }
 
     enum Error: Swift.Error {
         case emptyResponse
