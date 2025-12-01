@@ -39,7 +39,6 @@ struct MindAnalyzerView: View {
                     Task {
                         mindAnalyzer.startAnalyze()
                         
-//                        await mindAnalyzer.startAnalyzing()
                         await mindAnalyzer.analyze()
                         
 //                        await mindAnalyzer.saveRecord()

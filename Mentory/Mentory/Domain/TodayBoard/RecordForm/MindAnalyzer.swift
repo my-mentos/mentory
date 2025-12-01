@@ -123,6 +123,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
         // mutate
         self.mindType = analysis.mindType
         self.analyzedResult = analysis.empathyMessage
+        self.isAnalyzeFinished = true
     }
     
     func cancel() {
