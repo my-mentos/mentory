@@ -28,7 +28,7 @@ struct MindAnalyzerView: View {
             
             CharacterPicker(
                 characters: MentoryCharacter.allCases,
-                selection: $mindAnalyzer.selectedCharacter
+                selection: $mindAnalyzer.character
             )
             
             AnalyzeButton(

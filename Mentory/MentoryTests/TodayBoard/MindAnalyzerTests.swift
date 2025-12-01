@@ -26,7 +26,7 @@ struct MindAnalyzerTests {
             try await #require(mindAnalyzer.isAnalyzeFinished == false)
             
             await MainActor.run {
-                mindAnalyzer.selectedCharacter = .cool
+                mindAnalyzer.character = .cool
             }
             
             // when
@@ -40,7 +40,7 @@ struct MindAnalyzerTests {
             try await #require(mindAnalyzer.analyzedResult == nil)
             
             await MainActor.run {
-                mindAnalyzer.selectedCharacter = .cool
+                mindAnalyzer.character = .cool
             }
             
             // when
@@ -54,7 +54,7 @@ struct MindAnalyzerTests {
             try await #require(mindAnalyzer.mindType == nil)
             
             await MainActor.run {
-                mindAnalyzer.selectedCharacter = .cool
+                mindAnalyzer.character = .cool
             }
             
             // when
@@ -63,6 +63,37 @@ struct MindAnalyzerTests {
             // then
             await #expect(mindAnalyzer.mindType != nil)
             
+        }
+        
+        @Test func whenTextInputFromRecordFormIsEmpty() async throws {
+            // given
+            let recordForm = try #require(await mindAnalyzer.owner)
+            
+            await MainActor.run {
+                recordForm.textInput = ""
+            }
+            
+            try await #require(mindAnalyzer.isAnalyzeFinished == false)
+            
+            // when
+            await mindAnalyzer.analyze()
+            
+            // then
+            await #expect(mindAnalyzer.isAnalyzeFinished == false)
+        }
+        @Test func whenCharacterIsNil() async throws {
+            // given
+            await MainActor.run {
+                mindAnalyzer.character = nil
+            }
+            
+            try await #require(mindAnalyzer.isAnalyzeFinished == false)
+            
+            // when
+            await mindAnalyzer.analyze()
+            
+            // then
+            await #expect(mindAnalyzer.isAnalyzeFinished == false)
         }
     }
     

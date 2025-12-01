@@ -35,7 +35,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
     
     @Published var isAnalyzeFinished: Bool = false
     
-    @Published var selectedCharacter: MentoryCharacter? = nil
+    @Published var character: MentoryCharacter? = nil
     
     @Published var analyzedResult: String? = nil
     @Published var mindType: Emotion? = nil
@@ -54,7 +54,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
             return
         }
         
-        guard let selectedCharacter else {
+        guard let character else {
             logger.error("캐릭터를 먼저 선택해야 합니다.")
             return
         }
@@ -70,7 +70,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
         
         let analysis: FirebaseAnalysis
         do {
-            analysis = try await firebaseLLM.getEmotionAnalysis(question, character: selectedCharacter)
+            analysis = try await firebaseLLM.getEmotionAnalysis(question, character: character)
             
         } catch {
             logger.error("\(error)")
@@ -83,6 +83,8 @@ final class MindAnalyzer: Sendable, ObservableObject {
         self.analyzedResult = analysis.empathyMessage
         self.isAnalyzeFinished = true
     }
+    
+    // TODO: saveRecord를 analyze 액션으로 통합, 
     func saveRecord() async {
         // capture
         guard let analyzedContent = self.analyzedResult,
