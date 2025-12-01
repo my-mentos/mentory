@@ -222,8 +222,66 @@ actor MentoryDB: Sendable {
             logger.error("행동 추천 완료 상태 업데이트 실패: \(error)")
         }
     }
-    
-    
+
+    /// 특정 날짜의 일기를 조회합니다 (recordDate 기준)
+    func getRecordForDate(_ targetDate: Date) async -> RecordData? {
+        let context = ModelContext(MentoryDB.container)
+        let id = self.id
+
+        let descriptor = FetchDescriptor<MentoryDBModel>(
+            predicate: #Predicate { $0.id == id }
+        )
+
+        do {
+            guard let db = try context.fetch(descriptor).first else {
+                logger.error("DB가 존재하지 않아 nil을 반환합니다.")
+                return nil
+            }
+
+            let calendar = Calendar.current
+            let startOfDay = calendar.startOfDay(for: targetDate)
+            let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!
+
+            let record = db.records.first {
+                let recordStart = calendar.startOfDay(for: $0.recordDate)
+                return recordStart >= startOfDay && recordStart < endOfDay
+            }
+
+            if let record = record {
+                logger.debug("날짜 \(targetDate)의 레코드 조회 성공")
+                return record.toData()
+            } else {
+                logger.debug("날짜 \(targetDate)의 레코드가 없습니다.")
+                return nil
+            }
+        } catch {
+            logger.error("특정 날짜 레코드 조회 오류: \(error)")
+            return nil
+        }
+    }
+
+    /// 특정 RecordDate(오늘/어제/그제)에 일기가 있는지 확인합니다
+    func hasRecordForDate(_ recordDate: RecordDate) async -> Bool {
+        let targetDate = recordDate.toDate()
+        let record = await getRecordForDate(targetDate)
+        return record != nil
+    }
+
+    /// 작성 가능한 날짜 목록을 반환합니다 (일기가 없는 날짜만)
+    func getAvailableDatesForWriting() async -> [RecordDate] {
+        var available: [RecordDate] = []
+
+        for date in RecordDate.allCases {
+            if await !hasRecordForDate(date) {
+                available.append(date)
+            }
+        }
+
+        logger.debug("작성 가능한 날짜: \(available.map { $0.rawValue })")
+        return available
+    }
+
+
     func getMentorMessage() -> MessageData? {
         let context = ModelContext(MentoryDB.container)
         let id = self.id
@@ -305,6 +363,7 @@ actor MentoryDB: Sendable {
             let newModels = db.createRecordQueue.map { data in
                 DailyRecord.DailyRecordModel(
                     id: data.id,
+                    recordDate: data.recordDate,
                     createdAt: data.createdAt,
                     content: data.content,
                     analyzedResult: data.analyzedResult,
@@ -359,7 +418,8 @@ actor MentoryDB: Sendable {
     final class RecordTicket {
         // MARK: core
         @Attribute(.unique) var id: UUID
-        var createdAt: Date
+        var recordDate: Date  // 일기가 속한 날짜
+        var createdAt: Date   // 실제 작성 시간
         var content: String
         var analyzedResult: String
         var emotion: Emotion
@@ -368,6 +428,7 @@ actor MentoryDB: Sendable {
         
         init(data: RecordData) {
             self.id = data.id
+            self.recordDate = data.recordDate
             self.createdAt = data.createdAt
             self.content = data.content
             self.analyzedResult = data.analyzedResult
@@ -379,6 +440,7 @@ actor MentoryDB: Sendable {
         func toRecordData() -> RecordData {
             .init(
                 id: id,
+                recordDate: recordDate,
                 createdAt: createdAt,
                 content: content,
                 analyzedResult: analyzedResult,

@@ -10,6 +10,7 @@ import OSLog
 import Collections
 import AsyncAlgorithms
 @preconcurrency import Combine
+import Values
 
 
 // MARK: View
@@ -31,7 +32,7 @@ struct RecordFormView: View {
                         )
                     },
                     center: {
-                        TodayDate()
+                        TodayDate(targetDate: recordForm.targetDate)
                     },
                     right: {
                         SubmitButton(
@@ -132,13 +133,15 @@ fileprivate struct CancelButton: View {
 }
 
 fileprivate struct TodayDate: View {
+    let targetDate: RecordDate
+
     private var formattedDate: String {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ko_KR")
         formatter.dateFormat = "M월 d일 EEEE"
-        return formatter.string(from: Date())
+        return formatter.string(from: targetDate.toDate())
     }
-    
+
     var body: some View {
         Text(formattedDate)
             .font(.headline)

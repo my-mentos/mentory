@@ -13,8 +13,9 @@ import Collections
 @MainActor
 final class DailyRecordModel: Sendable {
     // MARK: core
-    init(owner: MentoryDBModel? = nil, createAt: Date, content: String, analyzedContent: String, emotion: Emotion, actionTexts: [String] = [], actionCompletionStatus: [Bool] = []) {
+    init(owner: MentoryDBModel? = nil,recordDate: Date, createAt: Date, content: String, analyzedContent: String, emotion: Emotion, actionTexts: [String] = [], actionCompletionStatus: [Bool] = []) {
         self.owner = owner
+        self.recordDate = recordDate
         self.createAt = createAt
         self.content = content
         self.analyzedContent = analyzedContent
@@ -28,6 +29,7 @@ final class DailyRecordModel: Sendable {
     nonisolated let id = UUID()
     weak var owner: MentoryDBModel?
     
+    nonisolated let recordDate: Date
     nonisolated let createAt: Date
     
     var content: String

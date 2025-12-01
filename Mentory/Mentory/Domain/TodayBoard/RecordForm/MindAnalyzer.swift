@@ -173,7 +173,8 @@ final class MindAnalyzer: Sendable, ObservableObject {
         // MentoryRecord 생성
         let recordData = RecordData(
             id: UUID(),
-            createdAt: Date(),
+            recordDate: recordForm.targetDate.toDate(),  // 일기가 속한 날짜
+            createdAt: Date(),  // 실제 작성 시간
             content: "",
             analyzedResult: analyzedContent,
             emotion: self.mindType!,

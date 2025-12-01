@@ -52,7 +52,22 @@ public struct MentoryDBAPI: Sendable {
     public func updateActionCompletion(recordId: UUID, completionStatus: [Bool]) async throws {
         await mentoryDB.updateActionCompletion(recordId: recordId, completionStatus: completionStatus)
     }
-    
+
+    @concurrent
+    public func fetchRecordForDate(_ targetDate: Date) async throws -> RecordData? {
+        return await mentoryDB.getRecordForDate(targetDate)
+    }
+
+    @concurrent
+    public func hasRecordForDate(_ recordDate: RecordDate) async throws -> Bool {
+        return await mentoryDB.hasRecordForDate(recordDate)
+    }
+
+    @concurrent
+    public func fetchAvailableDatesForWriting() async throws -> [RecordDate] {
+        return await mentoryDB.getAvailableDatesForWriting()
+    }
+
     @concurrent
     public func fetchMentorMessage() async throws -> MessageData? {
         return await mentoryDB.getMentorMessage()

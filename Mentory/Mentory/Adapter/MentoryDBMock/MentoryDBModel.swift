@@ -30,6 +30,7 @@ final class MentoryDBModel: Sendable {
         self.records
             .map {
                 RecordData(id: $0.id,
+                           recordDate: $0.recordDate,
                            createdAt: $0.createAt,
                            content: $0.content,
                            analyzedResult: $0.analyzedContent,
@@ -45,6 +46,7 @@ final class MentoryDBModel: Sendable {
             .filter { calendar.isDateInToday($0.createAt) }
             .map {
                 RecordData(id: $0.id,
+                           recordDate: $0.recordDate,
                            createdAt: $0.createAt,
                            content: $0.content,
                            analyzedResult: $0.analyzedContent,
@@ -61,6 +63,7 @@ final class MentoryDBModel: Sendable {
             .filter { $0.createAt >= start && $0.createAt <= end }
             .map {
                 RecordData(id: $0.id,
+                           recordDate: $0.recordDate,
                            createdAt: $0.createAt,
                            content: $0.content,
                            analyzedResult: $0.analyzedContent,
@@ -79,6 +82,7 @@ final class MentoryDBModel: Sendable {
             
             let newRecord = DailyRecordModel(
                 owner: self,
+                recordDate: data.recordDate,
                 createAt: data.createdAt,
                 content: data.content,
                 analyzedContent: data.analyzedResult,
@@ -99,6 +103,47 @@ final class MentoryDBModel: Sendable {
 
         record.actionCompletionStatus = completionStatus
         print("레코드 \(recordId)의 행동 추천 완료 상태가 업데이트되었습니다.")
+    }
+
+    func getRecordForDate(_ targetDate: Date) -> RecordData? {
+        let calendar = Calendar.current
+        let startOfDay = calendar.startOfDay(for: targetDate)
+        let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!
+
+        let record = records.first {
+            let recordStart = calendar.startOfDay(for: $0.recordDate)
+            return recordStart >= startOfDay && recordStart < endOfDay
+        }
+
+        return record.map {
+            RecordData(
+                id: $0.id,
+                recordDate: $0.recordDate,
+                createdAt: $0.createAt,
+                content: $0.content,
+                analyzedResult: $0.analyzedContent,
+                emotion: $0.emotion,
+                actionTexts: $0.actionTexts,
+                actionCompletionStatus: $0.actionCompletionStatus
+            )
+        }
+    }
+
+    func hasRecordForDate(_ recordDate: RecordDate) -> Bool {
+        let targetDate = recordDate.toDate()
+        return getRecordForDate(targetDate) != nil
+    }
+
+    func getAvailableDatesForWriting() -> [RecordDate] {
+        var available: [RecordDate] = []
+
+        for date in RecordDate.allCases {
+            if !hasRecordForDate(date) {
+                available.append(date)
+            }
+        }
+
+        return available
     }
 
     func getMentorMessage() -> MessageData{

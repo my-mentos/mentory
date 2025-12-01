@@ -199,7 +199,10 @@ fileprivate struct RecordStatCard<Content: View>: View {
                     .font(.system(size: 16, weight: .medium))
                 
                 Button {
-                    todayBoard.setUpForm()
+                    Task {
+                        await todayBoard.setupRecordForms()
+                        todayBoard.showDateSelectionSheet = true
+                    }
                 } label: {
                     Text(self.navLabel)
                         .font(.system(size: 16, weight: .semibold))
@@ -230,6 +233,13 @@ fileprivate struct RecordStatCard<Content: View>: View {
             }
             .padding(.vertical, 24)
             .frame(maxWidth: .infinity)
+            // 날짜 선택 Sheet (반쯤 올라옴)
+            .sheet(isPresented: $todayBoard.showDateSelectionSheet) {
+                DateSelectionSheet(todayBoard: todayBoard)
+                    .presentationDetents([.medium, .large])
+                    .presentationDragIndicator(.visible)
+            }
+            // 일기 작성 FullScreenCover
             .fullScreenCover(isPresented: $showFullScreenCover) {
                 if let recordForm = todayBoard.recordForm {
                     navDestination(recordForm)
@@ -364,6 +374,136 @@ fileprivate struct SuggestionActionRows: View {
     }
 }
 
+// MARK: - DateSelectionSheet
+fileprivate struct DateSelectionSheet: View {
+    @ObservedObject var todayBoard: TodayBoard
+    @Environment(\.dismiss) var dismiss
 
+    var body: some View {
+        VStack(spacing: 24) {
+            // 헤더
+            VStack(spacing: 8) {
+                Text("어느 날의 일기를 쓸까요?")
+                    .font(.system(size: 24, weight: .bold))
 
+                Text("작성 가능한 날짜를 선택해주세요.")
+                    .font(.system(size: 14))
+                    .foregroundColor(.gray)
+                
+                Text("일기는 최대 이틀 전까지의 날짜만 작성할 수 있어요.")
+                    .font(.system(size: 14))
+                    .foregroundColor(.gray)
+            }
+            .padding(.top, 32)
 
+            // 날짜 선택 버튼들 또는 완료 메시지
+            if todayBoard.recordForms.isEmpty {
+                VStack(spacing: 16) {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.system(size: 60))
+                        .foregroundColor(.green)
+                        .padding(.top, 32)
+
+                    Text("모든 일기를 작성했어요!")
+                        .font(.system(size: 20, weight: .bold))
+
+                    Text("오늘, 어제, 그제의 일기를\n모두 작성하셨습니다.")
+                        .font(.system(size: 14))
+                        .foregroundColor(.gray)
+                        .multilineTextAlignment(.center)
+
+                    Button {
+                        dismiss()
+                    } label: {
+                        Text("확인")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 14)
+                            .background(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [Color.blue]),
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
+                            .cornerRadius(12)
+                            .shadow(
+                                color: Color.blue.opacity(0.3),
+                                radius: 8,
+                                x: 0,
+                                y: 4
+                            )
+                    }
+                    .padding(.horizontal, 24)
+                    .padding(.top, 16)
+                }
+
+                Spacer()
+            } else {
+                VStack(spacing: 12) {
+                    ForEach(todayBoard.recordForms) { recordForm in
+                        DateButton(
+                            date: recordForm.targetDate,
+                            action: {
+                                // recordForm 설정
+                                todayBoard.recordForm = recordForm
+                                // Sheet 닫기
+                                dismiss()
+                            }
+                        )
+                    }
+                }
+                .padding(.horizontal, 24)
+
+                Spacer()
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color(.systemBackground))
+    }
+}
+
+fileprivate struct DateButton: View {
+    let date: RecordDate
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(date.rawValue)
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundColor(.primary)
+
+                    Text(dateDescription(for: date))
+                        .font(.system(size: 14))
+                        .foregroundColor(.gray)
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(.gray)
+            }
+            .padding(.horizontal, 20)
+            .padding(.vertical, 16)
+            .background(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(Color(.secondarySystemBackground))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+            )
+        }
+    }
+
+    private func dateDescription(for recordDate: RecordDate) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "M월 d일 (E)"
+        dateFormatter.locale = Locale(identifier: "ko_KR")
+        return dateFormatter.string(from: recordDate.toDate())
+    }
+}

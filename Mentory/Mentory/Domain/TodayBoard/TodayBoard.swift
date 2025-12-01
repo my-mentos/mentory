@@ -23,8 +23,11 @@ final class TodayBoard: Sendable, ObservableObject {
     // MARK: state
     nonisolated let id = UUID()
     weak var owner: MentoryiOS?
-    
-    @Published var recordForm: RecordForm? = nil
+
+    @Published var recordForm: RecordForm? = nil  // deprecated: 기존 단일 폼 (호환성 유지)
+    @Published var recordForms: [RecordForm] = []  // RecordForm 배열 (각 RecordForm이 targetDate 정보를 포함)
+    @Published var showDateSelectionSheet: Bool = false  // 날짜 선택 Sheet 표시 여부
+
     @Published var records: [RecordData] = []
     func getIndicator() -> String {
         let records = self.records
@@ -56,18 +59,22 @@ final class TodayBoard: Sendable, ObservableObject {
     
     
     // MARK: action
+    /// @deprecated 이 메서드는 더 이상 사용되지 않습니다.
+    /// 대신 setupRecordForms()와 날짜 선택 UI를 사용하세요.
+    /// 기존 호환성 유지를 위해 남겨둔 메서드입니다.
     func setUpForm() {
-        logger.debug("TodayBoard.setUp 호출")
-        
+        logger.warning("setUpForm() 호출됨 - deprecated: setupRecordForms() 사용을 권장합니다")
+
         // capture
         guard self.recordForm == nil else {
             logger.error("이미 TodayBoard에 RecordForm이 존재합니다.")
             return
         }
-        
-        // mutate
-        self.recordForm = RecordForm(owner: self)
+
+        // mutate - 기본값으로 오늘 날짜 사용
+        self.recordForm = RecordForm(owner: self, targetDate: .today)
     }
+    
     func fetchTodayString() async {
         // capture
         guard isFetchedTodayString == false else {
@@ -240,5 +247,39 @@ final class TodayBoard: Sendable, ObservableObject {
         }
         
         // mutate
+    }
+
+    /// 작성 가능한 날짜의 RecordForm들을 생성합니다
+    func setupRecordForms() async {
+        // capture
+        let mentoryDB = owner!.mentoryDB
+
+        // process
+        let availableDates: [RecordDate]
+        do {
+            availableDates = try await mentoryDB.fetchAvailableDatesForWriting()
+            logger.debug("작성 가능한 날짜 \(availableDates.count)개 발견")
+        } catch {
+            logger.error("작성 가능한 날짜 조회 실패: \(error)")
+            return
+        }
+
+        // mutate
+        guard !availableDates.isEmpty else {
+            logger.warning("작성 가능한 날짜가 없습니다. 모든 날짜에 이미 일기가 작성되었습니다.")
+            self.recordForms = []
+            return
+        }
+
+        self.recordForms = availableDates.map { date in
+            RecordForm(owner: self, targetDate: date)
+        }
+
+        logger.debug("RecordForm \(availableDates.count)개 생성 완료")
+    }
+
+    /// 지정된 날짜의 RecordForm을 반환합니다
+    func getRecordForm(for date: RecordDate) -> RecordForm? {
+        return recordForms.first { $0.targetDate == date }
     }
 }

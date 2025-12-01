@@ -55,8 +55,9 @@ actor DailyRecord: Sendable {
     final class DailyRecordModel {
         // MARK: core
         @Attribute(.unique) var id: UUID
-        var createdAt: Date
-        
+        var recordDate: Date  // 일기가 속한 날짜 (오늘/어제/그제)
+        var createdAt: Date   // 실제 작성 시간
+
         var content: String
         var analyzedResult: String
         var emotion: Emotion
@@ -65,8 +66,9 @@ actor DailyRecord: Sendable {
         var actionTexts: [String]
         var actionCompletionStatus: [Bool]
 
-        init(id: UUID = UUID(), createdAt: Date, content: String, analyzedResult: String, emotion: Emotion, actionTexts: [String] = [], actionCompletionStatus: [Bool] = []) {
+        init(id: UUID = UUID(), recordDate: Date, createdAt: Date, content: String, analyzedResult: String, emotion: Emotion, actionTexts: [String] = [], actionCompletionStatus: [Bool] = []) {
             self.id = id
+            self.recordDate = recordDate
             self.createdAt = createdAt
             self.content = content
             self.analyzedResult = analyzedResult
@@ -79,6 +81,7 @@ actor DailyRecord: Sendable {
         // MARK: operator
         func toData() -> RecordData {
             return .init(id: self.id,
+                         recordDate: self.recordDate,
                          createdAt: self.createdAt,
                          content: self.content,
                          analyzedResult: self.analyzedResult,

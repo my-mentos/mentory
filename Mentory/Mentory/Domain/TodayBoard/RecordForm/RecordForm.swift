@@ -7,20 +7,23 @@
 import Foundation
 import Combine
 import OSLog
+import Values
 
 
 // MARK: Object
 @MainActor
-final class RecordForm: Sendable, ObservableObject {
+final class RecordForm: Sendable, ObservableObject, Identifiable {
     // MARK: core
-    init(owner: TodayBoard) {
+    init(owner: TodayBoard, targetDate: RecordDate) {
         self.owner = owner
+        self.targetDate = targetDate
     }
     nonisolated private let logger = Logger(subsystem: "MentoryiOS.TodayBoard.RecordForm", category: "Domain")
-    
-    
+
+
     // MARK: state
     nonisolated let id = UUID()
+    let targetDate: RecordDate  // 이 폼이 어느 날짜의 일기인지
     weak var owner: TodayBoard?
     
     @Published var mindAnalyzer: MindAnalyzer? = nil

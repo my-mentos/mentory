@@ -35,7 +35,22 @@ nonisolated struct MentoryDBAdapter: MentoryDBInterface {
     func updateActionCompletion(recordId: UUID, completionStatus: [Bool]) async throws {
         try await api.updateActionCompletion(recordId: recordId, completionStatus: completionStatus)
     }
-    
+
+    @concurrent
+    func fetchRecordForDate(_ targetDate: Date) async throws -> RecordData? {
+        try await api.fetchRecordForDate(targetDate)
+    }
+
+    @concurrent
+    func hasRecordForDate(_ recordDate: RecordDate) async throws -> Bool {
+        try await api.hasRecordForDate(recordDate)
+    }
+
+    @concurrent
+    func fetchAvailableDatesForWriting() async throws -> [RecordDate] {
+        try await api.fetchAvailableDatesForWriting()
+    }
+
     @concurrent
     func fetchAll() async throws -> [RecordData] {
         try await api.fetchAll()

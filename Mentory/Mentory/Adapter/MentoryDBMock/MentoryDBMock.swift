@@ -48,6 +48,27 @@ struct MentoryDBMock: MentoryDBInterface {
     }
 
     @concurrent
+    func fetchRecordForDate(_ targetDate: Date) async throws -> RecordData? {
+        await MainActor.run {
+            model.getRecordForDate(targetDate)
+        }
+    }
+
+    @concurrent
+    func hasRecordForDate(_ recordDate: RecordDate) async throws -> Bool {
+        await MainActor.run {
+            model.hasRecordForDate(recordDate)
+        }
+    }
+
+    @concurrent
+    func fetchAvailableDatesForWriting() async throws -> [RecordDate] {
+        await MainActor.run {
+            model.getAvailableDatesForWriting()
+        }
+    }
+
+    @concurrent
     func fetchAll() async throws -> [RecordData] {
         await MainActor.run {
             model.getAllRecords()
