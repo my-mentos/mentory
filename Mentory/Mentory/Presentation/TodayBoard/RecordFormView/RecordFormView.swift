@@ -168,27 +168,7 @@ fileprivate struct SubmitButton<Content: View>: View {
                 Button("제출") {
                     Task {
                         recordForm.validateInput()
-                        guard recordForm.canProceed else { return }
-                        
-                        recordForm.submit()
-                        
-                        let createdAt = Date()
-                        
-                        if let todayBoard = recordForm.owner,
-                           let mentory = todayBoard.owner,
-                           let settingBoard = mentory.settingBoard {
-                            
-                            let reminderTime = settingBoard.reminderTime
-                            
-                            // 기존 알림 전부 삭제
-                            await mentory.reminderCenter.cancelAllWeeklyReminders()
-                            
-                            // 마지막 기록(createdAt) 기준으로 알림 1개만 다시 예약
-                            await mentory.reminderCenter.scheduleWeeklyReminder(
-                                baseDate: createdAt,
-                                reminderTime: reminderTime
-                            )
-                        }
+                        await recordForm.submit()
                     }
                 }
             } message: {
