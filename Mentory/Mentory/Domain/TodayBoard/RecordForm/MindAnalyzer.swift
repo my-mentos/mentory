@@ -31,7 +31,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
     
     @Published var isAnalyzeFinished: Bool = false
     
-    @Published var selectedCharacter: CharacterType = .A
+    @Published var selectedCharacter: MentoryCharacter? = nil
 
     @Published var analyzedResult: String? = nil
     @Published var mindType: Emotion? = nil
@@ -206,8 +206,12 @@ final class MindAnalyzer: Sendable, ObservableObject {
             logger.error("textInput이 비어있습니다.")
             return
         }
+        
+        guard let selectedCharacter else {
+            logger.error("캐릭터를 먼저 선택해야 합니다.")
+            return
+        }
 
-        let character = selectedCharacter
         let recordForm = self.owner!
         let todayBoard = recordForm.owner!
         let mentoryiOS = todayBoard.owner!
@@ -219,7 +223,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
         
         let analysis: FirebaseAnalysis
         do {
-            analysis = try await firebaseLLM.getEmotionAnalysis(question)
+            analysis = try await firebaseLLM.getEmotionAnalysis(question, character: selectedCharacter)
             
         } catch {
             logger.error("\(error)")
@@ -241,32 +245,37 @@ final class MindAnalyzer: Sendable, ObservableObject {
     }
     
     
-    // MARK: value
-    enum CharacterType: Sendable, CaseIterable {
-        case A
-        case B
-        
-        var displayName: String {
-            switch self {
-            case .A: return "냉스 처리스키"
-            case .B: return "알렉산더 지방스"
-            }
-        }
-        
-        var description: String {
-            switch self {
-            case .A: return "냉철한 분석가 초록이가 감정 분석을 도와드릴게요!"
-            case .B: return "감성적인 조력자 지방이가 따뜻하게 답해드릴게요!"
-            }
-        }
-        
-        var imageName: String {
-            switch self {
-            case .A: return "bunsuk"
-            case .B: return "gureum"
-            }
-        }
-        
+//    // MARK: value
+//    enum CharacterType: Sendable, CaseIterable {
+//        case A
+//        case B
+//        
+//        var displayName: String {
+//            switch self {
+//            case .A: return "냉스 처리스키"
+//            case .B: return "알렉산더 지방스"
+//            }
+//        }
+//        
+//        var description: String {
+//            switch self {
+//            case .A: return "냉철한 분석가 초록이가 감정 분석을 도와드릴게요!"
+//            case .B: return "감성적인 조력자 지방이가 따뜻하게 답해드릴게요!"
+//            }
+//        }
+//        
+//        var imageName: String {
+//            switch self {
+//            case .A: return "bunsuk"
+//            case .B: return "gureum"
+//            }
+//        }
+//    }
+}
+
+
+
+
 //        fileprivate func makeSecondAnalysisPrompt(firstResult: MindAnalyzer.FirstAnalysisResult, diaryText: String) -> String {
 //            switch self {
 //            case .A:
@@ -339,5 +348,3 @@ final class MindAnalyzer: Sendable, ObservableObject {
 //                """
 //            }
 //        }
-    }
-}

@@ -15,7 +15,8 @@ import Values
 protocol FirebaseLLMInterface: Sendable {
     func question(_ : FirebaseQuestion) async throws -> FirebaseAnswer
     
-    func getEmotionAnalysis(_ : FirebaseQuestion) async throws -> FirebaseAnalysis
+    func getEmotionAnalysis(_ : FirebaseQuestion,
+                            character: MentoryCharacter) async throws -> FirebaseAnalysis
 }
 
 
@@ -63,15 +64,15 @@ struct FirebaseLLM: FirebaseLLMInterface {
     }
     
     @concurrent
-    func getEmotionAnalysis(_ question: FirebaseQuestion) async throws -> FirebaseAnalysis {
+    func getEmotionAnalysis(_ question: FirebaseQuestion, character: MentoryCharacter) async throws -> FirebaseAnalysis {
         logger.info("Firebase LLM 요청 시작")
         
         let jsonSchema = Schema.object(
             properties: [
                 "mindType": .enumeration(values: Emotion.getAllEmotions() ),
-                "empathyMessage": .string(description: "감정 상태 메시지"),
+                "empathyMessage": .string(description: character.messageDescription),
                 "actionKeywords": Schema.array(
-                    items: .string(description: "사용자의 감정 상Fou태에 따른 행동 추천"),
+                    items: .string(description: "사용자의 감정 상태에 따른 행동 추천"),
                     minItems: 3,
                     maxItems: 3),
             ])

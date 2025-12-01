@@ -15,7 +15,7 @@ struct FirebaseLLMMock: FirebaseLLMInterface {
         fatalError()
     }
     
-    func getEmotionAnalysis(_: FirebaseQuestion) async throws -> FirebaseAnalysis {
+    func getEmotionAnalysis(_: FirebaseQuestion, character: MentoryCharacter) async throws -> FirebaseAnalysis {
         fatalError()
     }
 }
