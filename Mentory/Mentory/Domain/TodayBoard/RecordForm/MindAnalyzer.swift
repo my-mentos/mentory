@@ -38,6 +38,47 @@ final class MindAnalyzer: Sendable, ObservableObject {
     
     
     // MARK: action
+    func analyze() async {
+        // capture
+        guard let textInput = owner?.textInput else {
+            logger.error("TextInput이 비어있습니다.")
+            return
+        }
+        
+        guard textInput.isEmpty == false else {
+            logger.error("textInput이 비어있습니다.")
+            return
+        }
+        
+        guard let selectedCharacter else {
+            logger.error("캐릭터를 먼저 선택해야 합니다.")
+            return
+        }
+        
+        let recordForm = self.owner!
+        let todayBoard = recordForm.owner!
+        let mentoryiOS = todayBoard.owner!
+        
+        let firebaseLLM = mentoryiOS.firebaseLLM
+        
+        // process
+        let question = FirebaseQuestion(textInput)
+        
+        let analysis: FirebaseAnalysis
+        do {
+            analysis = try await firebaseLLM.getEmotionAnalysis(question, character: selectedCharacter)
+            
+        } catch {
+            logger.error("\(error)")
+            return
+        }
+        
+        
+        // mutate
+        self.mindType = analysis.mindType
+        self.analyzedResult = analysis.empathyMessage
+        self.isAnalyzeFinished = true
+    }
     func saveRecord() async {
         guard let analyzedContent = self.analyzedResult,
               !analyzedContent.isEmpty else {
@@ -84,48 +125,6 @@ final class MindAnalyzer: Sendable, ObservableObject {
         }
     }
     
-    func analyze() async {
-        // capture
-        guard let textInput = owner?.textInput else {
-            logger.error("TextInput이 비어있습니다.")
-            return
-        }
-        
-        guard textInput.isEmpty == false else {
-            logger.error("textInput이 비어있습니다.")
-            return
-        }
-        
-        guard let selectedCharacter else {
-            logger.error("캐릭터를 먼저 선택해야 합니다.")
-            return
-        }
-        
-        let recordForm = self.owner!
-        let todayBoard = recordForm.owner!
-        let mentoryiOS = todayBoard.owner!
-        
-        let firebaseLLM = mentoryiOS.firebaseLLM
-        
-        // process
-        let question = FirebaseQuestion(textInput)
-        
-        let analysis: FirebaseAnalysis
-        do {
-            analysis = try await firebaseLLM.getEmotionAnalysis(question, character: selectedCharacter)
-            
-        } catch {
-            logger.error("\(error)")
-            return
-        }
-        
-        
-        // mutate
-        self.mindType = analysis.mindType
-        self.analyzedResult = analysis.empathyMessage
-        self.isAnalyzeFinished = true
-    }
-    
     func cancel() {
         // capture
         let recordForm = self.owner
@@ -133,5 +132,4 @@ final class MindAnalyzer: Sendable, ObservableObject {
         // mutate
         recordForm?.mindAnalyzer = nil
     }
-    
 }
