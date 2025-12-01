@@ -20,7 +20,7 @@ struct OnboardingLayout<Content: View, BottomContent: View> : View {
                     HStack {
                         Text(title)
                             .font(.system(size: 32, weight: .bold))
-                            .foregroundColor(.black)
+                            .foregroundColor(.primary)
                             .padding(.top, 60)
                             .padding(.leading, 30)
                         
@@ -36,8 +36,9 @@ struct OnboardingLayout<Content: View, BottomContent: View> : View {
             bottom()
                 .padding(.horizontal, 30)
                 .padding(.bottom, 40)
-                
-                .background(Color.white)
+            
+                .background(Color.mentoryBackground.ignoresSafeArea())
+
         }
         
     }

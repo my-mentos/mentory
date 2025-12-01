@@ -20,19 +20,19 @@ struct OnboardingDetailView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 40, height: 40)
-                .foregroundColor(.black)
+                .foregroundColor(.mentoryAccentPrimary)
 
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(.system(size: 15, weight: .bold))
-                    .foregroundColor(.black)
+                    .foregroundColor(.primary)
                     .lineLimit(nil)
                     .fixedSize(horizontal: false, vertical: true)
 
                 Text(subtitle)
                     .font(.system(size: 13))
-                    .foregroundColor(.gray)
+                    .foregroundColor(.secondary)
                     .lineLimit(nil)
                     .fixedSize(horizontal: false, vertical: true)
             }

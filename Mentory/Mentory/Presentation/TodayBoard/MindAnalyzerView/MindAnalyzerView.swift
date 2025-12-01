@@ -15,8 +15,8 @@ struct MindAnalyzerView: View {
     init(_ mindAnalyzer: MindAnalyzer) {
         self.mindAnalyzer = mindAnalyzer
     }
-
-
+    
+    
     // MARK: body
     var body: some View {
         MindAnalyzerLayout {
@@ -142,6 +142,7 @@ fileprivate struct Header: View {
         VStack(alignment: .leading, spacing: 8) {
             Text(title)
                 .font(.title3.bold())
+                .foregroundColor(.primary)
             Text(description)
                 .font(.footnote)
                 .foregroundColor(.secondary)
@@ -194,11 +195,11 @@ fileprivate struct CharacterPicker: View {
                 .padding(.horizontal, 12)
                 .background(
                     RoundedRectangle(cornerRadius: 28, style: .continuous)
-                        .fill(Color.white)
+                        .fill(Color.mentoryCard)
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 28, style: .continuous)
-                        .stroke(isSelected ? Color.black : Color(.systemGray4), lineWidth: isSelected ? 2 : 1)
+                        .stroke(isSelected ? Color.mentoryAccentPrimary : Color(.mentoryBorder), lineWidth: isSelected ? 2 : 1)
                 )
                 .shadow(color: isSelected ? Color.black.opacity(0.08) : Color.clear, radius: 10, y: 8)
             }
@@ -224,8 +225,10 @@ fileprivate struct AnalyzeButton: View {
             .frame(maxWidth: .infinity)
             .padding(.vertical, 16)
             .background(
-                RoundedRectangle(cornerRadius: 20, style: .continuous)
-                    .fill(self.isActive ? Color.purple : Color.gray.opacity(0.35))
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(isActive ?
+                          Color.mentoryAccentPrimary :
+                          Color.mentoryAccentPrimary.opacity(0.35))
             )
             .foregroundColor(.white)
         }
@@ -258,7 +261,7 @@ fileprivate struct AnalyzedResult: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
                 RoundedRectangle(cornerRadius: 24, style: .continuous)
-                    .fill(Color(.secondarySystemBackground))
+                    .fill(Color(.mentorySubCard))
             )
         } else {
             StatusBadge(text: readyPrompt)
@@ -292,7 +295,7 @@ fileprivate struct AnalyzedResult: View {
     }
     private struct StatusBadge: View {
         let text: String
-
+        
         var body: some View {
             HStack(spacing: 10) {
                 Image(systemName: "sparkles")
@@ -331,7 +334,7 @@ fileprivate struct ConfirmButton: View {
                 .padding(.vertical, 16)
                 .background(
                     RoundedRectangle(cornerRadius: 20, style: .continuous)
-                        .fill(Color.blue)
+                        .fill(Color.mentoryAccentPrimary)
                 )
                 .foregroundColor(.white)
             }

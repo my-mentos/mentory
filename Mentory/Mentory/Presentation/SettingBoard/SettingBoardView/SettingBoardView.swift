@@ -92,7 +92,7 @@ struct SettingBoardView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color(.systemGray6)
+                Color.mentoryBackground
                     .ignoresSafeArea()
                 
                 // 화면에 보이는 Row들
@@ -145,6 +145,12 @@ struct SettingBoardView: View {
                 } label: {
                     Image(systemName: "info.circle")
                         .font(.system(size: 18, weight: .semibold))
+                            .foregroundStyle(.secondary)
+                            .padding(8)
+                            .background(
+                                Color.mentorySubCard.opacity(0.9),
+                                in: Circle()
+                            )
                 }
             }
         }
@@ -320,7 +326,7 @@ struct SettingBoardView: View {
                 .padding(.vertical, 12)
                 .background(
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(Color(.systemGray5))
+                        .fill(Color(.mentorySubCard))
                 )
             }
             .padding()
@@ -359,12 +365,12 @@ struct SettingRow: View {
                         if let subtitle {
                             Text(subtitle)
                                 .font(.system(size: 12))
-                                .foregroundColor(.gray)
+                                .foregroundColor(.secondary)
                         }
                     }
                     Spacer()
                     Image(systemName: "chevron.right")
-                        .foregroundColor(.gray)
+                        .foregroundColor(.secondary)
                         .font(.system(size: 14, weight: .semibold))
                 }
                 .padding(.vertical, 12)
@@ -396,7 +402,7 @@ struct SettingToggleRow: View {
                 Spacer()
                 Toggle("", isOn: $isOn)
                     .labelsHidden()
-                    .tint(.green)
+                    .tint(.mentoryAccentPrimary)
             }
             .padding(.vertical, 12)
             .padding(.horizontal, 16)
@@ -425,9 +431,9 @@ struct SettingValueRow: View {
                         .foregroundColor(.primary)
                     Spacer()
                     Text(value)
-                        .foregroundColor(.gray)
+                        .foregroundColor(.secondary)
                     Image(systemName: "chevron.right")
-                        .foregroundColor(.gray)
+                        .foregroundColor(.secondary)
                 }
                 .padding(.vertical, 12)
                 .padding(.horizontal, 16)

@@ -19,7 +19,7 @@ struct TodayBoardLayout<Content: View, navDestination: View>: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                GrayBackground()
+                MentoryBackground()
                 ScrollView {
                     VStack(alignment: .leading, spacing: 24) {
                         self.content()
@@ -49,9 +49,9 @@ struct TodayBoardLayout<Content: View, navDestination: View>: View {
 
 
 // MARK: Component
-fileprivate struct GrayBackground: View {
+fileprivate struct MentoryBackground: View {
     var body: some View {
-        Color(.systemGray6)
+        Color.mentoryBackground
             .ignoresSafeArea()
     }
 }

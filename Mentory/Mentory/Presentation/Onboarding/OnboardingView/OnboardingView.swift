@@ -33,7 +33,7 @@ struct OnboardingView: View {
                         
                         Text("온화한 성격의 구름이")
                             .font(.system(size: 14))
-                            .foregroundColor(.black)
+                            .foregroundColor(.primary)
                     }
                     
                     // 분석이 캐릭터
@@ -45,7 +45,7 @@ struct OnboardingView: View {
                         
                         Text("냉철한 성격의 분석이")
                             .font(.system(size: 14))
-                            .foregroundColor(.black)
+                            .foregroundColor(.primary)
                     }
                 }
                 .padding(.top, 40)
@@ -85,7 +85,7 @@ struct OnboardingView: View {
                     TextField("이름(닉네임)을 적어주세요.", text: $onboarding.nameInput)
                         .padding()
                         .frame(height: 60)
-                        .background(Color(white: 0.95))
+                        .background(Color.mentorySubCard)
                         .cornerRadius(16)
                         .submitLabel(.done)
                     
@@ -101,15 +101,20 @@ struct OnboardingView: View {
                     }) {
                         Text("계속")
                             .font(.system(size: 18, weight: .semibold))
-                            .foregroundColor(.white)
+                            .foregroundColor(onboarding.nameInput.isEmpty ? .secondary : .white)
                             .frame(maxWidth: .infinity)
                             .frame(height: 60)
-                            .background(onboarding.nameInput.isEmpty ? Color.gray : Color.blue)
+                            .background(onboarding.nameInput.isEmpty
+                                        ? Color.mentoryAccentPrimary.opacity(0.4)
+                                        : Color.mentoryAccentPrimary
+                            )
                             .cornerRadius(16)
                     }
                     .disabled(onboarding.nameInput.isEmpty)
                 }
-            })
+            }
+        )
+        .background(Color.mentoryBackground.ignoresSafeArea())
     }
 }
 

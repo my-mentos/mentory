@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		588879762ECD98EC00083137 /* MentoryWatch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 5888796C2ECD98EB00083137 /* MentoryWatch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		58E7CA662EDD53EE0024C342 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 58E7CA652EDD53EE0024C342 /* GoogleService-Info.plist */; };
 		69765AE42ECEADFF00776A5F /* MentoryWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 7B1337652ECD63A2009931A4 /* MentoryWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		7B1337682ECD63A2009931A4 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B1337672ECD63A2009931A4 /* WidgetKit.framework */; };
 		7B13376A2ECD63A2009931A4 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B1337692ECD63A2009931A4 /* SwiftUI.framework */; };
@@ -134,7 +133,6 @@
 
 /* Begin PBXFileReference section */
 		5888796C2ECD98EB00083137 /* MentoryWatch Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MentoryWatch Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		58E7CA652EDD53EE0024C342 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		694B366D2ECE207F0094E855 /* Speech.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Speech.framework; path = System/Library/Frameworks/Speech.framework; sourceTree = SDKROOT; };
 		7B1337652ECD63A2009931A4 /* MentoryWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = MentoryWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B1337672ECD63A2009931A4 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
@@ -277,7 +275,6 @@
 		CE39BFB32EC313F20090DF78 = {
 			isa = PBXGroup;
 			children = (
-				58E7CA652EDD53EE0024C342 /* GoogleService-Info.plist */,
 				7BEACE232ED44E5F00E2ADA9 /* MentoryWidgetExtension.entitlements */,
 				CE0027132ECF3EB8003324B0 /* Mentory.xctestplan */,
 				CED16A5E2ECB7FCD00CF012B /* Secrets.xcconfig */,
@@ -571,7 +568,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				58E7CA662EDD53EE0024C342 /* GoogleService-Info.plist in Resources */,
 				CED16A5F2ECB7FCD00CF012B /* Secrets.xcconfig in Resources */,
 				CE127F672ECB8858006A55E6 /* Secrets.xcconfig.sample in Resources */,
 			);

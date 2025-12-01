@@ -15,12 +15,12 @@ struct TodayBoardView: View {
     // MARK: model
     @ObservedObject var todayBoard: TodayBoard
     @ObservedObject var mentoryiOS: MentoryiOS
-
+    
     init(_ todayBoard: TodayBoard) {
         self.todayBoard = todayBoard
         self.mentoryiOS = todayBoard.owner!
     }
-
+    
     // MARK: body
     var body: some View {
         TodayBoardLayout(
@@ -109,9 +109,9 @@ fileprivate struct Title: View {
     
     var body: some View {
         HStack(alignment: .top) {
-            Text("기록")
+            Text(title)
                 .font(.system(size: 34, weight: .bold))
-            
+                .foregroundStyle(.primary)
             Spacer()
         }
         .padding(.top, 0)
@@ -128,16 +128,14 @@ fileprivate struct GreetingHeader: View {
         Group{
             if recordCount == 0 {
                 Text("\(userName)님, 일기를 작성해보세요!")
-                    .font(.system(size: 12))
-                    .foregroundColor(.gray)
-                    .frame(maxWidth: .infinity, alignment: .center)
             } else {
                 Text("\(userName)님 \(recordCount)번째 기록하셨네요!")
-                    .font(.system(size: 12))
-                    .foregroundColor(.gray)
-                    .frame(maxWidth: .infinity, alignment: .center)
             }
-        }.animation(
+        }
+        .font(.system(size: 12))
+        .foregroundStyle(.secondary)
+        .frame(maxWidth: .infinity, alignment: .center)
+        .animation(
             .spring(response: 0.6, dampingFraction: 0.8),
             value: todayBoard.mentorMessage?.message != nil)
     }
@@ -157,13 +155,12 @@ fileprivate struct PopupCard: View {
                 VStack(alignment: .leading, spacing: 12) {
                     Text(title)
                         .font(.system(size: 18, weight: .semibold))
-                    
+                        .foregroundStyle(.primary)
                     
                     Text(content)
                         .font(.system(size: 16))
-                        .foregroundColor(.gray)
+                        .foregroundStyle(.secondary)
                         .lineSpacing(4)
-                        .multilineTextAlignment(.leading)
                 }
                 .padding(.vertical, 24)
                 .padding(.horizontal, 20)
@@ -187,24 +184,19 @@ fileprivate struct RecordStatCard<Content: View>: View {
     var body: some View {
         LiquidGlassCard {
             VStack(spacing: 16) {
-                // 이미지
-                ZStack {
-                    Image(imageName)
-                       .resizable()
-                       .scaledToFit()
-                       .frame(width: 170, height: 170)
-                }
+                Image(imageName)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 170, height: 170)
                 
                 Text(content)
+                    .foregroundStyle(.primary)
                     .font(.system(size: 16, weight: .medium))
                 
                 Button {
-                    Task {
-                        await todayBoard.setupRecordForms()
-                        todayBoard.showDateSelectionSheet = true
-                    }
+                    todayBoard.setUpForm()
                 } label: {
-                    Text(self.navLabel)
+                    Text(navLabel)
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
@@ -217,43 +209,21 @@ fileprivate struct RecordStatCard<Content: View>: View {
                             ),
                             in: RoundedRectangle(cornerRadius: 24, style: .continuous)
                         )
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                                .stroke(Color.white.opacity(0.1), lineWidth: 1)
-                        )
-                        .shadow(
-                            color: Color.blue.opacity(0.3),
-                            radius: 8,
-                            x: 0,
-                            y: 4
-                        )
-                    
                 }
                 .padding(.horizontal, 32)
             }
             .padding(.vertical, 24)
             .frame(maxWidth: .infinity)
-            // 날짜 선택 Sheet (반쯤 올라옴)
-            .sheet(isPresented: $todayBoard.showDateSelectionSheet) {
-                DateSelectionSheet(todayBoard: todayBoard)
-                    .presentationDetents([.medium, .large])
-                    .presentationDragIndicator(.visible)
-            }
-            // 일기 작성 FullScreenCover
-            .fullScreenCover(isPresented: $showFullScreenCover) {
-                if let recordForm = todayBoard.recordForm {
-                    navDestination(recordForm)
-                }
-            }
         }
         .task {
-            let stream = todayBoard.$recordForm.values
-                .map { $0 != nil }
-            
-            for await isPresent in stream {
+            for await isPresent in todayBoard.$recordForm.values.map({ $0 != nil }) {
                 self.showFullScreenCover = isPresent
             }
-            
+        }
+        .fullScreenCover(isPresented: $showFullScreenCover) {
+            if let form = todayBoard.recordForm {
+                navDestination(form)
+            }
         }
     }
 }
@@ -262,92 +232,90 @@ fileprivate struct SuggestionCard<ActionRows: View>: View {
     @ObservedObject var todayBoard: TodayBoard
     let header: String
     let actionRows: ActionRows
-
+    
     init(todayBoard: TodayBoard, header: String, actionRows: ActionRows) {
         self.todayBoard = todayBoard
         self.header = header
         self.actionRows = actionRows
     }
-
+    
     var body: some View {
         LiquidGlassCard {
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 12) {
                 HStack {
-                    // 제목
                     Text(header)
                         .font(.system(size: 17, weight: .semibold))
                         .foregroundStyle(.primary)
                     Spacer()
-
                     Text(todayBoard.getIndicator())
                         .font(.system(size: 12, weight: .semibold))
-                        .foregroundColor(.gray)
-                        .frame(alignment: .trailing)
+                        .foregroundStyle(.secondary)
                 }
-                // MARK: - Progress Section
-                HStack {
-                    ZStack {
-                        Capsule()
-                            .fill(.gray.opacity(0.12))
-                            .frame(height: 10)
-                            .overlay(
-                                Capsule()
-                                    .stroke(.white.opacity(0.25), lineWidth: 1)
-                            )
-                        GeometryReader { geo in
-                            Capsule()
-                                .fill(
-                                    LinearGradient(
-                                        colors: [
-                                            .purple,
-                                            .purple.opacity(0.55)
-                                        ],
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
-                                    )
-                                )
-                                .frame(width: geo.size.width * todayBoard.getProgress())
-                                .shadow(color: .purple.opacity(0.3), radius: 3, x: 0, y: 1)
-                                .animation(.spring(response: 0.6, dampingFraction: 0.7), value: todayBoard.getProgress())
-                        }
-                    }
-                    .frame(height: 10)
-                    Button {
-                        // 새로고침 액션
-                    } label: {
-                        Image(systemName: "arrow.clockwise")
-                            .font(.system(size: 14, weight: .semibold))
-                            .foregroundColor(.gray)
-                            .padding(6)
-                    }
-                }
-                .padding(.vertical, 10)
-                .padding(.horizontal, 6)
-                .background(.white.opacity(0.05), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .stroke(.white.opacity(0.1), lineWidth: 1)
-                )
-
-                // MARK: - Action Rows Section
+                
+                ProgressSection
+                
                 actionRows
                     .padding(.top, 20)
             }
             .padding(.vertical, 22)
             .padding(.horizontal, 18)
-            .frame(maxWidth: .infinity, alignment: .leading)
         }
+    }
+    
+    private var ProgressSection: some View {
+        HStack {
+            ZStack {
+                Capsule()
+                    .fill(Color.mentoryProgressTrack)
+                    .frame(height: 10)
+                
+                GeometryReader { geo in
+                    Capsule()
+                        .fill(
+                            LinearGradient(
+                                colors: [
+                                    .purple,
+                                    .purple.opacity(0.55)
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .frame(width: geo.size.width * todayBoard.getProgress())
+                        .animation(.spring(response: 0.6,
+                                           dampingFraction: 0.7), value: todayBoard.getProgress())
+                }
+            }
+            .frame(height: 10)
+            
+            Button {
+                // TODO: 새로고침
+            } label: {
+                Image(systemName: "arrow.clockwise")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(.secondary)
+                    .padding(6)
+            }
+        }
+        .padding(.vertical, 10)
+        .padding(.horizontal, 6)
+        .background(Color.mentorySubCard.opacity(0.5),
+                    in: RoundedRectangle(cornerRadius: 16))
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(Color.mentoryBorder.opacity(0.4), lineWidth: 1)
+        )
     }
 }
 
 fileprivate struct SuggestionActionRows: View {
     @ObservedObject var todayBoard: TodayBoard
     @State private var actionRowEmpty = false
-
+    
     init(todayBoard: TodayBoard) {
         self.todayBoard = todayBoard
     }
-
+    
     var body: some View {
         if todayBoard.actionKeyWordItems.isEmpty {
             ActionRow(checked: $actionRowEmpty, text: "기록을 남기고 추천행동을 완료해보세요!")
@@ -378,14 +346,14 @@ fileprivate struct SuggestionActionRows: View {
 fileprivate struct DateSelectionSheet: View {
     @ObservedObject var todayBoard: TodayBoard
     @Environment(\.dismiss) var dismiss
-
+    
     var body: some View {
         VStack(spacing: 24) {
             // 헤더
             VStack(spacing: 8) {
                 Text("어느 날의 일기를 쓸까요?")
                     .font(.system(size: 24, weight: .bold))
-
+                
                 Text("작성 가능한 날짜를 선택해주세요.")
                     .font(.system(size: 14))
                     .foregroundColor(.gray)
@@ -395,7 +363,7 @@ fileprivate struct DateSelectionSheet: View {
                     .foregroundColor(.gray)
             }
             .padding(.top, 32)
-
+            
             // 날짜 선택 버튼들 또는 완료 메시지
             if todayBoard.recordForms.isEmpty {
                 VStack(spacing: 16) {
@@ -403,15 +371,15 @@ fileprivate struct DateSelectionSheet: View {
                         .font(.system(size: 60))
                         .foregroundColor(.green)
                         .padding(.top, 32)
-
+                    
                     Text("모든 일기를 작성했어요!")
                         .font(.system(size: 20, weight: .bold))
-
+                    
                     Text("오늘, 어제, 그제의 일기를\n모두 작성하셨습니다.")
                         .font(.system(size: 14))
                         .foregroundColor(.gray)
                         .multilineTextAlignment(.center)
-
+                    
                     Button {
                         dismiss()
                     } label: {
@@ -438,7 +406,7 @@ fileprivate struct DateSelectionSheet: View {
                     .padding(.horizontal, 24)
                     .padding(.top, 16)
                 }
-
+                
                 Spacer()
             } else {
                 VStack(spacing: 12) {
@@ -455,7 +423,7 @@ fileprivate struct DateSelectionSheet: View {
                     }
                 }
                 .padding(.horizontal, 24)
-
+                
                 Spacer()
             }
         }
@@ -467,7 +435,7 @@ fileprivate struct DateSelectionSheet: View {
 fileprivate struct DateButton: View {
     let date: RecordDate
     let action: () -> Void
-
+    
     var body: some View {
         Button(action: action) {
             HStack {
@@ -475,14 +443,14 @@ fileprivate struct DateButton: View {
                     Text(date.rawValue)
                         .font(.system(size: 18, weight: .semibold))
                         .foregroundColor(.primary)
-
+                    
                     Text(dateDescription(for: date))
                         .font(.system(size: 14))
                         .foregroundColor(.gray)
                 }
-
+                
                 Spacer()
-
+                
                 Image(systemName: "chevron.right")
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundColor(.gray)
@@ -499,7 +467,7 @@ fileprivate struct DateButton: View {
             )
         }
     }
-
+    
     private func dateDescription(for recordDate: RecordDate) -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "M월 d일 (E)"

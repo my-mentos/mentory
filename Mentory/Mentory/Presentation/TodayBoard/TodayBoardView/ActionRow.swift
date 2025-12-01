@@ -17,13 +17,18 @@ struct ActionRow: View {
             ZStack {
                 // 바깥원
                 Circle()
-                    .stroke(Color.gray.opacity(0.6), lineWidth: 2)
+                    .stroke(Color.mentoryBorder, lineWidth: 2)
                     .frame(width: 20, height: 20)
                 // 선택시 채워지는 원
                 if checked {
                     Circle()
-                        .fill(Color.black.opacity(0.8))
-                        .frame(width: 12, height: 12)
+                        .fill(Color.mentoryAccentPrimary)
+                        .frame(width: 20, height: 20)
+                                                .overlay(
+                                                    Image(systemName: "checkmark")
+                                                        .font(.system(size: 11, weight: .bold))
+                                                        .foregroundColor(.white)
+                                                )
                         .transition(.scale.combined(with: .opacity))
                         .animation(.spring(response: 0.25, dampingFraction: 0.7), value: checked)
                 }
@@ -32,8 +37,8 @@ struct ActionRow: View {
             
             Text(text.isEmpty ? " " : text)
                 .font(.system(size: 16))
-                .foregroundColor(.black.opacity(0.8))
-                .strikethrough(checked, color: .black.opacity(0.6))
+                .foregroundColor(checked ? .secondary : .primary)
+                .strikethrough(checked, color: .secondary)
             
             Spacer()
         }
