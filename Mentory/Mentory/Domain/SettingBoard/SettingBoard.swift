@@ -56,6 +56,29 @@ final class SettingBoard: Sendable, ObservableObject {
         self.editingName = EditingName(owner: self, userName: userName)
     }
     
+    func turnReminderOn() {
+        logger.debug("SettingBoard.turnReminderOn 호출")
+    }
+
+    func turnReminderOff() {
+        logger.debug("SettingBoard.turnReminderOff 호출")
+    }
+
+
+    func changeReminderTime(to newDate: Date) {
+        logger.debug("SettingBoard.changeReminderTime 호출")
+        
+        // capture
+        let newDate = newDate
+        
+        // mutate
+        self.reminderTime = newDate
+        applyChangedReminderTime()
+        
+        // 구현필요: 이미 예약된 알림은 그대로 두고, 이후 새로 예약되는 알림부터 변경된 시간을 사용한다.
+
+    }
+    
     func loadSavedReminderTime() {
         guard let savedTime = UserDefaults.standard.object(forKey: Self.reminderTimeKey) as? Date else {
             logger.info("저장된 알림 시간이 없습니다. 기본값: \(String(describing: self.reminderTime))")

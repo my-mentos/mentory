@@ -365,7 +365,7 @@ fileprivate struct MindAnalyzerPreview: View {
                     recordForm.titleInput = "SAMPLE-TITLE"
                     recordForm.textInput = "SAMPLE-TEXT"
                     
-                    recordForm.submit()
+                    await recordForm.submit()
                 }
         }
     }

@@ -140,6 +140,29 @@ final class MindAnalyzer: Sendable, ObservableObject {
         logger.info("분석 완료")
     }
     func startAnalyzingExteneded() async {
+        // capture
+        guard let textInput = owner?.textInput else {
+            logger.error("TextInput이 비어있습니다.")
+            return
+        }
+
+        guard textInput.isEmpty == false else {
+            logger.error("textInput이 비어있습니다.")
+            return
+        }
+
+        let character = selectedCharacter
+        let recordForm = self.owner!
+        let todayBoard = recordForm.owner!
+        let mentoryiOS = todayBoard.owner!
+        
+        let firebaseLLM = mentoryiOS.firebaseLLM
+        
+        // process
+        // firebaseLLM을 사용해 구조화된 출력을 얻는다.
+        
+        
+        // mutate
         
     }
 
@@ -313,16 +336,18 @@ final class MindAnalyzer: Sendable, ObservableObject {
         case high
     }
 
-    // 1차 분석 결과
     struct FirstAnalysisResult: Sendable, Codable {
         let riskLevel: RiskLevel
         let topic: String
         let mindType: Emotion
     }
 
-    // 2차 분석 결과
     struct SecondAnalysisResult: Sendable, Codable {
         let empathyMessage: String
         let actionKeywords: [String]
+    }
+    
+    struct FirebaseAnalysisResult: Sendable, Codable {
+        
     }
 }

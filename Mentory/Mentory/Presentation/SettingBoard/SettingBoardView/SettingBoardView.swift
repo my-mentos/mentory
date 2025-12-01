@@ -8,6 +8,7 @@ import SwiftUI
 import WebKit
 import OSLog
 import Combine
+import UserNotifications
 
 // MARK: Object
 class SettingBoardViewModel: ObservableObject {
@@ -26,11 +27,55 @@ class SettingBoardViewModel: ObservableObject {
     @Published var isShowingTermsOfServiceView = false
     
     @Published var isShowingDataDeletionAlert = false
+    @Published var notificationStatusText: String = "요청 전"
+    
     // MARK: action
+    func onAppear(settingBoard: SettingBoard) async {
+        settingBoard.loadSavedReminderTime()
+        await refreshNotificationStatus()
+    }
     
+    func refreshNotificationStatus() async {
+        let center = UNUserNotificationCenter.current()
+        let settings = await center.notificationSettings()
+        
+        switch settings.authorizationStatus {
+        case .authorized, .provisional, .ephemeral:
+            notificationStatusText = "ON"
+        case .denied:
+            notificationStatusText = "OFF"
+        case .notDetermined:
+            notificationStatusText = "요청 전"
+        @unknown default:
+            notificationStatusText = "-"
+        }
+    }
     
-    // MARK: value
+    func didTapReminderStatus(settingBoard: SettingBoard) async {
+        let center = UNUserNotificationCenter.current()
+        let settings = await center.notificationSettings()
+        
+        switch settings.authorizationStatus {
+        case .notDetermined:
+            // 아직 권한 요청 안했으면 팝업을 띄움
+            if let reminderCenter = settingBoard.owner?.reminderCenter {
+                await reminderCenter.requestAuthorizationIfNeeded()
+            }
+            await refreshNotificationStatus()
+            
+        case .denied, .authorized, .provisional, .ephemeral:
+            openAppSettings()
+            
+        @unknown default:
+            break
+        }
+    }
     
+    // MARK: 설정 앱 이동
+    private func openAppSettings() {
+        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+        UIApplication.shared.open(url)
+    }
 }
 
 
@@ -57,7 +102,7 @@ struct SettingBoardView: View {
                         SettingSection {
                             EditingNameRow
                             AppSettingsRow
-                            ReminderToggleRow
+                            ReminderStatusRow
                             ReminderTimeRow
                         }
                         SettingSection {
@@ -74,7 +119,7 @@ struct SettingBoardView: View {
                 }
             }
             .task {
-                settingBoard.loadSavedReminderTime()
+                await settingBoardViewModel.onAppear(settingBoard: settingBoard)
             }
         }
     }
@@ -144,16 +189,21 @@ struct SettingBoardView: View {
     }
     
     @ViewBuilder
-    private var ReminderToggleRow: some View {
-        SettingToggleRow(
+    private var ReminderStatusRow: some View {
+        SettingValueRow(
             iconName: "bell.fill",
-            iconBackground: Color.red,
-            title: "알림 설정",
-            isOn: $settingBoard.isReminderOn,
+            iconBackground: .red,
+            title: "알림 상태",
+            value: settingBoardViewModel.notificationStatusText,
             showDivider: false
-        )
-        
+        ) {
+            Task {
+                await settingBoardViewModel.didTapReminderStatus(settingBoard: settingBoard)
+            }
+        }
     }
+    
+    
     
     @ViewBuilder
     private var ReminderTimeRow: some View {
@@ -259,8 +309,7 @@ struct SettingBoardView: View {
                     settingBoardViewModel.selectedDate = settingBoard.reminderTime
                 }
                 .onChange(of: settingBoardViewModel.selectedDate, initial: false) { oldDate, newDate in
-                    settingBoard.reminderTime = newDate
-                    settingBoard.applyChangedReminderTime()
+                    settingBoard.changeReminderTime(to: newDate)
                 }
                 
                 Button("완료") {

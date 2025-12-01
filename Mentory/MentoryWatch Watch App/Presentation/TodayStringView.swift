@@ -8,24 +8,62 @@
 import SwiftUI
 
 struct TodayStringView: View {
+    @StateObject private var connectivityManager = WatchConnectivityManager.shared
+
     var body: some View {
         ScrollView {
             VStack(spacing: 16) {
-                // 아이콘
-                Image(systemName: "quote.bubble.fill")
+                // 멘토 캐릭터 아이콘
+                Image(systemName: getMentorIcon())
                     .font(.system(size: 40))
-                    .foregroundColor(.blue)
+                    .foregroundColor(getMentorColor())
 
-                // 제목
-                Text("오늘의 명언")
+                // 멘토 타이틀
+                Text(getMentorTitle())
                     .font(.headline)
 
-                // 명언 내용 (임시)
-                Text("노력은 배신하지 않는다")
+                // 멘토 메시지
+                Text(connectivityManager.mentorMessage)
                     .font(.body)
                     .multilineTextAlignment(.center)
                     .padding()
             }
+        }
+        .onAppear {
+            connectivityManager.requestDataFromPhone()
+        }
+    }
+
+    private func getMentorIcon() -> String {
+        switch connectivityManager.mentorCharacter {
+        case "Nangcheol":
+            return "brain.head.profile"
+        case "Gureum":
+            return "cloud.fill"
+        default:
+            return "quote.bubble.fill"
+        }
+    }
+
+    private func getMentorColor() -> Color {
+        switch connectivityManager.mentorCharacter {
+        case "Nangcheol":
+            return .cyan
+        case "Gureum":
+            return .pink
+        default:
+            return .blue
+        }
+    }
+
+    private func getMentorTitle() -> String {
+        switch connectivityManager.mentorCharacter {
+        case "Nangcheol":
+            return "냉철이의 현실 조언"
+        case "Gureum":
+            return "구름이의 따뜻한 한마디"
+        default:
+            return "멘토 메시지"
         }
     }
 }

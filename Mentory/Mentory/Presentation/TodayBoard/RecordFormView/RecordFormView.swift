@@ -18,7 +18,7 @@ struct RecordFormView: View {
     nonisolated let logger = Logger(subsystem: "MentoryiOS.RecordForm", category: "Presentation")
     @ObservedObject var recordForm: RecordForm
     
-
+    
     // MARK: - Body
     var body: some View {
         RecordFormLayout(
@@ -154,7 +154,7 @@ fileprivate struct SubmitButton<Content: View>: View {
     @State var isSubmitEnabled: Bool = false
     @State var showMindAnalyzerView: Bool = false
     @State var showingSubmitAlert: Bool = false
-
+    
     var body: some View {
         Button {
             showingSubmitAlert = true
@@ -168,7 +168,7 @@ fileprivate struct SubmitButton<Content: View>: View {
                 Button("제출") {
                     Task {
                         recordForm.validateInput()
-                        recordForm.submit()
+                        await recordForm.submit()
                     }
                 }
             } message: {
