@@ -6,12 +6,97 @@
 //
 import Foundation
 import Testing
+import Values
 @testable import Mentory
 
 
 // MARK: Tests
 @Suite("MindAnalyzer")
 struct MindAnalyzerTests {
+    struct Analyze {
+        let mentoryiOS: MentoryiOS
+        let mindAnalyzer: MindAnalyzer
+        init() async throws {
+            self.mentoryiOS = await MentoryiOS()
+            self.mindAnalyzer = try await getMindAnalyzerForTest(mentoryiOS)
+        }
+        
+        @Test func setIsAnalyzeFinishedTrue() async throws {
+            // given
+            try await #require(mindAnalyzer.isAnalyzeFinished == false)
+            
+            await MainActor.run {
+                mindAnalyzer.character = .cool
+            }
+            
+            // when
+            await mindAnalyzer.analyze()
+            
+            // then
+            await #expect(mindAnalyzer.isAnalyzeFinished == true)
+        }
+        @Test func setAnalyzedResult() async throws {
+            // given
+            try await #require(mindAnalyzer.analyzedResult == nil)
+            
+            await MainActor.run {
+                mindAnalyzer.character = .cool
+            }
+            
+            // when
+            await mindAnalyzer.analyze()
+            
+            // then
+            await #expect(mindAnalyzer.analyzedResult != nil)
+        }
+        @Test func setMindType() async throws {
+            // given
+            try await #require(mindAnalyzer.mindType == nil)
+            
+            await MainActor.run {
+                mindAnalyzer.character = .cool
+            }
+            
+            // when
+            await mindAnalyzer.analyze()
+            
+            // then
+            await #expect(mindAnalyzer.mindType != nil)
+            
+        }
+        
+        @Test func whenTextInputFromRecordFormIsEmpty() async throws {
+            // given
+            let recordForm = try #require(await mindAnalyzer.owner)
+            
+            await MainActor.run {
+                recordForm.textInput = ""
+            }
+            
+            try await #require(mindAnalyzer.isAnalyzeFinished == false)
+            
+            // when
+            await mindAnalyzer.analyze()
+            
+            // then
+            await #expect(mindAnalyzer.isAnalyzeFinished == false)
+        }
+        @Test func whenCharacterIsNil() async throws {
+            // given
+            await MainActor.run {
+                mindAnalyzer.character = nil
+            }
+            
+            try await #require(mindAnalyzer.isAnalyzeFinished == false)
+            
+            // when
+            await mindAnalyzer.analyze()
+            
+            // then
+            await #expect(mindAnalyzer.isAnalyzeFinished == false)
+        }
+    }
+    
     struct Cacnel {
         let mentoryiOS: MentoryiOS
         let mindAnalyzer: MindAnalyzer
@@ -58,6 +143,10 @@ private func getMindAnalyzerForTest(_ mentoryiOS: MentoryiOS) async throws -> Mi
         recordForm.titleInput = "SAMPLE_TITLE"
         recordForm.textInput = "SAMPLE_TEXT"
     }
+    
+    await recordForm.validateInput()
+    
+    try await #require(recordForm.canProceed == true)
     
     await recordForm.submit()
     

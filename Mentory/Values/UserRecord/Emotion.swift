@@ -9,7 +9,7 @@ import Foundation
 
 // MARK: Value
 @frozen
-nonisolated public enum Emotion: String, Codable, Sendable {
+nonisolated public enum Emotion: String, Codable, Sendable, CaseIterable {
     case veryUnpleasant
     case unPleasant
     case slightlyUnpleasant
@@ -17,4 +17,10 @@ nonisolated public enum Emotion: String, Codable, Sendable {
     case slightlyPleasant
     case pleasant
     case veryPleasant
+    
+    
+    // MARK: operator
+    public static func getAllEmotions() -> [String] {
+        return Self.allCases.map { $0.rawValue }
+    }
 }

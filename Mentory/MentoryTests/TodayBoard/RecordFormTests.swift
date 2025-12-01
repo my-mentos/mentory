@@ -115,8 +115,20 @@ struct RecordFormTests {
             self.recordForm = try await getRecordFormForTest(mentoryiOS)
             self.todayBoard = try #require(await mentoryiOS.todayBoard)
         }
-
         
+        @Test func whenCanProceeedIsFalse() async throws {
+            // given
+            try await #require(recordForm.canProceed == false)
+            
+            try await #require(recordForm.mindAnalyzer == nil)
+            
+            // when
+            await recordForm.submit()
+            
+            // then
+            await #expect(recordForm.mindAnalyzer == nil)
+        }
+
         @Test func notResetTitleInputWhenSucceed() async throws {
             // given
             let testTitle = "TEST_TITLE"

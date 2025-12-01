@@ -27,8 +27,8 @@ struct MindAnalyzerView: View {
             )
             
             CharacterPicker(
-                characters: MindAnalyzer.CharacterType.allCases,
-                selection: $mindAnalyzer.selectedCharacter
+                characters: MentoryCharacter.allCases,
+                selection: $mindAnalyzer.character
             )
             
             AnalyzeButton(
@@ -37,14 +37,15 @@ struct MindAnalyzerView: View {
                 isActive: !mindAnalyzer.isAnalyzing,
                 action: {
                     Task {
-                        mindAnalyzer.isAnalyzing = true
+                        mindAnalyzer.startAnalyze()
                         
-                        await mindAnalyzer.startAnalyzing()
-                        await mindAnalyzer.saveRecord()
+                        await mindAnalyzer.analyze()
                         
-                        await mindAnalyzer.owner?.owner?.loadTodayRecords()
+//                        await mindAnalyzer.saveRecord()
+//                        
+//                        await mindAnalyzer.owner?.owner?.loadTodayRecords()
                         
-                        mindAnalyzer.isAnalyzing = false
+                        mindAnalyzer.stopAnalyze()
                     }
                 })
             
@@ -150,8 +151,8 @@ fileprivate struct Header: View {
 
 
 fileprivate struct CharacterPicker: View {
-    let characters: [MindAnalyzer.CharacterType]
-    @Binding var selection: MindAnalyzer.CharacterType
+    let characters: [MentoryCharacter]
+    @Binding var selection: MentoryCharacter?
     
     var body: some View {
         VStack(spacing: 16) {
@@ -167,7 +168,7 @@ fileprivate struct CharacterPicker: View {
     }
     
     fileprivate struct SelectableCard: View {
-        let character: MindAnalyzer.CharacterType
+        let character: MentoryCharacter
         let isSelected: Bool
         let action: () -> Void
         

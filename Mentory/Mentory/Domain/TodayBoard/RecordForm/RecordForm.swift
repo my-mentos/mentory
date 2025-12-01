@@ -75,29 +75,21 @@ final class RecordForm: Sendable, ObservableObject, Identifiable {
             logger.error("RecordForm의 내용 입력이 비어있습니다. 텍스트, 이미지, 음성 중 하나 이상의 값이 필요합니다.")
             return
         }
-
-        // 기록 완성까지 걸린 시간 계산 및 저장
-        let now = Date()
         
-        if let startTime = startTime {
-            self.completionTime = Date().timeIntervalSince(startTime)
-            logger.info("기록 완성 시간: \(self.completionTime!)초")
-        } else {
-            logger.warning("startTime이 설정되지 않았습니다.")
-        }
-
-        // mutate
-        self.mindAnalyzer = MindAnalyzer(owner: self)
-        
-        await scheduleWeeklyReminder(baseDate: now)
-    }
-    
-    private func scheduleWeeklyReminder(baseDate: Date) async {
         guard let todayBoard = owner,
               let mentory = todayBoard.owner,
               let settingBoard = mentory.settingBoard else {
             logger.warning("리마인더 예약에 필요한 owner 체인이 없습니다.")
             return
+        }
+
+        
+        // process
+        if let startTime {
+            self.completionTime = Date().timeIntervalSince(startTime)
+            logger.info("기록 완성 시간: \(self.completionTime!)초")
+        } else {
+            logger.warning("startTime이 설정되지 않았습니다.")
         }
         
         let reminderTime = settingBoard.reminderTime
@@ -107,15 +99,22 @@ final class RecordForm: Sendable, ObservableObject, Identifiable {
         
         // 마지막 기록(baseDate) 기준으로 알림 1개만 다시 예약
         await mentory.reminderCenter.scheduleWeeklyReminder(
-            baseDate: baseDate,
+            baseDate: .now,
             reminderTime: reminderTime
         )
+        
+
+        // mutate
+        self.mindAnalyzer = MindAnalyzer(owner: self)
     }
 
     
     func removeForm() {
         // capture
-        let todayBoard = self.owner!
+        guard let todayBoard = self.owner else {
+            logger.error("RecordForm의 부모인 TodayBoard가 존재하지 않습니다.")
+            return
+        }
         
         // mutate
         todayBoard.recordForm = nil
@@ -123,21 +122,4 @@ final class RecordForm: Sendable, ObservableObject, Identifiable {
     
 
     // MARK: value
-    nonisolated struct Record: Identifiable, Sendable, Hashable {
-        let id: UUID
-        let title: String
-        let date: Date
-        let text: String?
-        let image: Data?
-        let voice: URL?
-
-        init(id: UUID = UUID(), title: String, date: Date, text: String? = nil, image: Data? = nil, voice: URL? = nil) {
-            self.id = id
-            self.title = title
-            self.date = date
-            self.text = text
-            self.image = image
-            self.voice = voice
-        }
-    }
 }

@@ -153,6 +153,7 @@
 		694B337D2ECB0A8D0094E855 /* Exceptions for "Mentory" folder in "Mentory" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				"GoogleService-Info.plist",
 				Info.plist,
 			);
 			target = CE39BFBB2EC313F20090DF78 /* Mentory */;

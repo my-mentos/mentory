@@ -90,6 +90,8 @@ final class TodayBoard: Sendable, ObservableObject {
             let question = AlanQuestion("오늘의 명언이나 속담을 하나만 짧게 알려줘. 명언이나 속담만 답변해줘.")
             let response = try await alanLLM.question(question)
             
+            // watch 앱으로 데이터 전송
+            
             contentFromAlanLLM = response.content
             logger.debug("오늘의 명언 fetch 성공: \(response.content)")
         } catch {
@@ -131,6 +133,8 @@ final class TodayBoard: Sendable, ObservableObject {
             }
             // AlanLLM 호출결과값 DB에 저장
             try await mentoryDB.saveMentorMessage(newMessage, character)
+            
+            //
             
             //mutate
             // DB에 저장된 새 멘토메세지 불러오기
