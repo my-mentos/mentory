@@ -16,23 +16,18 @@ public struct MentoryDBAPI: Sendable {
     
     
     // MARK: API
-    @concurrent
-    public func updateName(_ newName: String) async throws {
+    @concurrent public func updateName(_ newName: String) async throws {
         await mentoryDB.setName(newName)
     }
-    
-    @concurrent
-    public func getName() async throws -> String? {
+    @concurrent public func getName() async throws -> String? {
         return await mentoryDB.getName()
     }
     
-    @concurrent
-    public func fetchAll() async throws -> [RecordData] {
+    @concurrent public func fetchAll() async throws -> [RecordData] {
         return await mentoryDB.getAllRecords()
     }
     
-    @concurrent
-    public func fetchToday() async throws -> [RecordData] {
+    @concurrent public func fetchToday() async throws -> [RecordData] {
         return await mentoryDB.getTodayRecordDatas()
     }
     
@@ -75,5 +70,11 @@ public struct MentoryDBAPI: Sendable {
     @concurrent
     public func saveMentorMessage(_ message: String, _ type: MentoryCharacter) async throws {
         await mentoryDB.setMentorMessage(message, type)
+    }
+    
+    
+    @concurrent
+    public func getRecordCount() async throws -> Int  {
+        await mentoryDB.getRecordCount()
     }
 }

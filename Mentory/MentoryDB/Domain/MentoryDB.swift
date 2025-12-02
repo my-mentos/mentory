@@ -13,7 +13,9 @@ import OSLog
 // MARK: Object
 actor MentoryDB: Sendable {
     // MARK: core
-    init() { }
+    init(id: UUID = UUID(uuidString: "00000000-0000-0000-0000-000000000000")!) {
+        self.id = id
+    }
     
     nonisolated let logger = Logger(subsystem: "MentoryDB.MentoryDB", category: "Domain")
     static let container: ModelContainer = {
@@ -29,8 +31,10 @@ actor MentoryDB: Sendable {
     
     
     // MARK: state
-    nonisolated public let id: UUID = UUID(uuidString: "00000000-0000-0000-0000-000000000000")!
+    // + id: UUID
+    nonisolated public let id: UUID
     
+    // + userName: String? = nil
     func setName(_ newName: String) {
         let context = ModelContext(MentoryDB.container)
         let id = self.id
@@ -89,6 +93,7 @@ actor MentoryDB: Sendable {
         }
     }
     
+    // + records: [DailyRecord]
     func getAllRecords() async -> [RecordData] {
         let context = ModelContext(MentoryDB.container)
         let id = self.id
@@ -173,7 +178,29 @@ actor MentoryDB: Sendable {
             return []
         }
     }
+    func getRecordCount() -> Int {
+        let context = ModelContext(MentoryDB.container)
+        let id = self.id
+        
+        let descriptor = FetchDescriptor<MentoryDBModel>(
+            predicate: #Predicate { $0.id == id }
+        )
+        
+        do {
+            guard let db = try context.fetch(descriptor).first else {
+                logger.error("MentoryDB가 존재하지 않아 0을 반환합니다.")
+                return 0
+            }
+            
+            return db.records.count
+            
+        } catch {
+            logger.error("에러 발생으로 0 반환. \(error)")
+            return 0
+        }
+    }
     
+    // + createRecordQueue: [RecordTicket]
     func insertDataInQueue(_ recordData: RecordData) {
         let context = ModelContext(Self.container)
         let id = self.id
@@ -203,6 +230,66 @@ actor MentoryDB: Sendable {
         }
     }
     
+    // + mentorMessages: MentorMessage? = nil
+    func getMentorMessage() -> MessageData? {
+        let context = ModelContext(MentoryDB.container)
+        let id = self.id
+        
+        let descriptor = FetchDescriptor<MentoryDBModel>(
+            predicate: #Predicate { $0.id == id }
+        )
+        do {
+            guard let db = try context.fetch(descriptor).first else {
+                logger.error("DB가 존재하지 않습니다.")
+                return nil
+            }
+            
+            // messages가 비어있을 때
+            guard let latest = db.messages.max(by: { $0.createdAt < $1.createdAt }) else {
+                logger.error("messages가 비어 있습니다.")
+                return nil
+            }
+            logger.debug("저장된 전체 메세지:\(db.messages.sorted(by: { $0.createdAt < $1.createdAt }).map { $0.toMessageData() })")
+            return latest.toMessageData()
+            
+        } catch {
+            logger.error("DB fetch error → nil 반환")
+            return nil
+        }
+    }
+    func setMentorMessage(_ message: String, _ type: MentoryCharacter) {
+        let context = ModelContext(MentoryDB.container)
+        let id = self.id
+        
+        let descriptor = FetchDescriptor<MentoryDBModel>(
+            predicate: #Predicate { $0.id == id }
+        )
+        do {
+            guard let db = try context.fetch(descriptor).first else {
+                logger.error("DB가 존재하지 않아 메세지를 저장할수 없습니다.")
+                return
+            }
+
+            let newMessage = MentorMessage.MentorMessageModel(
+                id: UUID(),
+                createdAt: Date(),
+                message: message,
+                characterType: type
+            )
+            
+            db.messages.append(newMessage)
+            try context.save()
+            logger.debug("MentoryDB에 새로운 멘토 메시지를 저장했습니다.")
+            
+        } catch {
+            logger.error("MentoryDB 저장 오류: \(error)")
+            return
+        }
+    }
+    
+    
+    
+    // MARK: other
     func updateActionCompletion(recordId: UUID, completionStatus: [Bool]) async {
         let context = ModelContext(MentoryDB.container)
         
@@ -284,61 +371,7 @@ actor MentoryDB: Sendable {
     }
 
 
-    func getMentorMessage() -> MessageData? {
-        let context = ModelContext(MentoryDB.container)
-        let id = self.id
-        
-        let descriptor = FetchDescriptor<MentoryDBModel>(
-            predicate: #Predicate { $0.id == id }
-        )
-        do {
-            guard let db = try context.fetch(descriptor).first else {
-                logger.error("DB가 존재하지 않습니다.")
-                return nil
-            }
-            
-            // messages가 비어있을 때
-            guard let latest = db.messages.max(by: { $0.createdAt < $1.createdAt }) else {
-                logger.error("messages가 비어 있습니다.")
-                return nil
-            }
-            logger.debug("저장된 전체 메세지:\(db.messages.sorted(by: { $0.createdAt < $1.createdAt }).map { $0.toMessageData() })")
-            return latest.toMessageData()
-            
-        } catch {
-            logger.error("DB fetch error → nil 반환")
-            return nil
-        }
-    }
-    func setMentorMessage(_ message: String, _ type: MentoryCharacter) {
-        let context = ModelContext(MentoryDB.container)
-        let id = self.id
-        
-        let descriptor = FetchDescriptor<MentoryDBModel>(
-            predicate: #Predicate { $0.id == id }
-        )
-        do {
-            guard let db = try context.fetch(descriptor).first else {
-                logger.error("DB가 존재하지 않아 메세지를 저장할수 없습니다.")
-                return
-            }
-
-            let newMessage = MentorMessage.MentorMessageModel(
-                id: UUID(),
-                createdAt: Date(),
-                message: message,
-                characterType: type
-            )
-            
-            db.messages.append(newMessage)
-            try context.save()
-            logger.debug("MentoryDB에 새로운 멘토 메시지를 저장했습니다.")
-            
-        } catch {
-            logger.error("MentoryDB 저장 오류: \(error)")
-            return
-        }
-    }
+    
     
     
     // MARK: action
@@ -424,8 +457,10 @@ actor MentoryDB: Sendable {
         @Attribute(.unique) var id: UUID
         var recordDate: Date  // 일기가 속한 날짜
         var createdAt: Date   // 실제 작성 시간
+        
         var analyzedResult: String
         var emotion: Emotion
+        
         var actionTexts: [String]
         var actionCompletionStatus: [Bool]
         

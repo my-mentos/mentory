@@ -77,4 +77,9 @@ nonisolated struct MentoryDBAdapter: MentoryDBInterface {
     public func saveMentorMessage(_ message: String, _ type: MentoryCharacter) async throws {
         try await api.saveMentorMessage(message, type)
     }
+    
+    @concurrent
+    public func getRecordCount() async throws -> Int {
+        try await api.getRecordCount()
+    }
 }

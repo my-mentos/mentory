@@ -29,7 +29,7 @@ final class TodayBoard: Sendable, ObservableObject {
     func getRecordForm(for date: RecordDate) -> RecordForm? {
         return recordForms.first { $0.targetDate == date }
     }
-
+    
     @Published var userRecordCount: Int? = nil
     
     @Published var records: [RecordData] = []
@@ -115,7 +115,21 @@ final class TodayBoard: Sendable, ObservableObject {
         }
     }
     func fetchUserRecordCoount() async {
-        fatalError()
+        // capture
+        let mentoryiOS = self.owner!
+        let mentoryDB = mentoryiOS.mentoryDB
+        
+        // process
+        let recordCount: Int
+        do {
+            recordCount = try await mentoryDB.getRecordCount()
+        } catch {
+            logger.error("\(error)")
+            return
+        }
+        
+        // mutate
+        self.userRecordCount = recordCount
     }
     
     // 데이터 쌓기 위한테스트용 함수, 추후 loadTodayMentorMessage()로 변경해야함

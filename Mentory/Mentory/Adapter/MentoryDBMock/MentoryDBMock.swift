@@ -103,4 +103,9 @@ struct MentoryDBMock: MentoryDBInterface {
             model.setMentorMessage(message, type)
         }
     }
+    
+    @concurrent
+    func getRecordCount() async throws -> Int {
+        fatalError()
+    }
 }
