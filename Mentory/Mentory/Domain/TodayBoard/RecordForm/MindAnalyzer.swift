@@ -87,6 +87,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
                 Suggestion(
                     owner: todayBoard,
                     source: .random,
+                    content: keyword,
                     isDone: false)
             }
         todayBoard.suggestions = suggestions

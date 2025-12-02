@@ -15,7 +15,9 @@ public struct FirebaseAnalysis: Sendable, Hashable, Codable {
     public let empathyMessage: String
     public let actionKeywords: [String]
     
-    public init(mindType: Emotion, empathyMessage: String, actionKeywords: [String]) {
+    public init(mindType: Emotion,
+                empathyMessage: String,
+                actionKeywords: [String]) {
         self.mindType = mindType
         self.empathyMessage = empathyMessage
         self.actionKeywords = actionKeywords
