@@ -64,7 +64,6 @@ struct MindAnalyzerView: View {
                 isPresented: mindAnalyzer.isAnalyzeFinished,
                 action: {
                     let recordForm = mindAnalyzer.owner!
-                    
                     recordForm.removeForm()
                 }
             )

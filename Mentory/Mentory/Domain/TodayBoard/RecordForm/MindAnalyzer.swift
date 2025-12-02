@@ -80,6 +80,8 @@ final class MindAnalyzer: Sendable, ObservableObject {
         // mutate
         self.mindType = analysis.mindType
         self.analyzedResult = analysis.empathyMessage
+        todayBoard.actionKeyWordItems = analysis.actionKeywords.map {($0,false)}
+        logger.debug("추천행동: \(todayBoard.actionKeyWordItems)")
         self.isAnalyzeFinished = true
     }
     
@@ -125,6 +127,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
             try await mentoryDB.saveRecord(recordData)
             
             logger.info("레코드 저장 성공: \(recordData.id)")
+            logger.debug("레코드 저장추천행동\(recordData.actionTexts))")
             
             // 저장된 레코드 ID를 TodayBoard에 저장 (체크 상태 업데이트용)
             todayBoard.latestRecordId = recordData.id
