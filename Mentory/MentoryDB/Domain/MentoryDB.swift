@@ -365,12 +365,16 @@ actor MentoryDB: Sendable {
             let newModels = db.createRecordQueue.map { data in
                 DailyRecord.DailyRecordModel(
                     id: data.id,
+                    
                     recordDate: data.recordDate,
                     createdAt: data.createdAt,
+                    
                     analyzedResult: data.analyzedResult,
                     emotion: data.emotion,
+                    
                     actionTexts: data.actionTexts,
-                    actionCompletionStatus: data.actionCompletionStatus
+                    actionCompletionStatus: data.actionCompletionStatus,
+                    suggestions: []
                 )
             }
             

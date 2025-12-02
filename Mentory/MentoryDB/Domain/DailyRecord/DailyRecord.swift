@@ -66,7 +66,14 @@ actor DailyRecord: Sendable {
         
         @Relationship var suggestions: [DailySuggestion.DailySuggestionModel] = []
 
-        init(id: UUID, recordDate: Date, createdAt: Date, analyzedResult: String, emotion: Emotion, actionTexts: [String], actionCompletionStatus: [Bool], suggestions: [DailySuggestion.DailySuggestionModel]) {
+        init(id: UUID,
+             recordDate: Date,
+             createdAt: Date,
+             analyzedResult: String,
+             emotion: Emotion,
+             actionTexts: [String],
+             actionCompletionStatus: [Bool],
+             suggestions: [DailySuggestion.DailySuggestionModel]) {
             self.id = id
             self.recordDate = recordDate
             self.createdAt = createdAt

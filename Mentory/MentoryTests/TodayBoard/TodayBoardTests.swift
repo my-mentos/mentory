@@ -106,7 +106,6 @@ struct TodayBoardTests {
             let recordData = RecordData(id: .init(),
                                         recordDate: .now,
                                         createdAt: .now,
-                                        content: "SAMPLE_CONTENT",
                                         analyzedResult: "SAMPLE_RESULT",
                                         emotion: .neutral)
             
