@@ -43,6 +43,16 @@ public struct MentoryDate: Sendable, Codable, Hashable {
         }
     }
     
+    public func formatted() -> String {
+        self.rawValue.formatted(
+            Date.FormatStyle()
+                .locale(Locale(identifier: "ko_KR"))
+                .month(.defaultDigits)
+                .day(.defaultDigits)
+                .weekday(.wide)
+        )
+    }
+    
     
     // MARK: value
     public enum RelativeDay: String, Sendable, Hashable, Codable {

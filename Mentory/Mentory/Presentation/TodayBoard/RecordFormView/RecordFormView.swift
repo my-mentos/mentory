@@ -133,13 +133,13 @@ fileprivate struct CancelButton: View {
 }
 
 fileprivate struct TodayDate: View {
-    let targetDate: RecordDate
+    let targetDate: MentoryDate
 
     private var formattedDate: String {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ko_KR")
         formatter.dateFormat = "M월 d일 EEEE"
-        return formatter.string(from: targetDate.toDate())
+        return formatter.string(from: targetDate.rawValue)
     }
 
     var body: some View {

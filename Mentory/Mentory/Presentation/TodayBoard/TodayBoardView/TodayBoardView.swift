@@ -34,7 +34,7 @@ struct TodayBoardView: View {
             GreetingHeader(
                 todayBoard: todayBoard,
                 userName: mentoryiOS.userName ?? "익명",
-                recordCount: todayBoard.userRecordCount
+                recordCount: todayBoard.recordCount
             )
             
             // "오늘의 명언" 카드

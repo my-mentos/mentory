@@ -22,8 +22,6 @@ final class MentoryDBModel: Sendable {
     
     var records: [DailyRecordModel] = []
     
-//    var messages: [MessageData] = []
-    
     var messages: [MentorMessageModel] = []
     
     func getAllRecords() -> [RecordData] {
@@ -33,9 +31,7 @@ final class MentoryDBModel: Sendable {
                            recordDate: $0.recordDate,
                            createdAt: $0.createAt,
                            analyzedResult: $0.analyzedContent,
-                           emotion: $0.emotion,
-                           actionTexts: $0.actionTexts,
-                           actionCompletionStatus: $0.actionCompletionStatus)
+                           emotion: $0.emotion)
             }
     }
     func getTodayRecords() -> [RecordData] {
@@ -48,9 +44,7 @@ final class MentoryDBModel: Sendable {
                            recordDate: $0.recordDate,
                            createdAt: $0.createAt,
                            analyzedResult: $0.analyzedContent,
-                           emotion: $0.emotion,
-                           actionTexts: $0.actionTexts,
-                           actionCompletionStatus: $0.actionCompletionStatus)
+                           emotion: $0.emotion)
             }
     }
     func getRecords(from: Date, to: Date) -> [RecordData] {
@@ -64,9 +58,7 @@ final class MentoryDBModel: Sendable {
                            recordDate: $0.recordDate,
                            createdAt: $0.createAt,
                            analyzedResult: $0.analyzedContent,
-                           emotion: $0.emotion,
-                           actionTexts: $0.actionTexts,
-                           actionCompletionStatus: $0.actionCompletionStatus)
+                           emotion: $0.emotion)
             }
     }
     
@@ -82,83 +74,34 @@ final class MentoryDBModel: Sendable {
                 recordDate: data.recordDate,
                 createAt: data.createdAt,
                 analyzedContent: data.analyzedResult,
-                emotion: data.emotion,
-                actionTexts: data.actionTexts,
-                actionCompletionStatus: data.actionCompletionStatus
+                emotion: data.emotion
             )
             
             records.append(newRecord)
         }
     }
 
-    func updateActionCompletion(recordId: UUID, completionStatus: [Bool]) {
-        guard let record = records.first(where: { $0.id == recordId }) else {
-            print("레코드 ID \(recordId)를 찾을 수 없습니다.")
-            return
-        }
-
-        record.actionCompletionStatus = completionStatus
-        print("레코드 \(recordId)의 행동 추천 완료 상태가 업데이트되었습니다.")
-    }
-
-    func getRecordForDate(_ targetDate: Date) -> RecordData? {
-        let calendar = Calendar.current
-        let startOfDay = calendar.startOfDay(for: targetDate)
-        let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!
-
-        let record = records.first {
-            let recordStart = calendar.startOfDay(for: $0.recordDate)
-            return recordStart >= startOfDay && recordStart < endOfDay
-        }
-
-        return record.map {
-            RecordData(
-                id: $0.id,
-                recordDate: $0.recordDate,
-                createdAt: $0.createAt,
-                analyzedResult: $0.analyzedContent,
-                emotion: $0.emotion,
-                actionTexts: $0.actionTexts,
-                actionCompletionStatus: $0.actionCompletionStatus
-            )
-        }
-    }
-
-    func hasRecordForDate(_ recordDate: RecordDate) -> Bool {
-        let targetDate = recordDate.toDate()
-        return getRecordForDate(targetDate) != nil
-    }
-
-    func getAvailableDatesForWriting() -> [RecordDate] {
-        var available: [RecordDate] = []
-
-        for date in RecordDate.allCases {
-            if !hasRecordForDate(date) {
-                available.append(date)
-            }
-        }
-
-        return available
+    func getAvailableDatesForWriting() -> [MentoryDate] {
+        fatalError("미구현")
     }
 
     func getMentorMessage() -> MessageData{
         let latest = messages.max { $0.createdAt < $1.createdAt }!
 
         let latestData = MessageData(
-            id: latest.id,
             createdAt: latest.createdAt,
-            message: latest.message,
+            content: latest.message,
             characterType: latest.characterType
         )
         return latestData
         
     }
-    func setMentorMessage(_ message: String, _ type: MentoryCharacter) {
+    func updateMentorMessage(_ data: MessageData) {
         let newMessage = MentorMessageModel(
             owner: self,
             createdAt: Date(),
-            message: message,
-            characterType: type
+            message: data.content,
+            characterType: data.characterType
         )
         
         messages.append(newMessage)

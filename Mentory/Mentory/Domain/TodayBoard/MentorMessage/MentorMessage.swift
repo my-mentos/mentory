@@ -6,6 +6,7 @@
 //
 import Foundation
 import Combine
+import Values
 
 
 // MARK: Object
@@ -13,16 +14,21 @@ import Combine
 final class MentorMessage: Sendable, ObservableObject {
     // MARK: core
     init(owner: TodayBoard,
-         content: String) {
+         content: String,
+         character: MentoryCharacter) {
         self.owner = owner
         self.content = content
+        self.character = character
     }
     
     
     // MARK: state
     weak var owner: TodayBoard?
     
+    nonisolated let character: MentoryCharacter
+    
     @Published private(set) var content: String
+    
     
     
     // MARK: action

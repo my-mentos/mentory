@@ -40,28 +40,7 @@ struct MentoryDBMock: MentoryDBInterface {
     }
 
     @concurrent
-    func updateActionCompletion(recordId: UUID, completionStatus: [Bool]) async throws {
-        await MainActor.run {
-            model.updateActionCompletion(recordId: recordId, completionStatus: completionStatus)
-        }
-    }
-
-    @concurrent
-    func fetchRecordForDate(_ targetDate: Date) async throws -> RecordData? {
-        await MainActor.run {
-            model.getRecordForDate(targetDate)
-        }
-    }
-
-    @concurrent
-    func hasRecordForDate(_ recordDate: RecordDate) async throws -> Bool {
-        await MainActor.run {
-            model.hasRecordForDate(recordDate)
-        }
-    }
-
-    @concurrent
-    func fetchAvailableDatesForWriting() async throws -> [RecordDate] {
+    func fetchAvailableDatesForWriting() async throws -> [MentoryDate] {
         await MainActor.run {
             model.getAvailableDatesForWriting()
         }
@@ -97,9 +76,9 @@ struct MentoryDBMock: MentoryDBInterface {
     }
     
     @concurrent
-    func saveMentorMessage(_ message: String, _ type: MentoryCharacter) async throws {
+    func updateMentorMessage(_ data: MessageData) async throws {
         await MainActor.run {
-            model.setMentorMessage(message, type)
+            model.updateMentorMessage(data)
         }
     }
     

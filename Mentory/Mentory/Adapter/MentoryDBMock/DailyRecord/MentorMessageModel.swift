@@ -13,9 +13,11 @@ import Values
 // MARK: Object
 @MainActor
 final class MentorMessageModel: Sendable {
-    
     // MARK: core
-    init(owner: MentoryDBModel? = nil, createdAt: Date, message: String, characterType: MentoryCharacter) {
+    init(owner: MentoryDBModel,
+         createdAt: Date,
+         message: String,
+         characterType: MentoryCharacter) {
         self.owner = owner
         self.createdAt = createdAt
         self.message = message
@@ -31,14 +33,6 @@ final class MentorMessageModel: Sendable {
     nonisolated let message: String
     nonisolated let characterType: MentoryCharacter
     
-    
-
-//    // MARK: action
-//    func toMessageData() -> MessageData {
-//        return .init(id: self.id,
-//                     createdAt: self.createdAt,
-//                     message: self.message,
-//                     characterType: self.characterType)
-//    }
-    
 }
+
+
