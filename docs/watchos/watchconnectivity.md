@@ -9,6 +9,11 @@ WatchConnectivity는 iOS 앱과 watchOS 앱 간의 양방향 통신을 가능하
 - **파일 전송**: 이미지나 문서 같은 파일 전송
 - **애플리케이션 컨텍스트**: 최신 상태 정보 동기화
 
+## Swift Concurrency 주의사항
+
+WCSessionDelegate 메서드는 백그라운드 스레드에서 호출됩니다.
+`@MainActor` 클래스에서 구현할 때는 반드시 `nonisolated`로 선언하세요.
+
 ## 기본 설정
 
 ### iOS 앱 설정
