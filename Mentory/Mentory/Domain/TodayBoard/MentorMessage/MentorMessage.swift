@@ -31,9 +31,13 @@ final class MentorMessage: Sendable, ObservableObject {
     
     
     // MARK: action
+    func setRandomCharacter() {
+        
+    }
     func fetchUserCharacter() async {
         
     }
+    
     func updateContent() async {
         let mentoryiOS = self.owner!.owner!
         

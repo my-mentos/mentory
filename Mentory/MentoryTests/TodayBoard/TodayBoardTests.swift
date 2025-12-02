@@ -51,24 +51,18 @@ struct TodayBoardTests {
 // MARK: Helphers
 private func getTodayBoardForTest(_ mentoryiOS: MentoryiOS) async throws -> TodayBoard {
     
+    // create Onboarding
     await mentoryiOS.setUp()
     
-    // 온보딩 가져오기
-    guard let onboarding = await mentoryiOS.onboarding else {
-        throw NSError(domain: "Onboarding not initialized", code: -1)
-    }
+    let onboarding = try #require(await mentoryiOS.onboarding)
     
-    // 온보딩 값 입력 + 검증
+    // create TodayBoard
     await onboarding.setName("테스트유저")
     await onboarding.validateInput()
     
-    // 온보딩 완료
     await onboarding.next()
     
-    // TodayBoard 가져오기
-    guard let todayBoard = await mentoryiOS.todayBoard else {
-        throw NSError(domain: "TodayBoard not initialized", code: -1)
-    }
+    let todayBoard = try #require(await mentoryiOS.todayBoard)
     
     return todayBoard
 }
