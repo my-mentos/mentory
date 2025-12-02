@@ -126,7 +126,7 @@ struct MindAnalyzerView: View {
                 }
             }
         }
-        .navigationBarBackButtonHidden(!isSelectingStage)
+//        .navigationBarBackButtonHidden(!isSelectingStage)
     }
 }
 

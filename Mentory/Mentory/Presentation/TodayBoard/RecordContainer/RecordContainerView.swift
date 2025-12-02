@@ -14,7 +14,7 @@ import Combine
 struct RecordContainerView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var navigationPath = NavigationPath()
-    
+    @State private var isSubmitEnabled = false
     @ObservedObject var recordForm: RecordForm
     
     
@@ -23,7 +23,7 @@ struct RecordContainerView: View {
         NavigationStack(path: $navigationPath) {
             RecordFormView(recordForm: recordForm)
                 .navigationDestination(for: String.self) { value in
-                    if value == "MindAnalyzer" {
+                    if value == "MindAnalyzerView" {
                         MindAnalyzerView(recordForm.mindAnalyzer!)
                     }
                 }
@@ -48,21 +48,34 @@ struct RecordContainerView: View {
                         if navigationPath.isEmpty {
                             // 현재 화면 = RecordFormView
                             Button {
-                                recordForm.validateInput()
-                                if recordForm.canProceed {
-                                    Task { await recordForm.submit() }
+                                Task {
+                                    recordForm.validateInput()
+                                    if recordForm.canProceed {
+                                        await recordForm.submit()
+                                        if recordForm.mindAnalyzer != nil {
+                                            navigationPath.append("MindAnalyzerView")
+                                        }
+                                    }
                                 }
                             } label: {
                                 Image(systemName: "checkmark")
                             }
+                            .disabled(!isSubmitEnabled)
                         }
                     }
                 }
+            // MARK: 입력 변경 감지 → validateInput() 호출
+                .onReceive(recordForm.$titleInput) { _ in
+                    recordForm.validateInput()
+                }
+                .onReceive(recordForm.$textInput) { _ in
+                    recordForm.validateInput()
+                }
+            
+            // MARK: canProceed 변경 감지 → 완료버튼 활성화 반영
                 .task {
-                    for await analyzer in recordForm.$mindAnalyzer.values {
-                        if let _ = analyzer {
-                            navigationPath.append("MindAnalyzer")
-                        }
+                    for await canProceed in recordForm.$canProceed.values {
+                        self.isSubmitEnabled = canProceed
                     }
                 }
         }
