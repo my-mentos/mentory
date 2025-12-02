@@ -25,14 +25,11 @@ final class TodayBoard: Sendable, ObservableObject {
     weak var owner: MentoryiOS?
 
     // record
-    @Published private var recordForm: RecordForm? = nil
-    @Published var selectedRecordForm: RecordForm? = nil
     @Published var recordForms: [RecordForm] = []
-    func getRecordForm(for date: RecordDate) -> RecordForm? {
-        return recordForms.first { $0.targetDate == date }
-    }
+    @Published var selectedRecordForm: RecordForm? = nil
     
     @Published var userRecordCount: Int? = nil
+    
     
     @Published var records: [RecordData] = []
     func getIndicator() -> String {
