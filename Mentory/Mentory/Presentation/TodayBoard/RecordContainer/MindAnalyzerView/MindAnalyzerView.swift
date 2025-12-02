@@ -17,71 +17,118 @@ struct MindAnalyzerView: View {
         self.mindAnalyzer = mindAnalyzer
     }
     
+    private var isSelectingStage: Bool {
+        !mindAnalyzer.isAnalyzing && !mindAnalyzer.isAnalyzeFinished
+    }
+    
+    private var isGeneratingStage: Bool {
+        mindAnalyzer.isAnalyzing
+    }
+    
+    private var isResultStage: Bool {
+        !mindAnalyzer.isAnalyzing && mindAnalyzer.isAnalyzeFinished
+    }
     
     // MARK: body
     var body: some View {
         MindAnalyzerLayout {
             
-            Header(
-                title: "누구에게 면담을 요청할까요?",
-                description: "오늘의 감정을 가장 잘 표현해줄 멘토를 선택하면 맞춤 리포트를 보내드릴게요."
-            )
-            
-            CharacterPicker(
-                characters: MentoryCharacter.allCases,
-                selection: $mindAnalyzer.character
-            )
-            
-            AnalyzeButton(
-                iconName: mindAnalyzer.isAnalyzing ? "hourglass" : "paperplane",
-                label: mindAnalyzer.isAnalyzing ? "면담 요청 중" : "면담 요청하기",
-                isActive: !mindAnalyzer.isAnalyzing,
-                action: {
-                    showingSubmitAlert = true
-                }
-            )
-            .alert("일기 제출하기", isPresented: $showingSubmitAlert) {
-                Button("취소", role: .cancel) { }
-                Button("제출") {
-                    Task {
-                        mindAnalyzer.startAnalyze()
-                        
-                        await mindAnalyzer.analyze()
-                        
-//                        await mindAnalyzer.saveRecord()
-//                        
-//                        await mindAnalyzer.owner?.owner?.loadTodayRecords()
-                        
-                        mindAnalyzer.stopAnalyze()
+            if isSelectingStage {
+                
+                Header(
+                    title: "누구에게 면담을 요청할까요?",
+                    description: "오늘의 감정을 가장 잘 표현해줄 멘토를 선택하면 맞춤 리포트를 보내드릴게요."
+                )
+                
+                CharacterPicker(
+                    characters: MentoryCharacter.allCases,
+                    selection: $mindAnalyzer.character
+                )
+                
+                AnalyzeButton(
+                    iconName: mindAnalyzer.isAnalyzing ? "hourglass" : "paperplane",
+                    label: mindAnalyzer.isAnalyzing ? "면담 요청 중" : "면담 요청하기",
+                    isActive: !mindAnalyzer.isAnalyzing,
+                    action: {
+                        showingSubmitAlert = true
                     }
+                )
+                .alert("일기 제출하기", isPresented: $showingSubmitAlert) {
+                    Button("취소", role: .cancel) { }
+                    Button("제출") {
+                        Task {
+                            mindAnalyzer.startAnalyze()
+                            
+                            await mindAnalyzer.analyze()
+                            
+                            //                        await mindAnalyzer.saveRecord()
+                            //                        await mindAnalyzer.owner?.owner?.loadTodayRecords()
+                            
+                            mindAnalyzer.stopAnalyze()
+                        }
+                    }
+                } message: {
+                    Text("일기를 제출하면 수정할 수 없습니다.\n제출하시겠습니까?")
                 }
-            } message: {
-                Text("일기를 제출하면 수정할 수 없습니다.\n제출하시겠습니까?")
+                .keyboardShortcut(.defaultAction)
+                
+                AnalyzedResult(
+                    readyPrompt: "면담 요청을 보내면 멘토가 감정 리포트를 작성해드려요.",
+                    progressPrompt: "선택한 멘토가 답변을 준비 중이에요...",
+                    isProgress: false,
+                    result: mindAnalyzer.analyzedResult,
+                    mindType: mindAnalyzer.mindType
+                )
             }
-            .keyboardShortcut(.defaultAction)
-            
-            AnalyzedResult(
-                readyPrompt: "면담 요청을 보내면 멘토가 감정 리포트를 작성해드려요.",
-                progressPrompt: "선택한 멘토가 답변을 준비 중이에요...",
-                isProgress: mindAnalyzer.isAnalyzing,
-                result: mindAnalyzer.analyzedResult,
-                mindType: mindAnalyzer.mindType
-            )
-            
-            
-            ConfirmButton(
-                icon: "checkmark.circle.fill",
-                label: "확인",
-                isPresented: mindAnalyzer.isAnalyzeFinished,
-                action: {
+            else if isGeneratingStage {
+                if let character = mindAnalyzer.character {
+                    CharacterPicker.SelectableCard(
+                        character: character,
+                        isSelected: true,
+                        action: { }
+                    )
+                    .disabled(true)
+                }
+                
+                AnalyzedResult(
+                    readyPrompt: "면담 요청을 보내면 멘토가 감정 리포트를 작성해드려요.",
+                    progressPrompt: "선택한 멘토가 답변을 준비 중이에요...",
+                    isProgress: true,
+                    result: mindAnalyzer.analyzedResult,
+                    mindType: mindAnalyzer.mindType
+                )
+            }
+            else if isResultStage {
+                
+                if let character = mindAnalyzer.character {
+                    CharacterPicker.SelectableCard(
+                        character: character,
+                        isSelected: true,
+                        action: { }
+                    )
+                    .disabled(true)
+                }
+                
+                AnalyzedResult(
+                    readyPrompt: "면담 요청을 보내면 멘토가 감정 리포트를 작성해드려요.",
+                    progressPrompt: "선택한 멘토가 답변을 준비 중이에요...",
+                    isProgress: false,
+                    result: mindAnalyzer.analyzedResult,
+                    mindType: mindAnalyzer.mindType
+                )
+                ConfirmButton(
+                    icon: "checkmark.circle.fill",
+                    label: "확인",
+                    isPresented: mindAnalyzer.isAnalyzeFinished
+                ) {
                     let recordForm = mindAnalyzer.owner!
                     recordForm.removeForm()
                 }
-            )
+            }
         }
+        .navigationBarBackButtonHidden(!isSelectingStage)
     }
 }
-
 
 
 
