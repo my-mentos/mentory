@@ -29,22 +29,22 @@ public enum MentoryCharacter: String, Sendable, Hashable, CaseIterable, Codable 
     
     public var imageName: String {
         switch self {
-        case .cool: return "bunsuk"
-        case .warm: return "gureum"
+        case .cool: return "cool"
+        case .warm: return "warm"
         }
     }
     
     public var displayName: String {
         switch self {
         case .cool: return "냉스 처리스키"
-        case .warm: return "알렉산더 지방스"
+        case .warm: return "알렉산더 구름스"
         }
     }
     
     public var description: String {
         switch self {
-        case .cool: return "냉철한 분석가 초록이가 감정 분석을 도와드릴게요!"
-        case .warm: return "감성적인 조력자 지방이가 따뜻하게 답해드릴게요!"
+        case .cool: return "논리적인 분석가 냉철이가 해석을 도와드릴게요!"
+        case .warm: return "감성적인 조력자 구름이가 따뜻하게 답해드릴게요!"
         }
     }
     
