@@ -102,10 +102,7 @@ final class TodayBoard: Sendable, ObservableObject {
         self.todayString = contentFromAlanLLM
         self.isFetchedTodayString = true
 
-        // Watch로 명언 전송
-        if let quote = contentFromAlanLLM {
-            WatchConnectivityManager.shared.updateTodayString(quote)
-        }
+
     }
     
     // 데이터 쌓기 위한테스트용 함수, 추후 loadTodayMentorMessage()로 변경해야함
@@ -143,7 +140,7 @@ final class TodayBoard: Sendable, ObservableObject {
                 self.mentorMessageDate = updatedMessage.createdAt
 
                 // Watch로 멘토 메시지 전송
-                WatchConnectivityManager.shared.updateMentorMessage(updatedMessage.message, character: updatedMessage.characterType.rawValue)
+                await WatchConnectivityManager.shared.updateMentorMessage(updatedMessage.message, character: updatedMessage.characterType.rawValue)
 
                 return
             }
