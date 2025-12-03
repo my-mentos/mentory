@@ -36,9 +36,9 @@ struct TodayStringView: View {
 
     private func getMentorIcon() -> String {
         switch connectivityManager.mentorCharacter {
-        case "Nangcheol":
+        case "cool":
             return "brain.head.profile"
-        case "Gureum":
+        case "warm":
             return "cloud.fill"
         default:
             return "quote.bubble.fill"
@@ -47,9 +47,9 @@ struct TodayStringView: View {
 
     private func getMentorColor() -> Color {
         switch connectivityManager.mentorCharacter {
-        case "Nangcheol":
+        case "cool":
             return .cyan
-        case "Gureum":
+        case "warm":
             return .pink
         default:
             return .blue
@@ -58,9 +58,9 @@ struct TodayStringView: View {
 
     private func getMentorTitle() -> String {
         switch connectivityManager.mentorCharacter {
-        case "Nangcheol":
+        case "cool":
             return "냉철이의 현실 조언"
-        case "Gureum":
+        case "warm":
             return "구름이의 따뜻한 한마디"
         default:
             return "멘토 메시지"
