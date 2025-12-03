@@ -39,8 +39,10 @@ struct MentorMessageTests {
             }
             
             // when
+            await mentorMessage.setRandomCharacter()
             
             // then
+            await #expect(mentorMessage.character == character)
         }
     }
 }
