@@ -23,30 +23,6 @@ struct RecordFormView: View {
     // MARK: - Body
     var body: some View {
         RecordFormLayout(
-            
-            //            topBar: {
-            //
-            //                TopBarLayout(
-            //                    left: {
-            //                        CancelButton(
-            //                            label: "취소",
-            //                            action: recordForm.removeForm
-            //                        )
-            //                    },
-            //                    center: {
-            //                        TodayDate(targetDate: recordForm.targetDate)
-            //                    },
-            //                    right: {
-            //                        SubmitButton(
-            //                            recordForm: recordForm,
-            //                            label: "완료",
-            //                            destination: { mindAnalyzer in
-            //                                MindAnalyzerView(mindAnalyzer)
-            //                            }
-            //                        )
-            //                    }
-            //                )
-            //            },
             todayDate: {TodayDate(targetDate: recordForm.targetDate)},
             main: {
                 TitleField(
@@ -121,23 +97,6 @@ fileprivate struct RecordFormPreview: View {
 
 
 // MARK: Component
-//fileprivate struct CancelButton: View {
-//    let label: String
-//    let action: () -> Void
-//
-//    var body: some View {
-//        Button {
-//            action()
-//        } label: {
-//            LiquidGlassIconButtonLabel(
-//                systemName: "xmark",
-//                isEnabled: true,
-//                accessibilityLabel: label
-//            )
-//        }
-//        .buttonStyle(.plain)
-//    }
-//}
 
 fileprivate struct TodayDate: View {
     let targetDate: RecordDate
@@ -174,88 +133,6 @@ fileprivate struct LiquidGlassIconButtonLabel: View {
     }
 }
 
-
-//fileprivate struct SubmitButton<Content: View>: View {
-//    @ObservedObject var recordForm: RecordForm
-//    let label: String
-//    @ViewBuilder let destination: (MindAnalyzer) -> Content
-//
-//    @State var isSubmitEnabled: Bool = false
-//    @State var showMindAnalyzerView: Bool = false
-//
-//    var body: some View {
-//        Button {
-//            Task {
-//                recordForm.validateInput()
-//                guard recordForm.canProceed else { return }
-//                await recordForm.submit()
-//                // submit() 안에서 recordForm.mindAnalyzer가 설정됨
-//            }
-//        } label: {
-//            LiquidGlassIconButtonLabel(
-//                systemName: "checkmark",
-//                isEnabled: isSubmitEnabled,
-//                accessibilityLabel: label
-//            )
-//        }
-//        .buttonStyle(.plain)
-//        .disabled(!isSubmitEnabled)
-//
-//        .navigationDestination(isPresented: $showMindAnalyzerView, destination: {
-//            if let mindAnalyzer = recordForm.mindAnalyzer {
-//                destination(mindAnalyzer)
-//            }
-//        }
-//        )
-//
-//        .task {
-//            let stream = recordForm.$mindAnalyzer.values
-//                .map { $0 != nil }
-//                .dropFirst()
-//
-//            for await isPresented in stream {
-//                self.showMindAnalyzerView = isPresented
-//            }
-//        }
-//
-//
-//        .onReceive(recordForm.$textInput, perform: { _ in
-//            recordForm.validateInput()
-//        })
-//        .onReceive(recordForm.$titleInput, perform: { _ in
-//            recordForm.validateInput()
-//        })
-//        .task {
-//            let canProceedStream = recordForm.$canProceed.values
-//
-//            for await canProceed in canProceedStream {
-//                self.isSubmitEnabled = canProceed
-//            }
-//        }
-//    }
-//}
-
-
-//fileprivate struct TopBarLayout<L:View, C: View, R: View>: View {
-//    @ViewBuilder let left: () -> L
-//    @ViewBuilder let center: () -> C
-//    @ViewBuilder let right: () -> R
-//
-//    var body: some View {
-//        HStack {
-//            self.left()
-//
-//            Spacer()
-//
-//            self.center()
-//
-//            Spacer()
-//
-//            self.right()
-//        }
-//        .padding(.horizontal)
-//    }
-//}
 
 fileprivate struct TitleField: View {
     let prompt: String

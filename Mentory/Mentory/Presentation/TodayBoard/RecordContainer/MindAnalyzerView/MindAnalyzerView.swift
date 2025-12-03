@@ -165,20 +165,7 @@ struct MindAnalyzerView: View {
         }
 //    }
 //        .preference(key: CancelToolbarHidden.self, value: mindAnalyzer.isAnalyzing || mindAnalyzer.isAnalyzeFinished)
-        
-
-        .toolbar {
-            if isSelectingStage {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Image(systemName: "chevron.backward")
-                    }
-                }
-            }
-        }
-        .navigationBarBackButtonHidden(true)
+        .navigationBarBackButtonHidden(!isSelectingStage)
     }
 }
 

@@ -37,8 +37,9 @@ struct TodayBoardView: View {
                 recordCount: todayBoard.records.count
             )
             
-            // "오늘의 명언" 카드
+            // 멘토리메세지 카드
             PopupCard(
+                imageName: todayBoard.mentorMessage?.characterType.imageName ?? "greeting",
                 title: todayBoard.mentorMessage?.characterType.title ?? "오늘의 멘토리 조언을 준비하고 있어요",
                 content: todayBoard.mentorMessage?.message ?? "잠시 후 당신을 위한 멘토리 메시지가 도착해요\n오늘은 냉철이일까요, 구름이일까요?\n조금만 기다려 주세요"
             )
@@ -142,9 +143,11 @@ fileprivate struct GreetingHeader: View {
 }
 
 fileprivate struct PopupCard: View {
+    let imageName: String
     let title: String
     let content: String?
-    init(title: String, content: String) {
+    init(imageName: String, title: String, content: String) {
+        self.imageName = imageName
         self.title = title
         self.content = content
     }
@@ -153,9 +156,23 @@ fileprivate struct PopupCard: View {
         if let content {
             LiquidGlassCard {
                 VStack(alignment: .leading, spacing: 12) {
-                    Text(title)
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundStyle(.primary)
+                    HStack(spacing: 8) {
+                        Image(imageName)
+                            .resizable()
+                            .scaledToFill()
+                            .scaleEffect(1.8, anchor: .top)
+                            .offset(y: 2)
+                            .frame(width: 28, height: 28)
+                            .clipShape(Circle())
+                            .overlay(
+                                Circle()
+                                    .stroke(Color.primary.opacity(0.25), lineWidth: 0.5)   // ← 테두리 추가!
+                            )
+                        Text(title)
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundStyle(.primary)
+                    }
+                    
                     
                     Text(content)
                         .font(.system(size: 16))
@@ -232,19 +249,12 @@ fileprivate struct RecordStatCard<Content: View>: View {
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
         }
-        
-        // 일기 작성 FullScreenCover
-//        .fullScreenCover(isPresented: $showFullScreenCover) {
-//            if let form = todayBoard.recordForm {
-//                navDestination(form)
-//            }
-//        }
         .fullScreenCover(isPresented: $showFullScreenCover) {
             if let form = todayBoard.recordForm {
                 RecordContainerView(recordForm: form)
             }
         }
-
+        
         
     }
 }
