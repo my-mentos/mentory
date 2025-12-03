@@ -41,9 +41,9 @@ struct MindAnalyzerView: View {
                         
                         await mindAnalyzer.analyze()
                         
-//                        await mindAnalyzer.saveRecord()
+                        await mindAnalyzer.saveRecord()
 //                        
-//                        await mindAnalyzer.owner?.owner?.loadTodayRecords()
+                        await mindAnalyzer.owner?.owner?.loadTodayRecords()
                         
                         mindAnalyzer.stopAnalyze()
                     }
