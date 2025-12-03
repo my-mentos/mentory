@@ -71,7 +71,6 @@ struct RecordFormTests {
             self.recordForm = try await getRecordFormForTest(mentoryiOS)
         }
 
-        // 실패 케이스
         @Test func whenTitleIsEmpty() async throws {
             // Given: 제목이 비어있고 텍스트만 있음
             await MainActor.run {
@@ -105,7 +104,6 @@ struct RecordFormTests {
             await #expect(recordForm.canProceed == false)
         }
 
-        // 성공 케이스
         @Test func whenTitleAndTextExist() async throws {
             // Given
             await MainActor.run {
@@ -167,6 +165,45 @@ struct RecordFormTests {
             self.todayBoard = try #require(await mentoryiOS.todayBoard)
         }
         
+        @Test func createMindAnalyzer() async throws {
+            // given
+            await MainActor.run {
+                recordForm.titleInput = "TEST_TITLE"
+                recordForm.textInput = "TEST_TEXT"
+            }
+            
+            await recordForm.validateInput()
+            
+            try await #require(recordForm.canProceed == true)
+            
+            // given
+            try await #require(recordForm.mindAnalyzer == nil)
+            
+            // when
+            await recordForm.submit()
+            
+            // then
+            await #expect(recordForm.mindAnalyzer != nil)
+        }
+        @Test func doNotCreateMindAnalyzerAgainWhenSubmitTwice() async throws {
+            // given
+            await MainActor.run {
+                recordForm.titleInput = "TEST_TITLE"
+                recordForm.textInput = "TEST_TEXT"
+            }
+            
+            await recordForm.validateInput()
+            await recordForm.submit()
+            
+            let mindAnalyzer = try #require(await recordForm.mindAnalyzer)
+            
+            // when
+            await recordForm.submit()
+            
+            // then
+            await #expect(recordForm.mindAnalyzer?.id == mindAnalyzer.id)
+        }
+        
         @Test func whenCanProceeedIsFalse() async throws {
             // given
             try await #require(recordForm.canProceed == false)
@@ -193,6 +230,7 @@ struct RecordFormTests {
             let testTitle = "TEST_TITLE"
             await MainActor.run {
                 recordForm.titleInput = testTitle
+                recordForm.textInput = "TEST_TEXT"
             }
             
             // when

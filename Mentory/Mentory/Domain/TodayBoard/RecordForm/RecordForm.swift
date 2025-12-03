@@ -88,6 +88,10 @@ final class RecordForm: Sendable, ObservableObject, Identifiable {
     }
     func submit() async {
         // capture
+        guard self.mindAnalyzer == nil else {
+            logger.error("이미 MindAnalyzer가 존재합니다.")
+            return
+        }
         guard self.canProceed == true else {
             logger.error("canProceed가 false입니다. 먼저 validateInput을 실행해주세요.")
             return
@@ -95,7 +99,7 @@ final class RecordForm: Sendable, ObservableObject, Identifiable {
         
         let todayBoard = self.owner!
         let mentoryiOS = todayBoard.owner!
-        let settingBoard = mentoryiOS.settingBoard!
+//        let settingBoard = mentoryiOS.settingBoard!
 
         
 //        // process
