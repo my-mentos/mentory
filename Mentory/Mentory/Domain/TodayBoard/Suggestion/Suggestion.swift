@@ -14,11 +14,11 @@ import Values
 final class Suggestion: Sendable, ObservableObject {
     // MARK: core
     init(owner: TodayBoard,
-         source: SuggestionID,
+         target: SuggestionID,
          content: String,
          isDone: Bool) {
         self.owner = owner
-        self.source = source
+        self.target = target
         self.content = content
         self.isDone = isDone
     }
@@ -28,15 +28,27 @@ final class Suggestion: Sendable, ObservableObject {
     
     weak var owner: TodayBoard?
     
-    nonisolated let source: SuggestionID
+    nonisolated let target: SuggestionID
     nonisolated let content: String
     
-    @Published var isDone: Bool
+    @Published private(set) var isDone: Bool
+    func setStatus(isDone: Bool) {
+        self.isDone = isDone
+    }
     
     
     // MARK: action
     func markDone() async {
+        // capture
+        let todayBoard = self.owner!
+        let mentoryiOS = todayBoard.owner!
+        
+        let mentoryDB = mentoryiOS.mentoryDB
+        
+        // process
         // SwiftData의 UserSuggestion에 isDone 업데이트
+        
+        // mutate
         fatalError()
     }
     

@@ -10,6 +10,28 @@ import Values
 import OSLog
 
 
+// MARK: SwiftData Model
+@Model
+final class DailySuggestionModel {
+    @Attribute(.unique) var id: UUID
+    
+    var target: UUID // SuggestionID의 원시값
+    
+    var content: String
+    var status: SuggestionData.Status
+    
+    init(id: UUID = UUID(),
+         target: UUID,
+         content: String,
+         status: SuggestionData.Status) {
+        self.id = id
+        self.target = target
+        self.content = content
+        self.status = status
+    }
+}
+
+
 // MARK: Object
 actor DailySuggestion {
     // MARK: core
@@ -27,19 +49,4 @@ actor DailySuggestion {
     
     
     // MARK: value
-    @Model
-    final class DailySuggestionModel {
-        @Attribute(.unique) var id: UUID
-        
-        var content: String
-        var status: SuggestionData.Status
-        
-        init(id: UUID,
-             content: String,
-             status: SuggestionData.Status) {
-            self.id = id
-            self.content = content
-            self.status = status
-        }
-    }
 }

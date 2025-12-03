@@ -30,7 +30,7 @@ public actor MentoryDatabase: Sendable {
                 for: MentoryDBModel.self,
                 RecordTicket.self,
                 DailyRecord.DailyRecordModel.self,
-                DailySuggestion.DailySuggestionModel.self)
+                DailySuggestionModel.self)
         } catch {
             fatalError("❌ MentoryDB ModelContainer 생성 실패: \(error)")
         }

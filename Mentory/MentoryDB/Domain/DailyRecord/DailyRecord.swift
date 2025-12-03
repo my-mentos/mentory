@@ -61,14 +61,14 @@ actor DailyRecord: Sendable {
         var analyzedResult: String
         var emotion: Emotion
         
-        @Relationship var suggestions: [DailySuggestion.DailySuggestionModel] = []
+        @Relationship var suggestions: [DailySuggestionModel] = []
 
         init(id: UUID,
              recordDate: Date,
              createdAt: Date,
              analyzedResult: String,
              emotion: Emotion,
-             suggestions: [DailySuggestion.DailySuggestionModel]) {
+             suggestions: [DailySuggestionModel]) {
             self.id = id
             self.recordDate = recordDate
             self.createdAt = createdAt

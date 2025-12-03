@@ -105,7 +105,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
             .map { keyword in
                 Suggestion(
                     owner: todayBoard,
-                    source: .random,
+                    target: .random,
                     content: keyword,
                     isDone: false)
             }
