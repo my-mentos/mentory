@@ -52,19 +52,13 @@ final class RecordForm: Sendable, ObservableObject, Identifiable {
     func validateInput() {
         // capture
         let title = self.titleInput
-        guard title.isEmpty == false else {
-            logger.error("titleInput에는 값이 존재해야 합니다. 현재 값이 비어있습니다.")
-            return
-        }
-        
         let text = self.textInput
-        guard text.isEmpty == false else {
-            logger.error("textInput에는 값이 존재해야 합니다. 현재 값이 비어있습니다.")
-            return
-        }
-
+    
+        //process
+        let canProceedResult: Bool = !title.isEmpty && !text.isEmpty
+        
         // mutate
-        self.canProceed = true
+        self.canProceed = canProceedResult
     }
     func submit() async {
         // capture

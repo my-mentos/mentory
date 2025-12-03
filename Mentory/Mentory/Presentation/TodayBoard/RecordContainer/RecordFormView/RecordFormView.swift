@@ -23,28 +23,7 @@ struct RecordFormView: View {
     // MARK: - Body
     var body: some View {
         RecordFormLayout(
-            topBar: {
-                TopBarLayout(
-                    left: {
-                        CancelButton(
-                            label: "취소",
-                            action: recordForm.removeForm
-                        )
-                    },
-                    center: {
-                        TodayDate(targetDate: recordForm.targetDate)
-                    },
-                    right: {
-                        SubmitButton(
-                            recordForm: recordForm,
-                            label: "완료",
-                            destination: { mindAnalyzer in
-                                MindAnalyzerView(mindAnalyzer)
-                            }
-                        )
-                    }
-                )
-            },
+            todayDate: {TodayDate(targetDate: recordForm.targetDate)},
             main: {
                 TitleField(
                     prompt: "제목",
@@ -114,19 +93,6 @@ fileprivate struct RecordFormPreview: View {
 
 
 // MARK: Component
-fileprivate struct CancelButton: View {
-    let label: String
-    let action: () -> Void
-    
-    var body: some View {
-        Button {
-            action()
-        } label: {
-            ActionButtonLabel(text: self.label,
-                              usage: .cancel)
-        }
-    }
-}
 
 fileprivate struct TodayDate: View {
     let targetDate: MentoryDate
@@ -137,7 +103,7 @@ fileprivate struct TodayDate: View {
         formatter.dateFormat = "M월 d일 EEEE"
         return formatter.string(from: targetDate.rawValue)
     }
-
+    
     var body: some View {
         Text(formattedDate)
             .font(.headline)
@@ -145,91 +111,24 @@ fileprivate struct TodayDate: View {
     }
 }
 
-fileprivate struct SubmitButton<Content: View>: View {
-    @ObservedObject var recordForm: RecordForm
-    let label: String
-    @ViewBuilder let destination: (MindAnalyzer) -> Content
-    
-    @State var isSubmitEnabled: Bool = false
-    @State var showMindAnalyzerView: Bool = false
-    @State var showingSubmitAlert: Bool = false
+fileprivate struct LiquidGlassIconButtonLabel: View {
+    let systemName: String
+    var isEnabled: Bool = true
+    var accessibilityLabel: String?
     
     var body: some View {
-        Button {
-            showingSubmitAlert = true
-            
-        } label: {
-            ActionButtonLabel(text: "완료", usage: isSubmitEnabled ? .submitEnabled : .submitDisabled)
-            
-        }.disabled(!isSubmitEnabled)
-            .alert("일기 제출하기", isPresented: $showingSubmitAlert) {
-                Button("취소", role: .cancel) { }
-                Button("제출") {
-                    Task {
-                        recordForm.validateInput()
-                        await recordForm.submit()
-                    }
-                }
-            } message: {
-                Text("일기를 제출하면 수정할 수 없습니다.\n제출하시겠습니까?")
-            }
-            .keyboardShortcut(.defaultAction)
-        
-            .navigationDestination(isPresented: $showMindAnalyzerView, destination: {
-                if let mindAnalyzer = recordForm.mindAnalyzer {
-                    destination(mindAnalyzer)
-                }
-            }
-            )
-        
-            .task {
-                let stream = recordForm.$mindAnalyzer.values
-                    .map { $0 != nil }
-                    .dropFirst()
-                
-                for await isPresented in stream {
-                    self.showMindAnalyzerView = isPresented
-                }
-            }
-        
-        
-            .onReceive(recordForm.$textInput, perform: { _ in
-                recordForm.validateInput()
-            })
-            .onReceive(recordForm.$titleInput, perform: { _ in
-                recordForm.validateInput()
-            })
-            .task {
-                let canProceedStream = recordForm.$canProceed.values
-                
-                for await canProceed in canProceedStream {
-                    self.isSubmitEnabled = canProceed
-                }
-            }
-    }
-}
-
-
-fileprivate struct TopBarLayout<L:View, C: View, R: View>: View {
-    @ViewBuilder let left: () -> L
-    @ViewBuilder let center: () -> C
-    @ViewBuilder let right: () -> R
-    
-    var body: some View {
-        HStack {
-            self.left()
-            
-            Spacer()
-            
-            self.center()
-            
-            Spacer()
-            
-            self.right()
+        LiquidGlassCard {
+            Image(systemName: systemName)
+                .font(.system(size: 14, weight: .semibold))
+                .frame(width: 28, height: 28)
+                .padding(6)
+                .foregroundStyle(isEnabled ? .primary : .secondary)
+                .accessibilityLabel(accessibilityLabel ?? "")
         }
-        .padding(.horizontal)
+        .opacity(isEnabled ? 1.0 : 0.5)
     }
 }
+
 
 fileprivate struct TitleField: View {
     let prompt: String

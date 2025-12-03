@@ -37,10 +37,11 @@ struct TodayBoardView: View {
                 recordCount: todayBoard.recordCount
             )
             
-            // "오늘의 명언" 카드
+            // 멘토리메세지 카드
             PopupCard(
-                title: todayBoard.mentorMessage?.character?.title ?? "오늘의 멘토리 조언을 준비하고 있어요",
-                content: todayBoard.mentorMessage?.content ?? "잠시 후 당신을 위한 멘토리 메시지가 도착해요\n오늘은 냉철이일까요, 구름이일까요?\n조금만 기다려 주세요"
+                imageName: todayBoard.mentorMessage?.characterType.imageName ?? "greeting",
+                title: todayBoard.mentorMessage?.characterType.title ?? "오늘의 멘토리 조언을 준비하고 있어요",
+                content: todayBoard.mentorMessage?.message ?? "잠시 후 당신을 위한 멘토리 메시지가 도착해요\n오늘은 냉철이일까요, 구름이일까요?\n조금만 기다려 주세요"
             )
             
             // 기분 기록 카드
@@ -57,20 +58,27 @@ struct TodayBoardView: View {
             // 행동 추천 카드
             SuggestionCard(
                 todayBoard: todayBoard,
-                header: "오늘은 이런 행동 어떨까요?",
-                actionRows:
-                    Text("구현 예정")
-//                    SuggestionActionRows(todayBoard: todayBoard)
+                header: todayBoard.actionKeyWordItems.isEmpty ? "기록을 남기고 추천 행동을 완료해보세요! " :"오늘은 이런 행동 어떨까요?",
+                actionRows: SuggestionActionRows(todayBoard: todayBoard)
             )
         }
-//        // 로드 시 2개의 비동기 작업 실행
-//        .task {
-//            // 오늘의 기록 불러오기
-//            await todayBoard.loadTodayRecords()
-//        }
-//        .task {
-//            await todayBoard.loadTodayMentorMessageTest()
-//        }
+        // 로드 시 2개의 비동기 작업 실행
+        .task {
+            // 오늘의 기록 불러오기
+            await todayBoard.loadTodayRecords()
+        }
+        .task {
+            await todayBoard.loadTodayMentorMessageTest()
+        }
+        .task {
+            // WatchConnectivity 설정
+            await WatchConnectivityManager.shared.setUp()
+            await WatchConnectivityManager.shared.setTodoCompletionHandler { todoText, isCompleted in
+                Task { @MainActor in
+                    await todayBoard.handleWatchTodoCompletion(todoText: todoText, isCompleted: isCompleted)
+                }
+            }
+        }
     }
 }
 
@@ -151,22 +159,42 @@ fileprivate struct GreetingHeader: View {
 }
 
 fileprivate struct PopupCard: View {
+    let imageName: String
     let title: String
     let content: String?
-    init(title: String, content: String) {
+    init(imageName: String, title: String, content: String) {
+        self.imageName = imageName
         self.title = title
         self.content = content
+    }
+    
+    private func forMarkdown(_ string: String) -> LocalizedStringKey {
+        .init(string)
     }
     
     var body: some View {
         if let content {
             LiquidGlassCard {
                 VStack(alignment: .leading, spacing: 12) {
-                    Text(title)
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundStyle(.primary)
+                    HStack(spacing: 8) {
+                        Image(imageName)
+                            .resizable()
+                            .scaledToFill()
+                            .scaleEffect(1.8, anchor: .top)
+                            .offset(y: 2)
+                            .frame(width: 28, height: 28)
+                            .clipShape(Circle())
+                            .overlay(
+                                Circle()
+                                    .stroke(Color.primary.opacity(0.25), lineWidth: 0.5)   // ← 테두리 추가!
+                            )
+                        Text(title)
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundStyle(.primary)
+                    }
                     
-                    Text(content)
+                    
+                    Text(forMarkdown(content))
                         .font(.system(size: 16))
                         .foregroundStyle(.secondary)
                         .lineSpacing(4)
@@ -246,13 +274,13 @@ fileprivate struct RecordStatCard<Content: View>: View {
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
         }
-        
-        // 일기 작성 FullScreenCover
         .fullScreenCover(isPresented: $showFullScreenCover) {
-            if let form = todayBoard.recordFormSelection {
-                navDestination(form)
+            if let form = todayBoard.recordForm {
+                RecordContainerView(recordForm: form)
             }
         }
+        
+        
     }
 }
 
@@ -270,27 +298,19 @@ fileprivate struct SuggestionCard<ActionRows: View>: View {
     var body: some View {
         LiquidGlassCard {
             VStack(alignment: .leading, spacing: 12) {
-                HStack {
-                    Text(header)
-                        .font(.system(size: 17, weight: .semibold))
-                        .foregroundStyle(.primary)
-                    Spacer()
-//                    Text(todayBoard.getIndicator())
-//                        .font(.system(size: 12, weight: .semibold))
-//                        .foregroundStyle(.secondary)
-                }
-                
-                ProgressSection
-                
+                Text(header)
+                    .font(.system(size: 17, weight: .semibold))
+                    .foregroundStyle(.primary)
+                ProgressBar
                 actionRows
-                    .padding(.top, 20)
+                    .padding(.top, 0)
             }
             .padding(.vertical, 22)
             .padding(.horizontal, 18)
         }
     }
     
-    private var ProgressSection: some View {
+    private var ProgressBar: some View {
         HStack {
             ZStack {
                 Capsule()
@@ -316,60 +336,42 @@ fileprivate struct SuggestionCard<ActionRows: View>: View {
             }
             .frame(height: 10)
             
-            Button {
-                // TODO: 새로고침
-            } label: {
-                Image(systemName: "arrow.clockwise")
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundStyle(.secondary)
-                    .padding(6)
-            }
+            Text(todayBoard.getIndicator())
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(.secondary)
         }
         .padding(.vertical, 10)
         .padding(.horizontal, 6)
-        .background(Color.mentorySubCard.opacity(0.5),
-                    in: RoundedRectangle(cornerRadius: 16))
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.mentoryBorder.opacity(0.4), lineWidth: 1)
-        )
     }
 }
 
-//fileprivate struct SuggestionActionRows: View {
-//    @ObservedObject var todayBoard: TodayBoard
-////    @State private var actionRowEmpty = false
-//    
-//    init(todayBoard: TodayBoard) {
-//        self.todayBoard = todayBoard
-//    }
-//    
-//    var body: some View {
-//        if todayBoard.suggestions.isEmpty {
-//            Text("기록을 남기고 추천 행동을 완료해보세요.")
-////            ActionRow(checked: $actionRowEmpty, text: "기록을 남기고 추천행동을 완료해보세요!")
-//        } else {
-//            VStack(spacing: 12) {
-//                ForEach(todayBoard.suggestions, id: \.id) { index in
-//                    ActionRow(
-//                        checked: Binding(
-//                            get: { todayBoard.actionKeyWordItems[index].1 },
-//                            set: { newValue in
-//                                todayBoard.actionKeyWordItems[index].1 = newValue
-//                                // 체크 상태 변경 시 DB에 실시간 업데이트
-//                                Task {
-//                                    await todayBoard.updateActionCompletion()
-//                                    await todayBoard.loadTodayRecords()
-//                                }
-//                            }
-//                        ),
-//                        text: todayBoard.actionKeyWordItems[index].0
-//                    )
-//                }
-//            }
-//        }
-//    }
-//}
+fileprivate struct SuggestionActionRows: View {
+    @ObservedObject var todayBoard: TodayBoard
+    
+    init(todayBoard: TodayBoard) {
+        self.todayBoard = todayBoard
+    }
+    
+    var body: some View {
+        ForEach(todayBoard.actionKeyWordItems.indices, id: \.self) { index in
+            ActionRow(
+                checked: Binding(
+                    get: { todayBoard.actionKeyWordItems[index].1 },
+                    set: { newValue in
+                        todayBoard.actionKeyWordItems[index].1 = newValue
+                        // 체크 상태 변경 시 DB에 실시간 업데이트
+                        Task {
+                            await todayBoard.updateActionCompletion()
+                            await todayBoard.loadTodayRecords()
+                        }
+                    }
+                ),
+                text: todayBoard.actionKeyWordItems[index].0
+            )
+        }
+        
+    }
+}
 
 // MARK: - DateSelectionSheet
 fileprivate struct DateSelectionSheet: View {

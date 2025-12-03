@@ -8,41 +8,59 @@
 import SwiftUI
 
 struct ActionTodoView: View {
-    @State private var todoItems = [
-        TodoItem(text: "산책하기", isCompleted: false),
-        TodoItem(text: "물 마시기", isCompleted: true),
-        TodoItem(text: "스트레칭", isCompleted: false)
-    ]
+    @StateObject private var connectivityManager = WatchConnectivityManager.shared
 
     var body: some View {
         List {
             Section {
-                ForEach($todoItems) { $item in
-                    HStack {
-                        Button(action: {
-                            item.isCompleted.toggle()
-                        }) {
-                            Image(systemName: item.isCompleted ? "checkmark.circle.fill" : "circle")
-                                .foregroundColor(item.isCompleted ? .green : .gray)
-                        }
-                        .buttonStyle(.plain)
+                if connectivityManager.actionTodos.isEmpty {
+                    Text("투두가 없습니다")
+                        .foregroundColor(.secondary)
+                } else {
+                    ForEach(Array(connectivityManager.actionTodos.enumerated()), id: \.offset) { index, todoText in
+                        let isCompleted = index < connectivityManager.todoCompletionStatus.count
+                            ? connectivityManager.todoCompletionStatus[index]
+                            : false
 
-                        Text(item.text)
-                            .strikethrough(item.isCompleted)
-                            .foregroundColor(item.isCompleted ? .gray : .primary)
+                        HStack {
+                            Button(action: {
+                                Task {
+                                    await handleTodoToggle(todoText: todoText, currentStatus: isCompleted)
+                                }
+                            }) {
+                                Image(systemName: isCompleted ? "checkmark.circle.fill" : "circle")
+                                    .foregroundColor(isCompleted ? .green : .gray)
+                            }
+                            .buttonStyle(.plain)
+
+                            Text(todoText)
+                                .strikethrough(isCompleted)
+                                .foregroundColor(isCompleted ? .gray : .primary)
+                        }
                     }
                 }
             } header: {
                 Text("오늘의 행동 추천")
             }
         }
+        .task {
+            // View가 나타날 때 데이터 로드
+            await connectivityManager.loadInitialData()
+        }
     }
-}
 
-struct TodoItem: Identifiable {
-    let id = UUID()
-    var text: String
-    var isCompleted: Bool
+    private func handleTodoToggle(todoText: String, currentStatus: Bool) async {
+        let newStatus = !currentStatus
+
+        // 1. 먼저 로컬 상태 즉시 업데이트 (UI 즉시 반영)
+        if let index = connectivityManager.actionTodos.firstIndex(of: todoText),
+           index < connectivityManager.todoCompletionStatus.count {
+            connectivityManager.todoCompletionStatus[index] = newStatus
+        }
+
+        // 2. iPhone으로 완료 상태 전송
+        await connectivityManager.sendTodoCompletion(todoText: todoText, isCompleted: newStatus)
+    }
 }
 
 #Preview {

@@ -29,22 +29,22 @@ public enum MentoryCharacter: String, Sendable, Hashable, CaseIterable, Codable 
     
     public var imageName: String {
         switch self {
-        case .cool: return "bunsuk"
-        case .warm: return "gureum"
+        case .cool: return "cool"
+        case .warm: return "warm"
         }
     }
     
     public var displayName: String {
         switch self {
         case .cool: return "냉스 처리스키"
-        case .warm: return "알렉산더 지방스"
+        case .warm: return "알렉산더 구름스"
         }
     }
     
     public var description: String {
         switch self {
-        case .cool: return "냉철한 분석가 초록이가 감정 분석을 도와드릴게요!"
-        case .warm: return "감성적인 조력자 지방이가 따뜻하게 답해드릴게요!"
+        case .cool: return "논리적인 분석가 냉철이가 해석을 도와드릴게요!"
+        case .warm: return "감성적인 조력자 구름이가 따뜻하게 답해드릴게요!"
         }
     }
     
@@ -61,9 +61,10 @@ public enum MentoryCharacter: String, Sendable, Hashable, CaseIterable, Codable 
     public var question: String {
         switch self {
         case .cool:
-            return "동기부여가 될만한 짧은 현실조언을 저번과 다르게 말해줘. 냉정한 태도로 말해줘. 문장에들어가면 어색한 특수문자들은 다 빼줘. 이모지는 어울리게 문장들 사이에 문장이 끝나기 전에 마침표앞에 두개 넣어줘"
+            return "동기부여가 될만한 짧은 현실조언을 저번과 다르게 말해줘. 냉정한 태도로 말해줘. 표정 말고 어울리는 이모티콘 하나를 문장 중간에, 어울리는 표정 이모티콘은 맨뒤에 한개 넣어줘"
         case .warm:
-            return "마음을 보살펴주는 짧은 위로격려를 저번과 다르게 말해줘. 상냥한 말투로 말해줘. 문장에들어가면 어색한 특수문자들은 다 빼줘. 이모지는 어울리게 문장들 사이에 문장이 끝나기 전에 마침표앞에 두개 넣어줘"
+            return "마음을 보살펴주는 짧은 위로격려를 저번과 다르게 말해줘. 상냥한 말투로 말해줘. 표정 말고 어울리는 이모티콘 하나를 문장 중간에, 어울리는 표정 이모티콘은 맨뒤에 한개 넣어줘"
         }
     }
 }
+

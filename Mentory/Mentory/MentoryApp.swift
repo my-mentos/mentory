@@ -18,7 +18,9 @@ struct MentoryApp: App {
     @StateObject private var watchConnectivity = WatchConnectivityManager.shared
 
     init() {
-        _ = WatchConnectivityManager.shared
+        Task {
+            await WatchConnectivityManager.shared.setUp()
+        }
     }
 
     // MARK: body

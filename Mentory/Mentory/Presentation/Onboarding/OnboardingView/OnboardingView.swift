@@ -26,7 +26,7 @@ struct OnboardingView: View {
                 HStack(spacing: 40) {
                     // 구름이 캐릭터
                     VStack(spacing: 12) {
-                        Image("gureum")
+                        Image("warm")
                             .resizable()
                             .scaledToFit()
                             .frame(width: 120, height: 120)
@@ -38,7 +38,7 @@ struct OnboardingView: View {
                     
                     // 분석이 캐릭터
                     VStack(spacing: 12) {
-                        Image("bunsuk")
+                        Image("cool")
                             .resizable()
                             .scaledToFit()
                             .frame(width: 120, height: 120)

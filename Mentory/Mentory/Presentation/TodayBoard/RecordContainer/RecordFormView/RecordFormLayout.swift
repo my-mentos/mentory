@@ -9,8 +9,8 @@ import UIKit
 
 
 // MARK: Layout
-struct RecordFormLayout<TopBar: View, Main: View, BottomBar: View>: View {
-    @ViewBuilder let topBar: () -> TopBar
+struct RecordFormLayout<TodayDate: View, Main: View, BottomBar: View>: View {
+    @ViewBuilder let todayDate: () -> TodayDate
     @ViewBuilder let main: () -> Main
     @ViewBuilder let bottomBar: () -> BottomBar
     
@@ -21,7 +21,7 @@ struct RecordFormLayout<TopBar: View, Main: View, BottomBar: View>: View {
                     .ignoresSafeArea()
                 VStack(spacing: 0) {
                     
-                    self.topBar()
+                    self.todayDate()
                     
                     ScrollView {
                         VStack(spacing: 16) {

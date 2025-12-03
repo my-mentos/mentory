@@ -159,4 +159,55 @@ final class TodayBoard: Sendable, ObservableObject {
         // mutate
         self.recordCount = recordCount
     }
+
+    /// Watch로부터 투두 완료 처리를 받아서 DB 업데이트
+    func handleWatchTodoCompletion(todoText: String, isCompleted: Bool) async {
+        // capture
+        guard let recordId = latestRecordId else {
+            logger.error("업데이트할 레코드 ID가 없습니다.")
+            return
+        }
+
+        // 투두 텍스트로 인덱스 찾기
+        guard let index = actionKeyWordItems.firstIndex(where: { $0.0 == todoText }) else {
+            logger.error("투두를 찾을 수 없음: \(todoText)")
+            return
+        }
+
+        // process
+        // UI 상태 업데이트
+        actionKeyWordItems[index].1 = isCompleted
+        logger.debug("Watch로부터 투두 완료 상태 업데이트: \(todoText) = \(isCompleted)")
+
+        // records 배열에서도 업데이트 (인디케이터 반영용, 로직 개선 필요)
+        if let recordIndex = records.firstIndex(where: { $0.id == recordId }) {
+            let oldRecord = records[recordIndex]
+            var newCompletionStatus = oldRecord.actionCompletionStatus
+            newCompletionStatus[index] = isCompleted
+
+            let updatedRecord = RecordData(
+                id: oldRecord.id,
+                recordDate: oldRecord.recordDate,
+                createdAt: oldRecord.createdAt,
+                content: oldRecord.content,
+                analyzedResult: oldRecord.analyzedResult,
+                emotion: oldRecord.emotion,
+                actionTexts: oldRecord.actionTexts,
+                actionCompletionStatus: newCompletionStatus
+            )
+            records[recordIndex] = updatedRecord
+            logger.debug("records 배열 업데이트 완료 - 인디케이터가 반영됩니다.")
+        }
+
+        // DB 업데이트
+        let mentoryDB = owner!.mentoryDB
+        let completionStatus = actionKeyWordItems.map { $0.1 }
+
+        do {
+            try await mentoryDB.updateActionCompletion(recordId: recordId, completionStatus: completionStatus)
+            logger.debug("Watch 투두 완료 상태가 DB에 저장되었습니다.")
+        } catch {
+            logger.error("Watch 투두 완료 상태 DB 저장 실패: \(error)")
+        }
+    }
 }
