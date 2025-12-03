@@ -33,32 +33,33 @@ struct MindAnalyzerView: View {
     // MARK: body
     var body: some View {
         MindAnalyzerLayout {
+            // Group{
             if isSelectingStage {
-
+                
                 Header(
                     title: "누구에게 면담을 요청할까요?",
                     description: "오늘의 감정을 가장 잘 표현해줄 멘토를 선택하면 맞춤 리포트를 보내드릴게요."
                 )
-
+                
                 CharacterPicker(
                     characters: MentoryCharacter.allCases,
                     selection: $mindAnalyzer.character,
                     namespace: mentorNamespace
                 )
-
+                
                 AnalyzeButton(
                     iconName: mindAnalyzer.isAnalyzing
-                        ? "hourglass" : "paperplane",
+                    ? "hourglass" : "paperplane",
                     label: mindAnalyzer.isAnalyzing ? "면담 요청 중" : "면담 요청하기",
                     isActive: !mindAnalyzer.isAnalyzing
-                        && mindAnalyzer.character != nil
+                    && mindAnalyzer.character != nil
                 ) {
                     showingSubmitAlert = true
                 }
                 .disabled(
                     mindAnalyzer.character == nil || mindAnalyzer.isAnalyzing
                 )
-
+                
                 .alert("일기 제출하기", isPresented: $showingSubmitAlert) {
                     Button("취소", role: .cancel) {}
                     Button("제출") {
@@ -73,10 +74,10 @@ struct MindAnalyzerView: View {
                                     mindAnalyzer.startAnalyze()
                                 }
                             }
-
+                            
                             let startTime = Date()
                             await mindAnalyzer.analyze()
-
+                            
                             // 로딩화면 최소 1초로 설정
                             let elapsed = Date().timeIntervalSince(startTime)
                             let minimum: TimeInterval = 1.0
@@ -86,10 +87,10 @@ struct MindAnalyzerView: View {
                                     nanoseconds: UInt64(remain * 1_000_000_000)
                                 )
                             }
-
+                            
                             //                        await mindAnalyzer.saveRecord()
                             //                        await mindAnalyzer.owner?.owner?.loadTodayRecords()
-
+                            
                             await MainActor.run {
                                 withAnimation(
                                     .spring(
@@ -106,7 +107,7 @@ struct MindAnalyzerView: View {
                     Text("일기를 제출하면 수정할 수 없습니다.\n제출하시겠습니까?")
                 }
                 .keyboardShortcut(.defaultAction)
-
+                
                 AnalyzedResult(
                     readyPrompt: "면담 요청을 보내면 멘토가 감정 리포트를 작성해드려요.",
                     progressPrompt: "선택한 멘토가 답변을 준비 중이에요...",
@@ -126,7 +127,7 @@ struct MindAnalyzerView: View {
                     )
                     .disabled(true)
                 }
-
+                
                 AnalyzedResult(
                     readyPrompt: "면담 요청을 보내면 멘토가 감정 리포트를 작성해드려요.",
                     progressPrompt: "선택한 멘토가 답변을 준비 중이에요...",
@@ -135,7 +136,7 @@ struct MindAnalyzerView: View {
                     mindType: mindAnalyzer.mindType
                 )
             } else if isResultStage {
-
+                
                 if let character = mindAnalyzer.character {
                     CharacterPicker.SelectableCard(
                         character: character,
@@ -146,7 +147,7 @@ struct MindAnalyzerView: View {
                     )
                     .allowsHitTesting(false)
                 }
-
+                
                 AnalyzedResult(
                     readyPrompt: "면담 요청을 보내면 멘토가 감정 리포트를 작성해드려요.",
                     progressPrompt: "선택한 멘토가 답변을 준비 중이에요...",
@@ -164,6 +165,9 @@ struct MindAnalyzerView: View {
                 }
             }
         }
+//    }
+//        .preference(key: CancelToolbarHidden.self, value: mindAnalyzer.isAnalyzing || mindAnalyzer.isAnalyzeFinished)
+        
 
         .navigationBarBackButtonHidden(!isSelectingStage)
     }

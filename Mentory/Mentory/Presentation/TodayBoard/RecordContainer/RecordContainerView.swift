@@ -9,16 +9,16 @@ import Foundation
 import SwiftUI
 import Combine
 
-@MainActor
-struct CancelToolbarHidden: PreferenceKey {
-    nonisolated
-    static let defaultValue: Bool = false
-    
-    nonisolated
-    static func reduce(value: inout Bool, nextValue: () -> Bool) {
-        value = nextValue()
-    }
-}
+//@MainActor
+//struct CancelToolbarHidden: PreferenceKey {
+//    nonisolated
+//    static let defaultValue: Bool = false
+//    
+//    nonisolated
+//    static func reduce(value: inout Bool, nextValue: () -> Bool) {
+//        value = nextValue()
+//    }
+//}
 
 
 // MARK: View
