@@ -143,8 +143,23 @@ struct TodayBoardTests {
         }
     }
     
+    struct UpdateRecordForms {
+        let mentory: MentoryiOS
+        let todayBoard: TodayBoard
+        init() async throws {
+            self.mentory = await MentoryiOS()
+            self.todayBoard = try await getTodayBoardForTest(mentory)
+        }
+    }
     
     struct SetUpSuggestion {
+        let mentory: MentoryiOS
+        let todayBoard: TodayBoard
+        init() async throws {
+            self.mentory = await MentoryiOS()
+            self.todayBoard = try await getTodayBoardForTest(mentory)
+        }
+        
         
     }
 }
