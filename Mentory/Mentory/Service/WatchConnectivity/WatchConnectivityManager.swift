@@ -52,4 +52,14 @@ final class WatchConnectivityManager: ObservableObject {
     func updateMentorMessage(_ message: String, character: String) async {
         await engine?.sendMentorMessage(message, character: character)
     }
+
+    /// 행동 추천 투두를 Watch로 전송
+    func updateActionTodos(_ todos: [String], completionStatus: [Bool]) async {
+        await engine?.sendActionTodos(todos, completionStatus: completionStatus)
+    }
+
+    /// 투두 완료 처리 핸들러 설정
+    func setTodoCompletionHandler(_ handler: @escaping @Sendable (String, Bool) -> Void) async {
+        await engine?.setTodoCompletionHandler(handler)
+    }
 }

@@ -30,7 +30,7 @@ struct TodayStringView: View {
             }
         }
         .task {
-            connectivityManager.loadInitialData()
+            await connectivityManager.loadInitialData()
         }
     }
 

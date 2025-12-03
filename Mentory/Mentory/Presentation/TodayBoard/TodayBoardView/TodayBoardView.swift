@@ -70,6 +70,15 @@ struct TodayBoardView: View {
         .task {
             await todayBoard.loadTodayMentorMessageTest()
         }
+        .task {
+            // WatchConnectivity 설정
+            await WatchConnectivityManager.shared.setUp()
+            await WatchConnectivityManager.shared.setTodoCompletionHandler { todoText, isCompleted in
+                Task { @MainActor in
+                    await todayBoard.handleWatchTodoCompletion(todoText: todoText, isCompleted: isCompleted)
+                }
+            }
+        }
     }
 }
 

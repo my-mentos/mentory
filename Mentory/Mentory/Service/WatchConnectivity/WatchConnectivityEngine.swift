@@ -20,14 +20,18 @@ actor WatchConnectivityEngine: NSObject {
     // MARK: - State
     private var cachedMentorMessage: String = ""
     private var cachedMentorCharacter: String = ""
+    private var cachedActionTodos: [String] = []
+    private var cachedTodoCompletionStatus: [Bool] = []
     private var cachedIsPaired: Bool = false
     private var cachedIsWatchAppInstalled: Bool = false
     private var cachedIsReachable: Bool = false
 
     // MARK: - Handler
     private var stateUpdateHandler: StateUpdateHandler?
+    private var todoCompletionHandler: TodoCompletionHandler?
 
     typealias StateUpdateHandler = @Sendable (ConnectionState) -> Void
+    typealias TodoCompletionHandler = @Sendable (String, Bool) -> Void
 
     // MARK: - Initialization
     private override init() {
@@ -52,6 +56,11 @@ actor WatchConnectivityEngine: NSObject {
         self.stateUpdateHandler = handler
     }
 
+    /// 투두 완료 처리 핸들러 설정
+    func setTodoCompletionHandler(_ handler: @escaping TodoCompletionHandler) {
+        self.todoCompletionHandler = handler
+    }
+
     /// 멘토 메시지를 Watch로 전송
     func sendMentorMessage(_ message: String, character: String) {
         guard session.activationState == .activated else {
@@ -62,9 +71,34 @@ actor WatchConnectivityEngine: NSObject {
         cachedMentorMessage = message
         cachedMentorCharacter = character
 
+        sendAllDataToWatch()
+    }
+
+    /// 행동 추천 투두를 Watch로 전송
+    func sendActionTodos(_ todos: [String], completionStatus: [Bool]) {
+        guard session.activationState == .activated else {
+            logger.warning("WCSession이 활성화되지 않음")
+            return
+        }
+
+        cachedActionTodos = todos
+        cachedTodoCompletionStatus = completionStatus
+
+        sendAllDataToWatch()
+    }
+
+    /// 모든 캐시된 데이터를 Watch로 전송
+    private func sendAllDataToWatch() {
+        guard session.activationState == .activated else {
+            logger.warning("WCSession이 활성화되지 않음")
+            return
+        }
+
         let context: [String: Any] = [
-            "mentorMessage": message,
-            "mentorCharacter": character,
+            "mentorMessage": cachedMentorMessage,
+            "mentorCharacter": cachedMentorCharacter,
+            "actionTodos": cachedActionTodos,
+            "todoCompletionStatus": cachedTodoCompletionStatus,
             "timestamp": Date().timeIntervalSince1970
         ]
 
@@ -89,8 +123,8 @@ actor WatchConnectivityEngine: NSObject {
         } else {
             logger.debug("WCSession 활성화 완료")
             // 활성화 완료 시 현재 데이터 전송
-            if !cachedMentorMessage.isEmpty {
-                sendMentorMessage(cachedMentorMessage, character: cachedMentorCharacter)
+            if !cachedMentorMessage.isEmpty || !cachedActionTodos.isEmpty {
+                sendAllDataToWatch()
             }
         }
 
@@ -109,6 +143,24 @@ actor WatchConnectivityEngine: NSObject {
     func handleReachabilityChange(isReachable: Bool) {
         cachedIsReachable = isReachable
         notifyStateUpdate()
+    }
+
+    /// Watch로부터 받은 투두 완료 처리
+    func handleTodoCompletion(todoText: String, isCompleted: Bool) {
+        // 로컬 캐시 업데이트
+        guard let index = cachedActionTodos.firstIndex(of: todoText) else {
+            logger.error("투두를 찾을 수 없음: \(todoText)")
+            return
+        }
+
+        cachedTodoCompletionStatus[index] = isCompleted
+        logger.debug("투두 완료 상태 업데이트: todoText=\(todoText), isCompleted=\(isCompleted)")
+
+        // 핸들러를 통해 TodayBoard로 전달
+        todoCompletionHandler?(todoText, isCompleted)
+
+        // 업데이트된 상태를 Watch로 다시 전송하여 동기화 유지
+        sendAllDataToWatch()
     }
 
     // MARK: - Private Methods
@@ -145,6 +197,20 @@ extension WatchConnectivityEngine: @preconcurrency WCSessionDelegate {
     nonisolated func sessionReachabilityDidChange(_ session: WCSession) {
         Task {
             await handleReachabilityChange(isReachable: session.isReachable)
+        }
+    }
+
+    /// Watch로부터 메시지 수신 (투두 완료 처리)
+    nonisolated func session(_ session: WCSession, didReceiveMessage message: [String : Any]) {
+        guard let action = message["action"] as? String,
+              action == "todoCompletion",
+              let todoText = message["todoText"] as? String,
+              let isCompleted = message["isCompleted"] as? Bool else {
+            return
+        }
+
+        Task {
+            await handleTodoCompletion(todoText: todoText, isCompleted: isCompleted)
         }
     }
 

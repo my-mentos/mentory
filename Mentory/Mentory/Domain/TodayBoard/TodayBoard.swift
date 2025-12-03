@@ -227,6 +227,12 @@ final class TodayBoard: Sendable, ObservableObject {
             self.latestRecordId = lastRecord.id
             
             logger.debug("가장 최근 레코드의 행동 추천 \(lastRecord.actionTexts.count)개 로드")
+
+            // Watch로 행동 추천 투두 전송
+            await WatchConnectivityManager.shared.updateActionTodos(
+                lastRecord.actionTexts,
+                completionStatus: lastRecord.actionCompletionStatus
+            )
         }
     }
     func updateActionCompletion() async {
@@ -244,9 +250,13 @@ final class TodayBoard: Sendable, ObservableObject {
             logger.debug("행동 추천 완료 상태가 업데이트되었습니다.")
         } catch {
             logger.error("행동 추천 완료 상태 업데이트 실패: \(error)")
+            return
         }
         
         // mutate
+        // Watch로 업데이트된 완료 상태 전송
+        let todos = actionKeyWordItems.map { $0.0 }
+        await WatchConnectivityManager.shared.updateActionTodos(todos, completionStatus: completionStatus)
     }
 
     /// 작성 가능한 날짜의 RecordForm들을 생성합니다
@@ -281,5 +291,56 @@ final class TodayBoard: Sendable, ObservableObject {
     /// 지정된 날짜의 RecordForm을 반환합니다
     func getRecordForm(for date: RecordDate) -> RecordForm? {
         return recordForms.first { $0.targetDate == date }
+    }
+
+    /// Watch로부터 투두 완료 처리를 받아서 DB 업데이트
+    func handleWatchTodoCompletion(todoText: String, isCompleted: Bool) async {
+        // capture
+        guard let recordId = latestRecordId else {
+            logger.error("업데이트할 레코드 ID가 없습니다.")
+            return
+        }
+
+        // 투두 텍스트로 인덱스 찾기
+        guard let index = actionKeyWordItems.firstIndex(where: { $0.0 == todoText }) else {
+            logger.error("투두를 찾을 수 없음: \(todoText)")
+            return
+        }
+
+        // process
+        // UI 상태 업데이트
+        actionKeyWordItems[index].1 = isCompleted
+        logger.debug("Watch로부터 투두 완료 상태 업데이트: \(todoText) = \(isCompleted)")
+
+        // records 배열에서도 업데이트 (인디케이터 반영용, 로직 개선 필요)
+        if let recordIndex = records.firstIndex(where: { $0.id == recordId }) {
+            let oldRecord = records[recordIndex]
+            var newCompletionStatus = oldRecord.actionCompletionStatus
+            newCompletionStatus[index] = isCompleted
+
+            let updatedRecord = RecordData(
+                id: oldRecord.id,
+                recordDate: oldRecord.recordDate,
+                createdAt: oldRecord.createdAt,
+                content: oldRecord.content,
+                analyzedResult: oldRecord.analyzedResult,
+                emotion: oldRecord.emotion,
+                actionTexts: oldRecord.actionTexts,
+                actionCompletionStatus: newCompletionStatus
+            )
+            records[recordIndex] = updatedRecord
+            logger.debug("records 배열 업데이트 완료 - 인디케이터가 반영됩니다.")
+        }
+
+        // DB 업데이트
+        let mentoryDB = owner!.mentoryDB
+        let completionStatus = actionKeyWordItems.map { $0.1 }
+
+        do {
+            try await mentoryDB.updateActionCompletion(recordId: recordId, completionStatus: completionStatus)
+            logger.debug("Watch 투두 완료 상태가 DB에 저장되었습니다.")
+        } catch {
+            logger.error("Watch 투두 완료 상태 DB 저장 실패: \(error)")
+        }
     }
 }

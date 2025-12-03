@@ -17,6 +17,8 @@ final class WatchConnectivityManager: ObservableObject {
     // MARK: - State
     @Published var mentorMessage: String = "멘토 메시지를 불러오는 중..."
     @Published var mentorCharacter: String = ""
+    @Published var actionTodos: [String] = []
+    @Published var todoCompletionStatus: [Bool] = []
     @Published var connectionStatus: String = "연결 대기 중"
 
     private var engine: WatchConnectivityEngine? = nil
@@ -39,6 +41,8 @@ final class WatchConnectivityManager: ObservableObject {
             Task { @MainActor in
                 self?.mentorMessage = data.mentorMessage
                 self?.mentorCharacter = data.mentorCharacter
+                self?.actionTodos = data.actionTodos
+                self?.todoCompletionStatus = data.todoCompletionStatus
                 self?.connectionStatus = data.connectionStatus
             }
         }
@@ -49,7 +53,12 @@ final class WatchConnectivityManager: ObservableObject {
     }
 
     /// iOS 앱에서 보낸 데이터 로드
-    func loadInitialData() {
-        engine?.loadInitialDataFromContext()
+    func loadInitialData() async {
+        await engine?.loadInitialDataFromContext()
+    }
+
+    /// 투두 완료 처리를 iPhone으로 전송
+    func sendTodoCompletion(todoText: String, isCompleted: Bool) async {
+        await engine?.sendTodoCompletion(todoText: todoText, isCompleted: isCompleted)
     }
 }

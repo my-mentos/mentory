@@ -20,6 +20,8 @@ actor WatchConnectivityEngine: NSObject {
     // MARK: - State
     private var cachedMentorMessage: String = ""
     private var cachedMentorCharacter: String = ""
+    private var cachedActionTodos: [String] = []
+    private var cachedTodoCompletionStatus: [Bool] = []
     private var cachedConnectionStatus: String = "연결 대기 중"
 
     // MARK: - Handler
@@ -56,25 +58,63 @@ actor WatchConnectivityEngine: NSObject {
         let context = session.receivedApplicationContext
         let mentorMsg = context["mentorMessage"] as? String ?? ""
         let character = context["mentorCharacter"] as? String ?? ""
+        let todos = context["actionTodos"] as? [String] ?? []
+        let completionStatus = context["todoCompletionStatus"] as? [Bool] ?? []
 
         logger.debug("ApplicationContext에서 데이터 로드 완료")
 
-        handleReceivedData(mentorMsg: mentorMsg, character: character)
+        handleReceivedData(
+            mentorMsg: mentorMsg,
+            character: character,
+            todos: todos,
+            completionStatus: completionStatus
+        )
     }
 
     // MARK: - Internal Methods
 
     /// 받은 데이터 처리
-    func handleReceivedData(mentorMsg: String?, character: String?) {
+    func handleReceivedData(
+        mentorMsg: String?,
+        character: String?,
+        todos: [String]? = nil,
+        completionStatus: [Bool]? = nil
+    ) {
         if let mentorMsg = mentorMsg {
             cachedMentorMessage = mentorMsg
         }
         if let character = character {
             cachedMentorCharacter = character
         }
+        if let todos = todos {
+            cachedActionTodos = todos
+        }
+        if let completionStatus = completionStatus {
+            cachedTodoCompletionStatus = completionStatus
+        }
 
         updateConnectionStatus("연결됨")
         notifyDataUpdate()
+    }
+
+    /// iPhone으로 투두 완료 처리 전송
+    func sendTodoCompletion(todoText: String, isCompleted: Bool) {
+        guard session.activationState == .activated else {
+            logger.warning("WCSession이 활성화되지 않음")
+            return
+        }
+
+        let message: [String: Any] = [
+            "action": "todoCompletion",
+            "todoText": todoText,
+            "isCompleted": isCompleted
+        ]
+
+        session.sendMessage(message, replyHandler: nil) { error in
+            self.logger.error("투두 완료 처리 전송 실패: \(error.localizedDescription)")
+        }
+
+        logger.debug("투두 완료 처리 전송: \(todoText) = \(isCompleted)")
     }
 
     /// 활성화 상태 업데이트
@@ -115,6 +155,8 @@ actor WatchConnectivityEngine: NSObject {
         let data = WatchData(
             mentorMessage: cachedMentorMessage,
             mentorCharacter: cachedMentorCharacter,
+            actionTodos: cachedActionTodos,
+            todoCompletionStatus: cachedTodoCompletionStatus,
             connectionStatus: cachedConnectionStatus
         )
 
@@ -133,18 +175,32 @@ extension WatchConnectivityEngine: @preconcurrency WCSessionDelegate {
     nonisolated func session(_ session: WCSession, didReceiveMessage message: [String : Any]) {
         let mentorMsg = message["mentorMessage"] as? String
         let character = message["mentorCharacter"] as? String
+        let todos = message["actionTodos"] as? [String]
+        let completionStatus = message["todoCompletionStatus"] as? [Bool]
 
         Task {
-            await handleReceivedData(mentorMsg: mentorMsg, character: character)
+            await handleReceivedData(
+                mentorMsg: mentorMsg,
+                character: character,
+                todos: todos,
+                completionStatus: completionStatus
+            )
         }
     }
 
     nonisolated func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String : Any]) {
         let mentorMsg = applicationContext["mentorMessage"] as? String
         let character = applicationContext["mentorCharacter"] as? String
+        let todos = applicationContext["actionTodos"] as? [String]
+        let completionStatus = applicationContext["todoCompletionStatus"] as? [Bool]
 
         Task {
-            await handleReceivedData(mentorMsg: mentorMsg, character: character)
+            await handleReceivedData(
+                mentorMsg: mentorMsg,
+                character: character,
+                todos: todos,
+                completionStatus: completionStatus
+            )
         }
     }
 }
@@ -153,5 +209,7 @@ extension WatchConnectivityEngine: @preconcurrency WCSessionDelegate {
 struct WatchData: Sendable {
     let mentorMessage: String
     let mentorCharacter: String
+    let actionTodos: [String]
+    let todoCompletionStatus: [Bool]
     let connectionStatus: String
 }
