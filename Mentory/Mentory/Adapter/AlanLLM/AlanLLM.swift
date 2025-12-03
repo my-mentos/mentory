@@ -128,6 +128,8 @@ struct AlanLLM: AlanLLMInterface {
             let name: String
             let speak: String
         }
+        
+        // MARK: operator
     }
     
     nonisolated
