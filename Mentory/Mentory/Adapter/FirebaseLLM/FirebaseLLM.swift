@@ -44,7 +44,8 @@ struct FirebaseLLM: FirebaseLLMInterface {
         logger.debug("Firebase LLM 요청 시작")
 
         do {
-            let content = buildModelContent(from: question)
+            let content = try question.toModelContent()
+            logger.debug("ModelContent 변환 완료 (파트 개수: \(content.parts.count))")
             let response = try await model.generateContent([content])
 
             guard let rawText = response.text,
@@ -88,7 +89,8 @@ struct FirebaseLLM: FirebaseLLMInterface {
           )
         )
 
-        let content = buildModelContent(from: question)
+        let content = try question.toModelContent()
+        logger.debug("ModelContent 변환 완료 (파트 개수: \(content.parts.count))")
         let response = try await newModel.generateContent([content])
         guard let data = response.text?.data(using: .utf8) else {
             throw Error.jsonDecodingFailed
@@ -96,35 +98,6 @@ struct FirebaseLLM: FirebaseLLMInterface {
         
         let analysis = try JSONDecoder().decode(FirebaseAnalysis.self, from: data)
         return analysis
-    }
-
-
-    // MARK: helper
-    private func buildModelContent(from question: FirebaseQuestion) -> ModelContent {
-        var parts: [any Part] = []
-
-        // 텍스트 추가
-        parts.append(TextPart(question.content))
-        logger.debug("텍스트 콘텐츠 추가됨")
-
-        // 이미지 추가 (최대 1개)
-        if let imageData = question.imageData {
-            parts.append(InlineDataPart(data: imageData, mimeType: "image/jpeg"))
-            logger.debug("이미지 데이터 전송 준비 완료 (크기: \(imageData.count) bytes)")
-        }
-
-        // 음성 추가 (최대 1개, wav 포맷)
-        if let voiceURL = question.voiceURL {
-            do {
-                let voiceData = try Data(contentsOf: voiceURL)
-                parts.append(InlineDataPart(data: voiceData, mimeType: "audio/wav"))
-                logger.debug("음성 파일 전송 준비 완료 (경로: \(voiceURL.lastPathComponent), 크기: \(voiceData.count) bytes, MIME: audio/wav)")
-            } catch {
-                logger.error("음성 파일 읽기 실패: \(error.localizedDescription)")
-            }
-        }
-
-        return ModelContent(role: "user", parts: parts)
     }
 
 
