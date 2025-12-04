@@ -11,8 +11,14 @@ import Foundation
 nonisolated
 public struct FirebaseQuestion: Sendable, Hashable {
     public let content: String
+    public let imageData: Data?
+    public let voiceURL: URL?
 
-    public init(_ content: String) {
+    public init(_ content: String,
+                imageData: Data? = nil,
+                voiceURL: URL? = nil) {
         self.content = content
+        self.imageData = imageData
+        self.voiceURL = voiceURL
     }
 }

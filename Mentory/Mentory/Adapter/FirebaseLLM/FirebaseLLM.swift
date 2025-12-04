@@ -44,7 +44,8 @@ struct FirebaseLLM: FirebaseLLMInterface {
         logger.info("Firebase LLM 요청 시작")
 
         do {
-            let response = try await model.generateContent(question.content)
+            let content = buildModelContent(from: question)
+            let response = try await model.generateContent([content])
 
             guard let rawText = response.text,
                   rawText.isEmpty == false else {
@@ -86,8 +87,9 @@ struct FirebaseLLM: FirebaseLLMInterface {
             responseSchema: jsonSchema
           )
         )
-        
-        let response = try await newModel.generateContent(question.content)
+
+        let content = buildModelContent(from: question)
+        let response = try await newModel.generateContent([content])
         guard let data = response.text?.data(using: .utf8) else {
             throw Error.jsonDecodingFailed
         }
@@ -95,8 +97,32 @@ struct FirebaseLLM: FirebaseLLMInterface {
         let analysis = try JSONDecoder().decode(FirebaseAnalysis.self, from: data)
         return analysis
     }
-    
-    
+
+
+    // MARK: helper
+    private func buildModelContent(from question: FirebaseQuestion) -> ModelContent {
+        var parts: [any Part] = []
+
+        // 텍스트 추가
+        parts.append(TextPart(question.content))
+        logger.debug("텍스트 콘텐츠 추가됨")
+
+        // 이미지 추가 (최대 1개)
+        if let imageData = question.imageData {
+            parts.append(InlineDataPart(data: imageData, mimeType: "image/jpeg"))
+            logger.info("이미지 데이터 전송 준비 완료 (크기: \(imageData.count) bytes)")
+        }
+
+        // 음성 추가 (최대 1개, m4a 포맷)
+        if let voiceURL = question.voiceURL {
+            parts.append(FileDataPart(uri: voiceURL.absoluteString, mimeType: "audio/m4a"))
+            logger.info("음성 파일 전송 준비 완료 (경로: \(voiceURL.lastPathComponent))")
+        }
+
+        return ModelContent(role: "user", parts: parts)
+    }
+
+
     // MARK: value
     enum Error: Swift.Error {
         case emptyResponse
