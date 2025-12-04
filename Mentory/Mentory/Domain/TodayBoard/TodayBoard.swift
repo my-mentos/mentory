@@ -70,7 +70,9 @@ final class TodayBoard: Sendable, ObservableObject {
         }
         
         // mutate
-        self.mentorMessage = MentorMessage(owner: self)
+        let mentorMessage = MentorMessage(owner: self)
+        self.mentorMessage = mentorMessage
+        logger.debug("mentorMessage 객체가 생성되었습니다.")
     }
     
     func setUpRecordForms() async {

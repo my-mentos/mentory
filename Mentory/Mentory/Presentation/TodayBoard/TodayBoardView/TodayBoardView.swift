@@ -38,14 +38,11 @@ struct TodayBoardView: View {
             )
             
             // 멘토리메세지 카드
-            PopupCard(
-                image: todayBoard.mentorMessage?.character?.imageName,
-                defaultImage: "greeting",
-                title: todayBoard.mentorMessage?.character?.title,
-                titlePrompt: "오늘의 멘토리 조언을 준비하고 있어요",
-                content: todayBoard.mentorMessage?.content,
-                contentPrompt: "잠시 후 당신을 위한 멘토리 메시지가 도착해요\n오늘은 냉철이일까요, 구름이일까요?\n조금만 기다려 주세요"
-            )
+            if let mentormessage = todayBoard.mentorMessage {
+                MentorMessageView(mentorMessage: mentormessage)
+            } else {
+                EmptyView()
+            }
             
             // 기분 기록 카드
             RecordStatCard(
@@ -69,6 +66,10 @@ struct TodayBoardView: View {
         .task {
 //            await todayBoard.loadTodayRecords()
 //            await todayBoard.loadTodayMentorMessageTest()
+        }
+        .task {
+            await todayBoard.setUpMentorMessage()
+            await todayBoard.mentorMessage?.loadTodayMentorMessageTest()
         }
         .task {
             // WatchConnectivity 설정
@@ -154,54 +155,6 @@ fileprivate struct GreetingHeader: View {
             value: todayBoard.mentorMessage?.content != nil)
         .task {
             await todayBoard.fetchUserRecordCoount()
-        }
-    }
-}
-
-fileprivate struct PopupCard: View {
-    let image: String?
-    let defaultImage: String
-    let title: String?
-    let titlePrompt: String
-    let content: String?
-    let contentPrompt: String
-    
-    private func forMarkdown(_ string: String) -> LocalizedStringKey {
-        .init(string)
-    }
-    
-    var body: some View {
-        if let content {
-            LiquidGlassCard {
-                VStack(alignment: .leading, spacing: 12) {
-                    HStack(spacing: 8) {
-                        Image(image ?? defaultImage)
-                            .resizable()
-                            .scaledToFill()
-                            .scaleEffect(1.8, anchor: .top)
-                            .offset(y: 2)
-                            .frame(width: 28, height: 28)
-                            .clipShape(Circle())
-                            .overlay(
-                                Circle()
-                                    .stroke(Color.primary.opacity(0.25), lineWidth: 0.5)   // ← 테두리 추가!
-                            )
-                        Text(title ?? titlePrompt)
-                            .font(.system(size: 18, weight: .semibold))
-                            .foregroundStyle(.primary)
-                    }
-                    
-                    
-                    Text(forMarkdown(content))
-                        .font(.system(size: 16))
-                        .foregroundStyle(.secondary)
-                        .lineSpacing(4)
-                }
-                .padding(.vertical, 24)
-                .padding(.horizontal, 20)
-                .frame(maxWidth: .infinity, alignment: .leading)
-            }
-            .transition(.scale(scale: 0.95).combined(with: .opacity))
         }
     }
 }
