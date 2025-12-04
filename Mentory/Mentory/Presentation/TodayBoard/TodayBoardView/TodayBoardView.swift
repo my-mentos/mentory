@@ -61,10 +61,6 @@ struct TodayBoardView: View {
         }
         // 로드 시 2개의 비동기 작업 실행
         .task {
-//            await todayBoard.loadTodayRecords()
-//            await todayBoard.loadTodayMentorMessageTest()
-        }
-        .task {
             await todayBoard.setUpMentorMessage()
         }
         .task {
@@ -323,24 +319,10 @@ fileprivate struct SuggestionActionRows: View {
     }
     
     var body: some View {
-//        ForEach(todayBoard.suggestions, id: \.self.id) { index in
-//            // 각 아이템마다 ActionRow를 하나씩 만들어준다.
-//            ActionRow(
-//                checked: Binding(
-//                    get: { todayBoard.actionKeyWordItems[index].1 },
-//                    set: { newValue in
-//                        todayBoard.actionKeyWordItems[index].1 = newValue
-//                        // 체크 상태 변경 시 DB에 실시간 업데이트
-//                        Task {
-//                            await todayBoard.updateActionCompletion()
-//                            await todayBoard.loadTodayRecords()
-//                        }
-//                    }
-//                ),
-//                text: todayBoard.actionKeyWordItems[index].0
-//            )
-//        }
-        
+        ForEach(todayBoard.suggestions, id: \.self.id) { suggestion in
+        SuggestionView(suggestion: suggestion)
+            
+        }
     }
 }
 

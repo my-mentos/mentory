@@ -8,10 +8,12 @@ import Foundation
 import Combine
 import Values
 
+import OSLog
+
 
 // MARK: Object
 @MainActor
-final class Suggestion: Sendable, ObservableObject {
+final class Suggestion: Sendable, ObservableObject, Identifiable {
     // MARK: core
     init(owner: TodayBoard,
          target: SuggestionID,
@@ -23,6 +25,8 @@ final class Suggestion: Sendable, ObservableObject {
         self.isDone = isDone
     }
     
+    nonisolated private let logger = Logger(subsystem: "Suggestion", category: "Domain")
+    
     // MARK: state
     nonisolated let id: UUID = UUID()
     
@@ -31,10 +35,7 @@ final class Suggestion: Sendable, ObservableObject {
     nonisolated let target: SuggestionID
     nonisolated let content: String
     
-    @Published private(set) var isDone: Bool
-    func setStatus(isDone: Bool) {
-        self.isDone = isDone
-    }
+    @Published var isDone: Bool
     
     
     // MARK: action
@@ -44,12 +45,15 @@ final class Suggestion: Sendable, ObservableObject {
         let mentoryiOS = todayBoard.owner!
         
         let mentoryDB = mentoryiOS.mentoryDB
-        
+        logger.debug("markDone호출")
+        if self.isDone == true {
+            logger.debug("isDone: \(self.isDone)")
+        }
         // process
         // SwiftData의 UserSuggestion에 isDone 업데이트
         
         // mutate
-        fatalError()
+//        fatalError()
     }
     
     
