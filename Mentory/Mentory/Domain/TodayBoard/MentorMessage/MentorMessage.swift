@@ -24,10 +24,9 @@ final class MentorMessage: Sendable, ObservableObject {
     nonisolated let id = UUID()
     weak var owner: TodayBoard?
     
-    @Published var character: MentoryCharacter? = nil
-    
     var recentUpdate: MentoryDate? = nil
     @Published var content: String? = nil
+    @Published var character: MentoryCharacter? = nil
     
     func resetContent() {
         self.content = nil
@@ -132,4 +131,45 @@ final class MentorMessage: Sendable, ObservableObject {
     
     
     // MARK: value
+    
+    func loadTodayMentorMessageTest() async {
+        let mentoryiOS = self.owner!.owner!
+        let mentoryDB = mentoryiOS.mentoryDB
+        let alanLLM = mentoryiOS.alanLLM
+        do {
+            let character: MentoryCharacter = .random
+            let messageContent: String
+            let messageCharacter: MentoryCharacter
+            do {
+                
+                // AlanLLM - 새로운 메시지 가져오기
+                let question = AlanQuestion(character.question)
+                
+                async let answer = try await alanLLM.question(question)
+                let newMessageContent = try await answer.content
+                
+                messageContent = newMessageContent
+                messageCharacter = character
+                
+                
+                // MentoryDB - 새로운 메시지 저장
+                let newMessage = MessageData(
+                    createdAt: .now,
+                    content: messageContent,
+                    characterType: character)
+                
+                try await mentoryDB.setMentorMessage(newMessage)
+                
+            } catch {
+                logger.error("setUpMentorMessage 에러 발생 : \(error)")
+                return
+            }
+            self.content = messageContent
+            self.character = messageCharacter
+            self.recentUpdate = .now
+            logger.debug("mentorMessage: \(messageContent)")
+            logger.debug("character: \(messageCharacter.displayName)")
+        }
+    }
+       
 }
