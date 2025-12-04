@@ -192,7 +192,7 @@ fileprivate struct PopupCard: View {
                     }
                     
                     
-                    Text(forMarkdown(content ?? contentPrompt))
+                    Text(forMarkdown(content))
                         .font(.system(size: 16))
                         .foregroundStyle(.secondary)
                         .lineSpacing(4)
