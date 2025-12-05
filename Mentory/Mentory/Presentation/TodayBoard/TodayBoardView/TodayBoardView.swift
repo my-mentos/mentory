@@ -415,11 +415,11 @@ fileprivate struct DateButton: View {
         Button(action: action) {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(relativeDayText)
+                    Text(date.relativeDay(from: .now).rawValue)
                         .font(.system(size: 18, weight: .semibold))
                         .foregroundColor(.primary)
 
-                    Text(shortDateText)
+                    Text(date.formatted())
                         .font(.system(size: 14))
                         .foregroundColor(.gray)
                 }
@@ -441,18 +441,5 @@ fileprivate struct DateButton: View {
                     .stroke(Color.gray.opacity(0.2), lineWidth: 1)
             )
         }
-    }
-
-    // 상대적 날짜 텍스트 (오늘, 어제, 그제)
-    private var relativeDayText: String {
-        date.relativeDay(from: .now).rawValue
-    }
-
-    // 짧은 형식의 날짜 텍스트 (예: "12월 5일 (금)")
-    private var shortDateText: String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "M월 d일 (E)"
-        dateFormatter.locale = Locale(identifier: "ko_KR")
-        return dateFormatter.string(from: date.rawValue)
     }
 }
