@@ -22,7 +22,8 @@ struct RecordFormLayout<TodayDate: View, Main: View, BottomBar: View>: View {
                 VStack(spacing: 0) {
                     
                     self.todayDate()
-                    
+                        .offset(y: -40)
+
                     ScrollView {
                         VStack(spacing: 16) {
                             self.main()

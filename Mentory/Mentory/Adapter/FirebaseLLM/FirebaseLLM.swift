@@ -41,10 +41,12 @@ struct FirebaseLLM: FirebaseLLMInterface {
     // MARK: flow
     @concurrent
     func question(_ question: FirebaseQuestion) async throws -> FirebaseAnswer {
-        logger.info("Firebase LLM 요청 시작")
+        logger.debug("Firebase LLM 요청 시작")
 
         do {
-            let response = try await model.generateContent(question.content)
+            let content = try question.buildModelContent()
+            logger.debug("ModelContent 생성 완료")
+            let response = try await model.generateContent([content])
 
             guard let rawText = response.text,
                   rawText.isEmpty == false else {
@@ -54,7 +56,7 @@ struct FirebaseLLM: FirebaseLLMInterface {
 
             let answer = FirebaseAnswer(rawText)
             let cleanedAnswer = answer.removeCodeBlockFence()
-            logger.info("Firebase LLM 응답 성공: \(cleanedAnswer.content, privacy: .public)")
+            logger.debug("Firebase LLM 응답 성공: \(cleanedAnswer.content, privacy: .public)")
             
             return cleanedAnswer
         } catch {
@@ -65,7 +67,7 @@ struct FirebaseLLM: FirebaseLLMInterface {
     
     @concurrent
     func getEmotionAnalysis(_ question: FirebaseQuestion, character: MentoryCharacter) async throws -> FirebaseAnalysis {
-        logger.info("Firebase LLM 요청 시작")
+        logger.debug("Firebase LLM 요청 시작")
         
         let jsonSchema = Schema.object(
             properties: [
@@ -86,8 +88,10 @@ struct FirebaseLLM: FirebaseLLMInterface {
             responseSchema: jsonSchema
           )
         )
-        
-        let response = try await newModel.generateContent(question.content)
+
+        let content = try question.buildModelContent()
+        logger.debug("ModelContent 생성 완료")
+        let response = try await newModel.generateContent([content])
         guard let data = response.text?.data(using: .utf8) else {
             throw Error.jsonDecodingFailed
         }
@@ -95,11 +99,35 @@ struct FirebaseLLM: FirebaseLLMInterface {
         let analysis = try JSONDecoder().decode(FirebaseAnalysis.self, from: data)
         return analysis
     }
-    
-    
+
+
     // MARK: value
     enum Error: Swift.Error {
         case emptyResponse
         case jsonDecodingFailed
+    }
+}
+
+
+// MARK: - Helper
+nonisolated extension FirebaseQuestion {
+    func buildModelContent() throws -> ModelContent {
+        var parts: [any Part] = []
+
+        // 텍스트 추가
+        parts.append(TextPart(content))
+
+        // 이미지 추가 (최대 1개)
+        if let imageData = imageData {
+            parts.append(InlineDataPart(data: imageData, mimeType: "image/jpeg"))
+        }
+
+        // 음성 추가 (최대 1개, wav 포맷)
+        if let voiceURL = voiceURL {
+            let voiceData = try Data(contentsOf: voiceURL)
+            parts.append(InlineDataPart(data: voiceData, mimeType: "audio/wav"))
+        }
+
+        return ModelContent(role: "user", parts: parts)
     }
 }

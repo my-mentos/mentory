@@ -80,6 +80,7 @@ struct EditingNameSheet: View {
                 Task { await editingName.submit() }
                 closeEditingNameSheet()
             }
+            .foregroundStyle(Color.mentoryAccentPrimary)
             .disabled(editingName.isSubmitDisabled)
         }
     }

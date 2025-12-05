@@ -13,24 +13,28 @@ struct MindAnalyzerView: View {
     @State private var showingSubmitAlert = false
     @ObservedObject var mindAnalyzer: MindAnalyzer
     @Namespace private var mentorNamespace
-    @Environment(\.dismiss) private var dismiss
-
-    init(_ mindAnalyzer: MindAnalyzer) {
+    var parentDismiss: DismissAction
+    
+    init(
+        mindAnalyzer: MindAnalyzer,
+        parentDismiss: DismissAction
+    ) {
         self.mindAnalyzer = mindAnalyzer
+        self.parentDismiss = parentDismiss
     }
-
+    
     private var isSelectingStage: Bool {
         !mindAnalyzer.isAnalyzing && !mindAnalyzer.isAnalyzeFinished
     }
-
+    
     private var isGeneratingStage: Bool {
         mindAnalyzer.isAnalyzing
     }
-
+    
     private var isResultStage: Bool {
         !mindAnalyzer.isAnalyzing && mindAnalyzer.isAnalyzeFinished
     }
-
+    
     // MARK: body
     var body: some View {
         MindAnalyzerLayout {
@@ -160,11 +164,10 @@ struct MindAnalyzerView: View {
                 ) {
                     let recordForm = mindAnalyzer.owner!
                     recordForm.removeForm()
+                    parentDismiss()
                 }
             }
         }
-//    }
-//        .preference(key: CancelToolbarHidden.self, value: mindAnalyzer.isAnalyzing || mindAnalyzer.isAnalyzeFinished)
         .navigationBarBackButtonHidden(!isSelectingStage)
     }
 }
@@ -181,7 +184,7 @@ extension Emotion {
         case .veryPleasant: return "최고의 하루"
         }
     }
-
+    
     fileprivate var description: String {
         switch self {
         case .veryUnpleasant:
@@ -200,7 +203,7 @@ extension Emotion {
             return "설레고 만족스러운 하루!"
         }
     }
-
+    
     fileprivate var tint: Color {
         switch self {
         case .veryUnpleasant: return .red
@@ -212,7 +215,7 @@ extension Emotion {
         case .veryPleasant: return .purple
         }
     }
-
+    
     fileprivate var emoji: String {
         switch self {
         case .veryUnpleasant: return "😣"
@@ -230,7 +233,7 @@ extension Emotion {
 private struct Header: View {
     let title: String
     let description: String
-
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(title)
@@ -246,9 +249,9 @@ private struct Header: View {
 private struct CharacterPicker: View {
     let characters: [MentoryCharacter]
     @Binding var selection: MentoryCharacter?
-
+    
     let namespace: Namespace.ID?
-
+    
     init(
         characters: [MentoryCharacter],
         selection: Binding<MentoryCharacter?>,
@@ -258,7 +261,7 @@ private struct CharacterPicker: View {
         self._selection = selection
         self.namespace = namespace
     }
-
+    
     var body: some View {
         VStack(spacing: 16) {
             ForEach(characters, id: \.self) { character in
@@ -273,21 +276,21 @@ private struct CharacterPicker: View {
             }
         }
     }
-
+    
     fileprivate struct SelectableCard: View {
         let character: MentoryCharacter
         let isSelected: Bool
         let namespace: Namespace.ID?
         let useMatchedGeometry: Bool
         let action: () -> Void
-
+        
         var body: some View {
             Button(action: action) {
                 cardContent
             }
             .buttonStyle(.plain)
         }
-
+        
         @ViewBuilder
         private var cardContent: some View {
             let base = VStack(spacing: 12) {
@@ -295,7 +298,7 @@ private struct CharacterPicker: View {
                     .resizable()
                     .scaledToFit()
                     .frame(height: 110)
-
+                
                 Text(character.displayName)
                     .font(.headline)
                     .foregroundColor(.primary)
@@ -305,28 +308,28 @@ private struct CharacterPicker: View {
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
             }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 20)
-            .padding(.horizontal, 12)
-            .background(
-                RoundedRectangle(cornerRadius: 28, style: .continuous)
-                    .fill(Color.mentoryCard)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 28, style: .continuous)
-                    .stroke(
-                        isSelected
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 20)
+                .padding(.horizontal, 12)
+                .background(
+                    RoundedRectangle(cornerRadius: 28, style: .continuous)
+                        .fill(Color.mentoryCard)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 28, style: .continuous)
+                        .stroke(
+                            isSelected
                             ? Color.mentoryAccentPrimary
                             : Color(.mentoryBorder),
-                        lineWidth: isSelected ? 2 : 1
-                    )
-            )
-            .shadow(
-                color: isSelected ? Color.black.opacity(0.08) : Color.clear,
-                radius: 10,
-                y: 8
-            )
-
+                            lineWidth: isSelected ? 2 : 1
+                        )
+                )
+                .shadow(
+                    color: isSelected ? Color.black.opacity(0.08) : Color.clear,
+                    radius: 10,
+                    y: 8
+                )
+            
             // namespace 와 useMatchedGeometry 둘 다 있으면 애니메이션 연결
             if let namespace, useMatchedGeometry {
                 base.matchedGeometryEffect(id: character, in: namespace)
@@ -342,7 +345,7 @@ private struct AnalyzeButton: View {
     let label: String
     let isActive: Bool
     let action: () -> Void
-
+    
     var body: some View {
         Button(action: action) {
             HStack(spacing: 8) {
@@ -356,8 +359,8 @@ private struct AnalyzeButton: View {
                 RoundedRectangle(cornerRadius: 20)
                     .fill(
                         isActive
-                            ? Color.mentoryAccentPrimary
-                            : Color.mentoryAccentPrimary.opacity(0.35)
+                        ? Color.mentoryAccentPrimary
+                        : Color.mentoryAccentPrimary.opacity(0.35)
                     )
             )
             .foregroundColor(.white)
@@ -371,7 +374,7 @@ private struct AnalyzedResult: View {
     let isProgress: Bool
     let result: String?
     let mindType: Emotion?
-
+    
     var body: some View {
         if isProgress {
             StatusBadge(text: progressPrompt)
@@ -380,7 +383,7 @@ private struct AnalyzedResult: View {
                 if let mindType {
                     MindTypeResultView(mindType: mindType)
                 }
-
+                
                 Text(result)
                     .font(.body)
                     .foregroundColor(.primary)
@@ -396,10 +399,10 @@ private struct AnalyzedResult: View {
             StatusBadge(text: readyPrompt)
         }
     }
-
+    
     private struct MindTypeResultView: View {
         let mindType: Emotion
-
+        
         var body: some View {
             HStack(spacing: 12) {
                 Text(mindType.emoji)
@@ -424,7 +427,7 @@ private struct AnalyzedResult: View {
     }
     private struct StatusBadge: View {
         let text: String
-
+        
         var body: some View {
             HStack(spacing: 10) {
                 Image(systemName: "sparkles")
@@ -447,7 +450,7 @@ private struct ConfirmButton: View {
     let label: String
     let isPresented: Bool
     let action: () -> Void
-
+    
     var body: some View {
         if isPresented {
             Button(action: self.action) {
@@ -471,13 +474,13 @@ private struct ConfirmButton: View {
 // MARK: Preview
 private struct MindAnalyzerPreview: View {
     @StateObject private var mentoryiOS = MentoryiOS()
-
+    @Environment(\.dismiss) var dismiss
     var body: some View {
         if let todayBoard = mentoryiOS.todayBoard,
            let recordForm = todayBoard.recordForms.first,
             let mindAnalyzer = recordForm.mindAnalyzer
         {
-            MindAnalyzerView(mindAnalyzer)
+            MindAnalyzerView(mindAnalyzer: mindAnalyzer, parentDismiss: dismiss)
         } else {
             ProgressView("프리뷰 로딩 중입니다.")
                 .task {

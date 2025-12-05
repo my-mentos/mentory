@@ -66,16 +66,40 @@ final class MindAnalyzer: Sendable, ObservableObject {
         let firebaseLLM = mentoryiOS.firebaseLLM
         let mentoryDB = mentoryiOS.mentoryDB
         
+        do {
+            try await mentoryDB.setCharacter(character)
+            logger.debug("MindAnalyzer에서 선택한 캐릭터 \(character.rawValue)를 MentoryDB에 저장 요청했습니다.")
+        } catch {
+            logger.error("MindAnalyzer에서 setCharacter 실패: \(error)")
+        }
+        
         let targetDate = recordForm.targetDate
-        
-        
+
+        // 이미지와 음성 입력 가져오기
+        let imageInput = recordForm.imageInput
+        let voiceInput = recordForm.voiceInput
+
+        // 멀티모달 입력 로깅
+        if imageInput != nil {
+            logger.debug("이미지 첨부됨 - 감정 분석에 포함")
+        }
+        if voiceInput != nil {
+            logger.debug("음성 첨부됨 - 감정 분석에 포함")
+        }
+
+
         // process - FirebaseLLM
-        // 감저 분석
-        let question = FirebaseQuestion(textInput)
-        
+        // 감정 분석 (텍스트 + 이미지 + 음성)
+        let question = FirebaseQuestion(
+            textInput,
+            imageData: imageInput,
+            voiceURL: voiceInput
+        )
+
         let analysis: FirebaseAnalysis
         do {
             analysis = try await firebaseLLM.getEmotionAnalysis(question, character: character)
+            logger.debug("멀티모달 감정 분석 완료")
         } catch {
             logger.error("\(error)")
             return
@@ -124,7 +148,6 @@ final class MindAnalyzer: Sendable, ObservableObject {
         
         self.isAnalyzeFinished = true
     }
-    
     func cancel() {
         // capture
         let recordForm = self.owner

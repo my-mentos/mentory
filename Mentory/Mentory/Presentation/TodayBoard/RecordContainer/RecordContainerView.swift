@@ -36,7 +36,8 @@ struct RecordContainerView: View {
             RecordFormView(recordForm: recordForm)
                 .navigationDestination(for: String.self) { value in
                     if value == "MindAnalyzerView" {
-                        MindAnalyzerView(recordForm.mindAnalyzer!)
+                        MindAnalyzerView(mindAnalyzer: recordForm.mindAnalyzer!,
+                                         parentDismiss: dismiss)
                     }
                 }
             
@@ -81,11 +82,9 @@ struct RecordContainerView: View {
                 }
             // MARK: 입력 변경 감지 → validateInput() 호출
                 .onReceive(recordForm.$titleInput) { _ in
-                    print("title changed → validateInput")
                     recordForm.validateInput()
                 }
                 .onReceive(recordForm.$textInput) { _ in
-                    print("text changed → validateInput")
                     recordForm.validateInput()
                 }
             
@@ -96,8 +95,5 @@ struct RecordContainerView: View {
                     }
                 }
         }
-//        .onPreferenceChange(CancelToolbarHidden.self) { value in
-//            isCancelHidden = value
-//        }
     }
 }

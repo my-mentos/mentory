@@ -29,27 +29,29 @@ nonisolated struct MentoryDBAdapter: MentoryDBInterface {
     }
     
     @concurrent func getCharacter() async throws -> MentoryCharacter? {
-        fatalError()
+        return await object.getCharacter()
     }
     @concurrent func setCharacter(_ character: MentoryCharacter) async throws {
-        fatalError()
+        await object.setCharacter(character)
     }
     
     @concurrent func getRecordCount() async throws -> Int {
         await object.getRecordCount()
     }
     @concurrent func isSameDayRecordExist(for date: MentoryDate) async throws -> Bool {
-        fatalError()
+        await object.isSameDayRecordExist(for: date)
     }
     
     @concurrent func getRecentRecord() async throws -> DailyRecordAdapter? {
-        fatalError("구현 예정입니다.")
+        guard let recordData = await object.getRecentRecord() else {
+            return nil
+        }
+        return DailyRecordAdapter(recordData: recordData)
     }
     
     @concurrent func submitAnalysis(recordData: RecordData, suggestionData: [SuggestionData]) async throws {
         await object.insertTicket(recordData)
         await object.createDailyRecords()
-        
-        fatalError("Suggestion 저장 추가 구현 필요합니다.")
+        await object.insertSuggestions(ticketId: recordData.id, suggestions: suggestionData)
     }
 }

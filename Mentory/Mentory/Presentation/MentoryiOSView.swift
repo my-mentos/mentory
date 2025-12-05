@@ -122,6 +122,14 @@ struct MentoryiOSView: View {
 
 
 // MARK: Preview
+fileprivate struct MentoryiOSPreview: View {
+    @StateObject var mentoryiOS = MentoryiOS()
+    
+    var body: some View {
+        MentoryiOSView(mentoryiOS)
+    }
+}
+
 #Preview {
-    MentoryiOSView(.init())
+    MentoryiOSPreview()
 }

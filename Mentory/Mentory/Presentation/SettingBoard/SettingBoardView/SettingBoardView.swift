@@ -145,12 +145,6 @@ struct SettingBoardView: View {
                 } label: {
                     Image(systemName: "info.circle")
                         .font(.system(size: 18, weight: .semibold))
-                            .foregroundStyle(.secondary)
-                            .padding(8)
-                            .background(
-                                Color.mentorySubCard.opacity(0.9),
-                                in: Circle()
-                            )
                 }
             }
         }
@@ -295,7 +289,7 @@ struct SettingBoardView: View {
                 }
             },
             message: {
-                Text("삭제를 누르면 멘토리 데이터가 모두 제거됩니다.")
+                Text("삭제를 누르면 앱 데이터가 모두 제거됩니다.")
             }
         )
     }
@@ -314,32 +308,37 @@ struct SettingBoardView: View {
                 .onAppear {
                     settingBoardViewModel.selectedDate = settingBoard.reminderTime
                 }
-                .onChange(of: settingBoardViewModel.selectedDate, initial: false) { oldDate, newDate in
-                    settingBoard.changeReminderTime(to: newDate)
-                }
-                
-                Button("완료") {
+
+                Button {
+                    // 완료 버튼을 눌렀을 때만 변경사항 적용
+                    settingBoard.changeReminderTime(to: settingBoardViewModel.selectedDate)
                     settingBoardViewModel.isShowingReminderPickerSheet = false
+                } label: {
+                    Text("완료")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(Color.mentoryAccentPrimary)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(Color.mentorySubCard)
+                        )
                 }
-                .font(.system(size: 16, weight: .semibold))
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 12)
-                .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(Color(.mentorySubCard))
-                )
+                .buttonStyle(.plain)
             }
             .padding()
             .navigationTitle("알림 설정")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("닫기") {
+                        // 닫기 버튼을 누르면 변경사항을 적용하지 않고 원래 값으로 복원
+                        settingBoardViewModel.selectedDate = settingBoard.reminderTime
                         settingBoardViewModel.isShowingReminderPickerSheet = false
                     }
                 }
             }
         }
-        .presentationDetents([.height(320)])
+        .presentationDetents([.height(400)])
     }
 }
 

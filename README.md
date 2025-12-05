@@ -147,6 +147,7 @@
    - [2025-11-17 앱 아이콘 설정](docs/troubleshooting/hyeonmo/20251117-app-icon.md)
    - [2025-12-02 WatchConnectivity MainActor 동시성 충돌](docs/troubleshooting/hyeonmo/20251202-watchconnectivity.md)
    - [2025-12-03 WatchConnectivity Manager-Engine 분리 리팩토링](docs/troubleshooting/hyeonmo/20251203-watchconnectivity-refactoring.md)
+   - [2025-12-04 Firebase LLM 음성 파일 포맷 오류](docs/troubleshooting/hyeonmo/20251204-firebase-audio-format.md)
 4. 김민우
    - [2024-09-18 음성 전사 중 앱 크래시](docs/troubleshooting/kim-minwoo/20240918-speech-transcript-crash.md)
 

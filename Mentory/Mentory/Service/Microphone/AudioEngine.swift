@@ -88,7 +88,7 @@ actor AudioEngine {
         
         // process
         let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        let fileURL = documentsPath.appendingPathComponent("recording_\(UUID().uuidString).m4a")
+        let fileURL = documentsPath.appendingPathComponent("recording_\(UUID().uuidString).wav")
         
         
         let avAudioFile: AVAudioFile
@@ -206,7 +206,12 @@ actor AudioEngine {
         
         self.isAudioProcessing = false
         self.isEngineSetUp = false
-        
+
+        // 파일 저장 완료 로그
+        if let url = self.audioURL {
+            logger.debug("오디오 파일 저장 완료: \(url.lastPathComponent)")
+        }
+
         self.audioFile = nil
         self.isAudioSetup = false
     }

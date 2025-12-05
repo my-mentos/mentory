@@ -15,13 +15,30 @@ import OSLog
 public actor MentoryDatabase: Sendable {
     // MARK: core
     private init(id: UUID = UUID(uuidString: "00000000-0000-0000-0000-000000000000")!) {
-        self.id = id
-        
-        let context = ModelContext(Self.container)
-        let newModel = MentoryDBModel(id: id)
-        context.insert(newModel)
-        try! context.save()
-    }
+            self.id = id
+            
+            let context = ModelContext(Self.container)
+            let descriptor = FetchDescriptor<MentoryDBModel>(
+                predicate: #Predicate { $0.id == id }
+            )
+            
+            do {
+                let existing = try context.fetch(descriptor)
+                
+                // 이미 같은 id의 MentoryDBModel 이 있으면 아무 것도 하지 않음
+                if existing.isEmpty {
+                    let newModel = MentoryDBModel(id: id)
+                    context.insert(newModel)
+                    try context.save()
+                    // 필요하면 여기서 logger로 "초기 DB 생성" 정도 남겨도 됨
+                } else {
+                    // 이미 존재 → 초기화 시 재생성하지 않음
+                    // logger.debug("이미 MentoryDBModel 이 존재하므로 새로 생성하지 않습니다.")
+                }
+            } catch {
+                fatalError("❌ MentoryDB 초기화 실패: \(error)")
+            }
+        }
     public static let shared = MentoryDatabase()
     
     nonisolated let logger = Logger(subsystem: "MentoryDB.MentoryDB", category: "Domain")
@@ -192,6 +209,62 @@ public actor MentoryDatabase: Sendable {
             return 0
         }
     }
+    
+    public func isSameDayRecordExist(for date: MentoryDate) -> Bool {
+        let context = ModelContext(MentoryDatabase.container)
+        let id = self.id
+
+        let descriptor = FetchDescriptor<MentoryDBModel>(
+            predicate: #Predicate { $0.id == id }
+        )
+
+        do {
+            guard let db = try context.fetch(descriptor).first else {
+                logger.error("MentoryDB가 존재하지 않아 isSameDayRecordExist에서 false 반환")
+                return false
+            }
+
+            let exists = db.records.contains { record in
+                MentoryDate(record.createdAt).isSameDate(as: date)
+            }
+            logger.debug("isSameDayRecordExist: \(exists)")
+
+            return exists
+        } catch {
+            logger.error("동일 날짜 레코드 조회 중 오류 발생: \(error)")
+            return false
+        }
+    }
+
+    public func getRecentRecord() -> RecordData? {
+        let context = ModelContext(MentoryDatabase.container)
+        let id = self.id
+
+        let descriptor = FetchDescriptor<MentoryDBModel>(
+            predicate: #Predicate { $0.id == id }
+        )
+
+        do {
+            guard let db = try context.fetch(descriptor).first else {
+                logger.error("MentoryDB가 존재하지 않아 getRecentRecord에서 nil 반환")
+                return nil
+            }
+
+            // createdAt 기준 최신 DailyRecordModel 찾기
+            guard let latest = db.records.max(by: { $0.createdAt < $1.createdAt }) else {
+                logger.debug("getRecentRecord: DailyRecord가 존재하지 않아 nil 반환")
+                return nil
+            }
+
+            // DailyRecordModel → RecordData 변환
+            return latest.toData()
+
+        } catch {
+            logger.error("최근 DailyRecord 조회 중 오류 발생: \(error)")
+            return nil
+        }
+    }
+    
     public func getRecord(ticketId: UUID) -> DailyRecord? {
         fatalError("구현 예정입니다.")
     }
@@ -224,6 +297,46 @@ public actor MentoryDatabase: Sendable {
         }
     }
     
+    
+    public func insertSuggestions(ticketId: UUID, suggestions: [SuggestionData]) async {
+        let context = ModelContext(MentoryDatabase.container)
+        let id = self.id
+
+        let descriptor = FetchDescriptor<MentoryDBModel>(
+            predicate: #Predicate { $0.id == id }
+        )
+
+        do {
+            // 1) 나(MentoryDatabase)에 해당하는 MentoryDBModel 찾기
+            guard let db = try context.fetch(descriptor).first else {
+                logger.error("insertSuggestions: MentoryDBModel not found")
+                return
+            }
+
+            // 2) ticketId 로 DailyRecordModel 찾기
+            guard let record = db.records.first(where: { $0.ticketId == ticketId }) else {
+                logger.error("insertSuggestions: DailyRecordModel not found for ticketId \(ticketId)")
+                return
+            }
+
+            // 3) SuggestionData -> DailySuggestionModel 매핑해서 record에 붙이기
+            for item in suggestions {
+                let model = DailySuggestionModel(
+                    id: item.id,
+                    target: item.target.rawValue,  // SuggestionID의 원시값(UUID)
+                    content: item.content,
+                    status: item.isDone
+                )
+                record.suggestions.append(model)
+            }
+            
+            try context.save()
+            logger.debug("insertSuggestions: \(suggestions.count)개의 DailySuggestionModel 저장 완료")
+            
+        } catch {
+            logger.error("insertSuggestions failed: \(error.localizedDescription, privacy: .public)")
+        }
+    }
     
     // MARK: action
     public func createDailyRecords() async {
@@ -272,7 +385,13 @@ public actor MentoryDatabase: Sendable {
             try context.save()
             
             logger.debug("RecordData \(newModels.count)개를 DailyRecord로 변환했습니다.")
-            
+
+            // 변환된 레코드의 분석 결과 로깅(추후 추천 로직 구현 시 삭제)
+            for model in newModels {
+                logger.debug("저장된 분석 결과 - 날짜: \(model.recordDate), 감정: \(model.emotion.rawValue), 메시지: \(model.analyzedResult, privacy: .public)")
+            }
+
+
         } catch {
             logger.error("큐 플러시 중 오류 발생: \(error.localizedDescription)")
         }
