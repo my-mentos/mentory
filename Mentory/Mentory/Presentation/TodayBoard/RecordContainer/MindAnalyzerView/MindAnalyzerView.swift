@@ -164,6 +164,7 @@ struct MindAnalyzerView: View {
                 ) {
                     let recordForm = mindAnalyzer.owner!
                     recordForm.removeForm()
+                    recordForm.finish()
                     parentDismiss()
                 }
             }

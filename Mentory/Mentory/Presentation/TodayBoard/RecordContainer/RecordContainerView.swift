@@ -48,6 +48,7 @@ struct RecordContainerView: View {
                             Button {
                                 if navigationPath.isEmpty {
                                     // 현재 화면 = RecordFormView
+                                    recordForm.finish()
                                     dismiss()                   // RecordContainerView 종료
                                 } else {
                                     // 현재 화면 = MindAnalyzer
