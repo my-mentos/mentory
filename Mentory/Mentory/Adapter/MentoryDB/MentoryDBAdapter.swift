@@ -46,9 +46,14 @@ nonisolated struct MentoryDBAdapter: MentoryDBInterface {
         guard let recordData = await object.getRecentRecord() else {
             return nil
         }
-        return DailyRecordAdapter(recordData: recordData)
+        return DailyRecordAdapter(recordData: recordData, db: self)
     }
     
+    @concurrent
+    func getSuggestions(by id: UUID) async throws -> [SuggestionData] {
+        await object.getSuggestions(by: id)
+    }
+
     @concurrent func submitAnalysis(recordData: RecordData, suggestionData: [SuggestionData]) async throws {
         await object.insertTicket(recordData)
         await object.createDailyRecords()

@@ -153,6 +153,7 @@ final class TodayBoard: Sendable, ObservableObject {
         let recentRecord: (any DailyRecordInterface)?
         do {
             recentRecord = try await mentoryDB.getRecentRecord()
+            logger.debug("최근일기가져오기")
         } catch {
             logger.error("\(#function) 실패: \(error)")
             return
@@ -181,7 +182,7 @@ final class TodayBoard: Sendable, ObservableObject {
                 isDone: $0.isDone)
             }
         self.recentSuggestionUpdate = currentDate
-
+        logger.debug("추천행동가져오기\(suggestionDatas)")
         // Watch로 전송
         await sendSuggestionsToWatch()
     }

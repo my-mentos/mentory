@@ -265,6 +265,44 @@ public actor MentoryDatabase: Sendable {
         }
     }
     
+    public func getSuggestions(by recordId: UUID) -> [SuggestionData] {
+        let context = ModelContext(MentoryDatabase.container)
+        let dbId = self.id
+
+        let descriptor = FetchDescriptor<MentoryDBModel>(
+            predicate: #Predicate { $0.id == dbId }
+        )
+
+        do {
+            guard let db = try context.fetch(descriptor).first else {
+                logger.error("getSuggestions: MentoryDBModel 조회 실패 >> [] 반환")
+                return []
+            }
+
+            // 중요: 여기서는 DailyRecordModel.id == recordId 로 찾는다
+            guard let record = db.records.first(where: { $0.id == recordId }) else {
+                logger.error("getSuggestions: DailyRecordModel(id: \(recordId)) 없음 >> [] 반환")
+                return []
+            }
+
+            // DailySuggestionModel > SuggestionData 변환
+            let suggestions: [SuggestionData] = record.suggestions.map { model in
+                SuggestionData(
+                    id: model.id,
+                    target: SuggestionID(model.target),
+                    content: model.content,
+                    isDone: model.status
+                )
+            }
+
+            return suggestions
+
+        } catch {
+            logger.error("getSuggestions 오류: \(error)")
+            return []
+        }
+    }
+    
     public func getRecord(ticketId: UUID) -> DailyRecord? {
         fatalError("구현 예정입니다.")
     }

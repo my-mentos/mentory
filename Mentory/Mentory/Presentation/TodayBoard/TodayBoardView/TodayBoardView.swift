@@ -64,9 +64,9 @@ struct TodayBoardView: View {
         }
         // TODO: DB 구현 완료 후 활성화
         // Suggestion을 DB에서 로드하고 워치로 전송
-//        .task {
-//            await todayBoard.loadSuggestions()
-//        }
+        .task {
+            await todayBoard.loadSuggestions()
+        }
         .task {
             // WatchConnectivity 설정
             await WatchConnectivityManager.shared.setUp()
