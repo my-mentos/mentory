@@ -258,12 +258,6 @@ fileprivate struct SuggestionCard<ActionRows: View>: View {
     let header: String
     let actionRows: ActionRows
     
-    init(todayBoard: TodayBoard, header: String, actionRows: ActionRows) {
-        self.todayBoard = todayBoard
-        self.header = header
-        self.actionRows = actionRows
-    }
-    
     var body: some View {
         LiquidGlassCard {
             VStack(alignment: .leading, spacing: 12) {
@@ -276,6 +270,9 @@ fileprivate struct SuggestionCard<ActionRows: View>: View {
             }
             .padding(.vertical, 22)
             .padding(.horizontal, 18)
+        }
+        .task {
+            // await todayBoard.loadSuggestions()
         }
     }
     

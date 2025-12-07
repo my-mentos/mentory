@@ -60,7 +60,14 @@ final class TodayBoard: Sendable, ObservableObject {
     @Published var suggestions: [Suggestion] = []
     var recentSuggestionUpdate: MentoryDate? = nil
     func getSuggestionIndicator() -> String {
-        "2/3"
+        let totalCount = self.suggestions
+            .count
+        
+        let doneCount = self.suggestions
+            .filter { $0.isDone == true }
+            .count
+        
+        return "\(doneCount)/\(totalCount)"
     }
     
     
@@ -142,7 +149,7 @@ final class TodayBoard: Sendable, ObservableObject {
         self.recordForms = newRecordForms
     }
     
-    func loadSuggestions() async {
+    func loadSuggestions() async {        
         // capture
         let currentDate = self.currentDate
         
