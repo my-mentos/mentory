@@ -254,11 +254,16 @@ fileprivate struct SuggestionCard<ActionRows: View>: View {
     let actionRows: ActionRows
 
     @State private var isFlipped = false
+    @State private var initialBadgeCount: Int = 0
 
     init(todayBoard: TodayBoard, header: String, actionRows: ActionRows) {
         self.todayBoard = todayBoard
         self.header = header
         self.actionRows = actionRows
+    }
+
+    private var hasNewBadge: Bool {
+        todayBoard.earnedBadges.count > initialBadgeCount
     }
     
     var body: some View {
@@ -315,9 +320,19 @@ fileprivate struct SuggestionCard<ActionRows: View>: View {
         }
         .task {
             await todayBoard.fetchEarnedBadges()
+            // 처음 로드 시 현재 뱃지 개수를 기록
+            if initialBadgeCount == 0 {
+                initialBadgeCount = todayBoard.earnedBadges.count
+            }
         }
         .task {
             await todayBoard.loadSuggestions()
+        }
+        .task(id: isFlipped) {
+            // 뱃지 화면을 열면 현재 뱃지 개수로 업데이트 (dot 제거)
+            if isFlipped == true {
+                initialBadgeCount = todayBoard.earnedBadges.count
+            }
         }
     }
     
@@ -332,9 +347,19 @@ fileprivate struct SuggestionCard<ActionRows: View>: View {
                     isFlipped.toggle()
                 }
             } label: {
-                Image(systemName: "trophy.fill")
-                    .font(.system(size: 16))
-                    .foregroundColor(todayBoard.earnedBadges.isEmpty ? .gray.opacity(0.5) : .mentoryAccentPrimary)
+                ZStack(alignment: .topTrailing) {
+                    Image(systemName: "trophy.fill")
+                        .font(.system(size: 16))
+                        .foregroundColor(todayBoard.earnedBadges.isEmpty ? .gray.opacity(0.5) : .mentoryAccentPrimary)
+
+                    // 새 뱃지 알림 dot
+                    if hasNewBadge {
+                        Circle()
+                            .fill(Color.red)
+                            .frame(width: 8, height: 8)
+                            .offset(x: 4, y: -4)
+                    }
+                }
             }
         }
     }
