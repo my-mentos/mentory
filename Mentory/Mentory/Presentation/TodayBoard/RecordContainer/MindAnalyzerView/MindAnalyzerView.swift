@@ -69,39 +69,15 @@ struct MindAnalyzerView: View {
                     Button("취소", role: .cancel) {}
                     Button("제출") {
                         Task {
-                            await MainActor.run {
-                                withAnimation(
-                                    .spring(
-                                        response: 0.7,
-                                        dampingFraction: 0.85
-                                    )
-                                ) {
-                                    mindAnalyzer.startAnalyze()
-                                }
+                            withAnimation {
+                                mindAnalyzer.startAnalyze()
                             }
                             
-                            let startTime = Date()
                             await mindAnalyzer.analyze()
+                            await mindAnalyzer.updateSuggestions()
                             
-                            // 로딩화면 최소 2초로 설정
-                            let elapsed = Date().timeIntervalSince(startTime)
-                            let minimum: TimeInterval = 2.0
-                            if elapsed < minimum {
-                                let remain = minimum - elapsed
-                                try? await Task.sleep(
-                                    nanoseconds: UInt64(remain * 1_000_000_000)
-                                )
-                            }
-                            
-                            await MainActor.run {
-                                withAnimation(
-                                    .spring(
-                                        response: 0.7,
-                                        dampingFraction: 0.85
-                                    )
-                                ) {
-                                    mindAnalyzer.stopAnalyze()
-                                }
+                            withAnimation {
+                                mindAnalyzer.stopAnalyze()
                             }
                         }
                     }
@@ -109,6 +85,7 @@ struct MindAnalyzerView: View {
                     Text("일기를 제출하면 수정할 수 없습니다.\n제출하시겠습니까?")
                 }
                 .keyboardShortcut(.defaultAction)
+    
                 
                 AnalyzedResult(
                     readyPrompt: "면담 요청을 보내면 멘토가 감정 리포트를 작성해드려요.",
@@ -480,26 +457,26 @@ private struct MindAnalyzerPreview: View {
     var body: some View {
         if let todayBoard = mentoryiOS.todayBoard,
            let recordForm = todayBoard.recordForms.first,
-            let mindAnalyzer = recordForm.mindAnalyzer
+           let mindAnalyzer = recordForm.mindAnalyzer
         {
             MindAnalyzerView(mindAnalyzer: mindAnalyzer, parentDismiss: dismiss)
         } else {
             ProgressView("프리뷰 로딩 중입니다.")
                 .task {
                     mentoryiOS.setUp()
-
+                    
                     let onboarding = mentoryiOS.onboarding!
                     onboarding.nameInput = "김깝십"
                     onboarding.next()
-
+                    
                     let todayBoard = mentoryiOS.todayBoard!
-
+                    
                     await todayBoard.setUpRecordForms()
                     let recordForm = todayBoard.recordForms.first!
-
+                    
                     recordForm.titleInput = "SAMPLE-TITLE"
                     recordForm.textInput = "SAMPLE-TEXT"
-
+                    
                     await recordForm.submit()
                 }
         }

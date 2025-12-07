@@ -38,7 +38,12 @@ final class MindAnalyzer: Sendable, ObservableObject {
     @Published var isAnalyzeFinished: Bool = false
     @Published var analyzedResult: String? = nil
     @Published var mindType: Emotion? = nil
-    @Published var suggestions: [SuggestionData] = []
+    
+    private(set) var currentDate: MentoryDate = .now
+    func refreshCurrentDate() {
+        self.currentDate = .now
+    }
+    
     
     
     // MARK: action
@@ -131,22 +136,60 @@ final class MindAnalyzer: Sendable, ObservableObject {
             return
         }
         
+        
         // mutate
         self.mindType = analysis.mindType
         self.analyzedResult = analysis.empathyMessage
-        self.suggestions = suggestionDatas
-        
-        let suggestions = analysis.actionKeywords
-            .map { keyword in
-                Suggestion(
-                    owner: todayBoard,
-                    target: .random,
-                    content: keyword,
-                    isDone: false)
-            }
-        todayBoard.suggestions = suggestions
-        
         self.isAnalyzeFinished = true
+    }
+    
+    func updateSuggestions() async {
+        // capture
+        let currentDate = self.currentDate
+        
+        let recordForm = self.owner!
+        let todayBoard = recordForm.owner!
+        let mentoryiOS = todayBoard.owner!
+        let mentoryDB = mentoryiOS.mentoryDB
+        
+        // process - MentoryDB
+        let recentRecord: (any DailyRecordInterface)?
+        do {
+            recentRecord = try await mentoryDB.getRecentRecord()
+            logger.debug("최근일기가져오기")
+        } catch {
+            logger.error("\(#function) 실패: \(error)")
+            return
+        }
+        
+        guard let recentRecord else {
+            logger.error("MentoryDB 안에 최근 Record가 존재하지 않습니다.")
+            return
+        }
+        
+        // process - MentoryDB
+        let suggestionDatas: [SuggestionData]
+        do {
+            suggestionDatas = try await recentRecord.getSuggestions()
+        } catch {
+            logger.error("\(#function) 실패 : \(error)")
+            return
+        }
+        
+        // mutate
+        todayBoard.suggestions = suggestionDatas
+            .map { Suggestion(
+                owner: todayBoard,
+                target: $0.target,
+                content: $0.content,
+                isDone: $0.isDone)
+            }
+        todayBoard.recentSuggestionUpdate = currentDate
+        logger.debug("추천행동가져오기\(suggestionDatas)")
+        
+        // 1. getRecentRecordData() -> recordAt: MentoryDate
+        // recordAt vs owner!.recordAt -> 더 최신이라면 업데이트한다
+        
     }
     
     func cancel() {

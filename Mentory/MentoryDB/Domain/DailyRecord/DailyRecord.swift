@@ -61,28 +61,30 @@ public actor DailyRecord: Sendable {
     
     
     // MARK: action
-    func delete() async {
-        let contanier = MentoryDatabase.container
-        let context = ModelContext(contanier)
-        let id = self.id
-        
+    public func getSuggestions() async -> [SuggestionData] {
+        let context = ModelContext(MentoryDatabase.container)
+        let recordId = self.id
+
+        let descriptor = FetchDescriptor<DailyRecordModel>(
+            predicate: #Predicate { $0.id == recordId }
+        )
+
         do {
-            // 1) DailyRecord.Model 을 id 로 조회
-            let descriptor = FetchDescriptor<DailyRecordModel>(
-                predicate: #Predicate<DailyRecordModel> { $0.id == id }
-            )
-            
-            if let target = try context.fetch(descriptor).first {
-                context.delete(target)
-                try context.save()
-            } else {
-                logger.error("⚠️ DailyRecord: 삭제할 모델을 찾지 못했습니다.")
-                return
+            guard let dailyRecord = try context.fetch(descriptor).first else {
+                logger.error("getSuggestions: DailyRecord 조회 실패 >> [] 반환")
+                return []
             }
 
+            // DailySuggestionModel > SuggestionData 변환
+            let suggestions: [SuggestionData] = dailyRecord.suggestions
+                .map { $0.toData() }
+
+            return suggestions
+
         } catch {
-            logger.error("❌ DailyRecord 삭제 실패: \(error)")
-            return
+            logger.error("getSuggestions 오류: \(error)")
+            return []
         }
     }
+
 }

@@ -236,7 +236,7 @@ public actor MentoryDatabase: Sendable {
         }
     }
 
-    public func getRecentRecord() -> RecordData? {
+    public func getRecentRecord() -> DailyRecord? {
         let context = ModelContext(MentoryDatabase.container)
         let id = self.id
 
@@ -251,19 +251,21 @@ public actor MentoryDatabase: Sendable {
             }
 
             // createdAt 기준 최신 DailyRecordModel 찾기
-            guard let latest = db.records.max(by: { $0.createdAt < $1.createdAt }) else {
+            guard let latest = db.records.max(by: { $0.recordDate < $1.recordDate }) else {
                 logger.debug("getRecentRecord: DailyRecord가 존재하지 않아 nil 반환")
                 return nil
             }
 
             // DailyRecordModel → RecordData 변환
-            return latest.toData()
+            return DailyRecord(id: latest.id)
 
         } catch {
             logger.error("최근 DailyRecord 조회 중 오류 발생: \(error)")
             return nil
         }
     }
+
+
     
     public func getRecord(ticketId: UUID) -> DailyRecord? {
         fatalError("구현 예정입니다.")

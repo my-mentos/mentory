@@ -12,46 +12,51 @@ import Values
 
 // MARK: Domain
 nonisolated struct MentoryDBAdapter: MentoryDBInterface {
-    private let object = MentoryDatabase.shared
+    private let mentoryDB = MentoryDatabase.shared
     
     @concurrent func getName() async throws -> String? {
-        return await object.getName()
+        return await mentoryDB.getName()
     }
     @concurrent func setName(_ newName: String) async throws {
-        await object.setName(newName)
+        await mentoryDB.setName(newName)
     }
     
     @concurrent func getMentorMessage() async throws -> MessageData? {
-        return await object.getMentorMessage()
+        return await mentoryDB.getMentorMessage()
     }
     @concurrent func setMentorMessage(_ data: MessageData) async throws {
-        await object.setMentorMessage(data)
+        await mentoryDB.setMentorMessage(data)
     }
     
     @concurrent func getCharacter() async throws -> MentoryCharacter? {
-        return await object.getCharacter()
+        return await mentoryDB.getCharacter()
     }
     @concurrent func setCharacter(_ character: MentoryCharacter) async throws {
-        await object.setCharacter(character)
+        await mentoryDB.setCharacter(character)
     }
     
     @concurrent func getRecordCount() async throws -> Int {
-        await object.getRecordCount()
+        await mentoryDB.getRecordCount()
     }
     @concurrent func isSameDayRecordExist(for date: MentoryDate) async throws -> Bool {
-        await object.isSameDayRecordExist(for: date)
+        await mentoryDB.isSameDayRecordExist(for: date)
     }
     
+
     @concurrent func getRecentRecord() async throws -> DailyRecordAdapter? {
-        guard let recordData = await object.getRecentRecord() else {
+        guard let dailyRecord = await mentoryDB.getRecentRecord() else {
             return nil
         }
-        return DailyRecordAdapter(recordData: recordData)
+        
+        return DailyRecordAdapter(dailyRecord)
     }
-    
+
+
     @concurrent func submitAnalysis(recordData: RecordData, suggestionData: [SuggestionData]) async throws {
-        await object.insertTicket(recordData)
-        await object.createDailyRecords()
-        await object.insertSuggestions(ticketId: recordData.id, suggestions: suggestionData)
+        await mentoryDB.insertTicket(recordData)
+        await mentoryDB.createDailyRecords()
+        
+        
+        await mentoryDB.insertSuggestions(ticketId: recordData.id, suggestions: suggestionData)
     }
 }

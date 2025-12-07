@@ -29,6 +29,17 @@ final class DailySuggestionModel {
         self.content = content
         self.status = status
     }
+    
+    // MARK: operator
+    func toData() -> SuggestionData {
+        SuggestionData(
+            id: self.id,
+            target: SuggestionID(self.target),
+            content: self.content,
+            isDone: self.status
+        )
+    }
+
 }
 
 
