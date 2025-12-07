@@ -43,7 +43,13 @@ final class MentoryDatabaseFake: Sendable {
         return self.records
             .max(by: { $0.recordDate < $1.recordDate })
     }
-    
+
+    func getCompletedSuggestionsCount() -> Int {
+        return records.reduce(0) { total, record in
+            total + record.suggestions.filter { $0.isDone }.count
+        }
+    }
+
     // MARK: action
     func createDailyRecords() {
         // mutate
