@@ -28,13 +28,11 @@ struct TodayBoardView: View {
             // 환영 인사 헤더
             GreetingHeader(
                 todayBoard: todayBoard,
-                userName: mentoryiOS.userName ?? "익명",
-                recordCount: todayBoard.recordCount
+                userName: mentoryiOS.userName ?? "익명"
             )
             
             // 멘토리메세지 카드
-            
-           MessageView(mentorMessage: todayBoard.mentorMessage)
+            MessageView(mentorMessage: todayBoard.mentorMessage)
             
             // 기분 기록 카드
             RecordStatCard(
@@ -67,7 +65,10 @@ struct TodayBoardView: View {
             await WatchConnectivityManager.shared.setUp()
             await WatchConnectivityManager.shared.setTodoCompletionHandler { todoText, isCompleted in
                 Task { @MainActor in
-                    await todayBoard.handleWatchTodoCompletion(todoText: todoText, isCompleted: isCompleted)
+                    await todayBoard.handleWatchTodoCompletion(
+                        todoText: todoText,
+                        isCompleted: isCompleted
+                    )
                 }
             }
         }
@@ -151,12 +152,11 @@ struct MentorMessageDefaultView: View {
 fileprivate struct GreetingHeader: View {
     @ObservedObject var todayBoard: TodayBoard
     let userName: String
-    let recordCount: Int?
     
     var body: some View {
         // 작은 설명 텍스트
         Group{
-            if let recordCount {
+            if let recordCount = todayBoard.recordCount {
                 if recordCount == 0 {
                     Text("\(userName)님, 일기를 작성해보세요!")
                 } else {
@@ -267,10 +267,10 @@ fileprivate struct SuggestionCard<ActionRows: View>: View {
     var body: some View {
         LiquidGlassCard {
             VStack(alignment: .leading, spacing: 12) {
-                Text(header)
-                    .font(.system(size: 17, weight: .semibold))
-                    .foregroundStyle(.primary)
+                Header
+                
                 ProgressBar
+                
                 actionRows
                     .padding(.top, 0)
             }
@@ -279,29 +279,32 @@ fileprivate struct SuggestionCard<ActionRows: View>: View {
         }
     }
     
+    private var Header: some View {
+        Text(header)
+            .font(.system(size: 17, weight: .semibold))
+            .foregroundStyle(.primary)
+    }
+    
     private var ProgressBar: some View {
         HStack {
             ZStack {
+                // 배경 캡슐
                 Capsule()
                     .fill(Color.mentoryProgressTrack)
                     .frame(height: 10)
                 
-                GeometryReader { geo in
-                    Capsule()
-                        .fill(
-                            LinearGradient(
-                                colors: [
-                                    .purple,
-                                    .purple.opacity(0.55)
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
+                // 상태 캡슐
+                Capsule()
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                .purple,
+                                .purple.opacity(0.55)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
                         )
-//                        .frame(width: geo.size.width * todayBoard.getProgress())
-//                        .animation(.spring(response: 0.6,
-//                                           dampingFraction: 0.7), value: todayBoard.getProgress())
-                }
+                    )
             }
             .frame(height: 10)
             
