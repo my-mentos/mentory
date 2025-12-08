@@ -25,7 +25,7 @@ final class EditingName: Sendable, ObservableObject{
     weak var owner: SettingBoard?
     
     @Published var nameInput: String
-    @Published var isSubmitDisabled: Bool = false
+    @Published var isSubmitDisabled: Bool = true
     
     
     // MARK: action
@@ -35,14 +35,15 @@ final class EditingName: Sendable, ObservableObject{
         let currentName = owner?.owner!.userName ?? ""
         
         // process
-        let validateResult = newName.isEmpty || newName == currentName
+        let isValid = newName.isEmpty == false && newName != currentName
         
         // mutate
-        guard validateResult == false else {
-            isSubmitDisabled = false
+        guard isValid else {
+            // 유효하지 않으면 저장 버튼 비활성화
+            isSubmitDisabled = true
             return
         }
-        isSubmitDisabled = true
+        isSubmitDisabled = false
     }
 
     func submit() async {
