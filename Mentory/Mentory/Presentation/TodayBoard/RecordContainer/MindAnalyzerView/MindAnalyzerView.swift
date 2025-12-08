@@ -75,7 +75,12 @@ struct MindAnalyzerView: View {
                             
                             await mindAnalyzer.analyze()
                             await mindAnalyzer.updateSuggestions()
-                            
+
+                            // Watch로 투두 전송
+                            let recordForm = mindAnalyzer.owner!
+                            let todayBoard = recordForm.owner!
+                            await todayBoard.sendSuggestionsToWatch()
+
                             withAnimation {
                                 mindAnalyzer.stopAnalyze()
                             }
@@ -139,18 +144,11 @@ struct MindAnalyzerView: View {
                     label: "확인",
                     isPresented: mindAnalyzer.isAnalyzeFinished
                 ) {
-                    Task {
-                        let recordForm = mindAnalyzer.owner!
-                        let todayBoard = recordForm.owner!
-
-                        // Watch로 투두 전송
-                        await todayBoard.sendSuggestionsToWatch()
-
-                        //recordForm.removeForm()
-                        recordForm.finish()
-                        mindAnalyzer.finish()
-                        parentDismiss()
-                    }
+                    let recordForm = mindAnalyzer.owner!
+                    //recordForm.removeForm()
+                    recordForm.finish()
+                    mindAnalyzer.finish()
+                    parentDismiss()
                 }
             }
         }
