@@ -133,7 +133,6 @@
 - [WatchConnectivity 이해하기](docs/watchos/watchconnectivity.md)
 - [Widget Extension 개념 이해하기](docs/Widget-Extension/README.md)
 - [Firebase AI 사용하기](docs/firebase-ai/README.md)
-- 브랜치 전략, TBD(Trunk-Based Development)
 
 ## 트러블슈팅 문서
 
@@ -149,7 +148,7 @@
    - [2025-12-03 WatchConnectivity Manager-Engine 분리 리팩토링](docs/troubleshooting/hyeonmo/20251203-watchconnectivity-refactoring.md)
    - [2025-12-04 Firebase LLM 음성 파일 포맷 오류](docs/troubleshooting/hyeonmo/20251204-firebase-audio-format.md)
 4. 김민우
-   - [2024-09-18 음성 전사 중 앱 크래시](docs/troubleshooting/kim-minwoo/20240918-speech-transcript-crash.md)
+   - 작성된 문서 없음
 
 ## 팀원
 
