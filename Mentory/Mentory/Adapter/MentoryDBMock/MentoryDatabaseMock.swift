@@ -79,6 +79,16 @@ struct MentoryDatabaseMock: MentoryDBInterface {
         return await dailyRecord.getSuggestions()
     }
     
+
+    @concurrent func getCompletedSuggestionsCount() async throws -> Int {
+        return await object.getCompletedSuggestionsCount()
+    }
+
+    @concurrent func updateSuggestionStatus(targetId: UUID, isDone: Bool) async throws {
+        await object.updateSuggestionStatus(targetId: targetId, isDone: isDone)
+    }
+
+
     @concurrent func submitAnalysis(recordData: RecordData, suggestionData: [SuggestionData]) async throws {
         
         // create DailyRecord

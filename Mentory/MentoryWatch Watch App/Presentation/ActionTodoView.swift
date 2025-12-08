@@ -50,7 +50,10 @@ struct ActionTodoView: View {
     }
 
     private func handleTodoToggle(todoText: String, currentStatus: Bool) async {
-        let newStatus = !currentStatus
+        // 이미 완료된 항목은 다시 해제할 수 없음
+        guard !currentStatus else { return }
+
+        let newStatus = true
 
         // 1. 먼저 로컬 상태 즉시 업데이트 (UI 즉시 반영)
         if let index = connectivityManager.actionTodos.firstIndex(of: todoText),

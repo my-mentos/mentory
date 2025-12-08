@@ -43,20 +43,26 @@ final class Suggestion: Sendable, ObservableObject, Identifiable {
         // capture
         let todayBoard = self.owner!
         let mentoryiOS = todayBoard.owner!
-        
         let mentoryDB = mentoryiOS.mentoryDB
-        logger.debug("markDone호출")
-        if self.isDone == true {
-            logger.debug("isDone: \(self.isDone)")
+
+        let targetId = self.target.rawValue
+        let isDone = self.isDone
+
+        logger.debug("markDone 호출: isDone=\(isDone)")
+
+        // process - DB에 Suggestion 상태 업데이트
+        do {
+            try await mentoryDB.updateSuggestionStatus(targetId: targetId, isDone: isDone)
+            logger.debug("Suggestion 상태 DB 저장 완료")
+        } catch {
+            logger.error("Suggestion 상태 업데이트 실패: \(error)")
         }
-        // process
-        // SwiftData의 UserSuggestion에 isDone 업데이트
-        
-        // mutate
-//        fatalError()
 
         // Watch로 전송
         await todayBoard.sendSuggestionsToWatch()
+
+        // 뱃지 갱신
+        await todayBoard.fetchEarnedBadges()
     }
     
     

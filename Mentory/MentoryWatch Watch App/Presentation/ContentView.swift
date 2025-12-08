@@ -22,11 +22,11 @@ struct ContentView: View {
                     Label("투두", systemImage: "checklist")
                 }
 
-            // 탭 3: 음성 기록
-            VoiceRecordView()
-                .tabItem {
-                    Label("기록", systemImage: "mic")
-                }
+            // 탭 3: 음성 기록 (기능 구현 안되어있어 임시 주석 처리)
+//            VoiceRecordView()
+//                .tabItem {
+//                    Label("기록", systemImage: "mic")
+//                }
         }
     }
 }

@@ -252,29 +252,118 @@ fileprivate struct SuggestionCard<ActionRows: View>: View {
     @ObservedObject var todayBoard: TodayBoard
     let header: String
     let actionRows: ActionRows
+
+    @State private var isFlipped = false
+    @State private var initialBadgeCount: Int = 0
+
+    init(todayBoard: TodayBoard, header: String, actionRows: ActionRows) {
+        self.todayBoard = todayBoard
+        self.header = header
+        self.actionRows = actionRows
+    }
+
+    private var hasNewBadge: Bool {
+        todayBoard.earnedBadges.count > initialBadgeCount
+    }
     
     var body: some View {
-        LiquidGlassCard {
-            VStack(alignment: .leading, spacing: 12) {
-                Header
-                
-                ProgressBar
-                
-                actionRows
-                    .padding(.top, 0)
+        Group {
+            if !isFlipped {
+                // 앞면: Suggestion 리스트
+                LiquidGlassCard {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Header
+                        ProgressBar
+                        actionRows
+                            .padding(.top, 0)
+                    }
+                    .padding(.vertical, 22)
+                    .padding(.horizontal, 18)
+                }
+                .transition(.asymmetric(
+                    insertion: .scale(scale: 0.95).combined(with: .opacity),
+                    removal: .scale(scale: 0.95).combined(with: .opacity)
+                ))
+            } else {
+                // 뒷면: Badge 그리드
+                LiquidGlassCard {
+                    VStack(alignment: .leading, spacing: 12) {
+                        HStack {
+                            Text("획득한 뱃지")
+                                .font(.system(size: 17, weight: .semibold))
+                                .foregroundStyle(.primary)
+                            Spacer()
+                            Button {
+                                withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
+                                    isFlipped.toggle()
+                                }
+                            } label: {
+                                Image(systemName: "xmark")
+                                    .font(.system(size: 16))
+                                    .foregroundColor(.mentoryAccentPrimary)
+                            }
+                        }
+
+                        BadgeGridView(
+                            earnedBadges: todayBoard.earnedBadges,
+                            completedCount: todayBoard.completedSuggestionsCount
+                        )
+                    }
+                    .padding(.vertical, 22)
+                    .padding(.horizontal, 18)
+                }
+                .transition(.asymmetric(
+                    insertion: .scale(scale: 0.95).combined(with: .opacity),
+                    removal: .scale(scale: 0.95).combined(with: .opacity)
+                ))
             }
-            .padding(.vertical, 22)
-            .padding(.horizontal, 18)
+        }
+        .task {
+            await todayBoard.fetchEarnedBadges()
+            // 처음 로드 시 현재 뱃지 개수를 기록
+            if initialBadgeCount == 0 {
+                initialBadgeCount = todayBoard.earnedBadges.count
+            }
         }
         .task {
             await todayBoard.loadSuggestions()
+            // Watch로 전송
+            await todayBoard.sendSuggestionsToWatch()
+        }
+        .task(id: isFlipped) {
+            // 뱃지 화면을 열면 현재 뱃지 개수로 업데이트 (dot 제거)
+            if isFlipped == true {
+                initialBadgeCount = todayBoard.earnedBadges.count
+            }
         }
     }
     
     private var Header: some View {
-        Text(header)
-            .font(.system(size: 17, weight: .semibold))
-            .foregroundStyle(.primary)
+        HStack {
+            Text(header)
+                .font(.system(size: 17, weight: .semibold))
+                .foregroundStyle(.primary)
+            Spacer()
+            Button {
+                withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
+                    isFlipped.toggle()
+                }
+            } label: {
+                ZStack(alignment: .topTrailing) {
+                    Image(systemName: "trophy.fill")
+                        .font(.system(size: 16))
+                        .foregroundColor(todayBoard.earnedBadges.isEmpty ? .gray.opacity(0.5) : .mentoryAccentPrimary)
+
+                    // 새 뱃지 알림 dot
+                    if hasNewBadge {
+                        Circle()
+                            .fill(Color.red)
+                            .frame(width: 8, height: 8)
+                            .offset(x: 4, y: -4)
+                    }
+                }
+            }
+        }
     }
     
     private var ProgressBar: some View {

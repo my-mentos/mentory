@@ -51,6 +51,13 @@ nonisolated struct MentoryDBAdapter: MentoryDBInterface {
         return DailyRecordAdapter(dailyRecord)
     }
 
+    @concurrent func getCompletedSuggestionsCount() async throws -> Int {
+        await mentoryDB.getCompletedSuggestionsCount()
+    }
+
+    @concurrent func updateSuggestionStatus(targetId: UUID, isDone: Bool) async throws {
+        await mentoryDB.updateSuggestionStatus(targetId: targetId, isDone: isDone)
+    }
 
     @concurrent func submitAnalysis(recordData: RecordData, suggestionData: [SuggestionData]) async throws {
         await mentoryDB.insertTicket(recordData)
