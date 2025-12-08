@@ -19,8 +19,11 @@ struct StatisticsView: View {
     @State private var timeLog = ""
     @State private var moodFlowNote = ""
 
-    private let calendarSlots = MoodSlot.sampleAugust
     private let chartEntries = MoodChartEntry.sample
+
+    private var calendarSlots: [MoodSlot] {
+        generateCalendarSlots(for: referenceMonth)
+    }
 
     private var monthTitle: String {
         let formatter = DateFormatter()
@@ -89,6 +92,16 @@ private extension StatisticsView {
                     }
                 }
                 .foregroundStyle(.primary)
+
+                // 요일 헤더
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 7), spacing: 8) {
+                    ForEach(Array(["일", "월", "화", "수", "목", "금", "토"].enumerated()), id: \.offset) { index, day in
+                        Text(day)
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundStyle(index == 0 ? MentoryColor.accentSecondary : index == 6 ? MentoryColor.accentPrimary : .secondary)
+                            .frame(height: 20)
+                    }
+                }
 
                 LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 7), spacing: 8) {
                     ForEach(calendarSlots) { slot in
@@ -242,6 +255,17 @@ private struct OutlinedSection<Content: View>: View {
 private struct MoodDayCell: View {
     let slot: StatisticsView.MoodSlot
 
+    var textColor: Color {
+        guard let weekday = slot.weekday else { return .secondary }
+        if weekday == 1 {
+            return MentoryColor.accentSecondary // 일요일
+        } else if weekday == 7 {
+            return MentoryColor.accentPrimary // 토요일
+        } else {
+            return .secondary
+        }
+    }
+
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 8, style: .continuous)
@@ -260,7 +284,7 @@ private struct MoodDayCell: View {
             } else if let day = slot.day {
                 Text("\(day)")
                     .font(.system(size: 12, weight: .semibold))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(textColor)
             }
         }
     }
@@ -279,50 +303,14 @@ private extension StatisticsView {
         let day: Int?
         let character: MentoryCharacter?
         let isHighlighted: Bool
+        let weekday: Int? // 1: 일요일, 2: 월요일, ..., 7: 토요일
 
-        init(day: Int?, character: MentoryCharacter? = nil, isHighlighted: Bool = false) {
+        init(day: Int?, character: MentoryCharacter? = nil, isHighlighted: Bool = false, weekday: Int? = nil) {
             self.day = day
             self.character = character
             self.isHighlighted = isHighlighted
+            self.weekday = weekday
         }
-
-        static let sampleAugust: [MoodSlot] = [
-            .init(day: 1, character: .cool),
-            .init(day: 2, character: .warm),
-            .init(day: 3),
-            .init(day: 4),
-            .init(day: 5, character: .cool),
-            .init(day: 6),
-            .init(day: 7),
-            .init(day: 8),
-            .init(day: 9),
-            .init(day: 10),
-            .init(day: 11),
-            .init(day: 12),
-            .init(day: 13),
-            .init(day: 14),
-            .init(day: 15, character: .warm),
-            .init(day: 16),
-            .init(day: 17, character: .cool),
-            .init(day: 18, isHighlighted: true),
-            .init(day: 19),
-            .init(day: 20),
-            .init(day: 21),
-            .init(day: 22),
-            .init(day: 23),
-            .init(day: 24),
-            .init(day: 25),
-            .init(day: 26),
-            .init(day: 27),
-            .init(day: 28),
-            .init(day: 29),
-            .init(day: 30),
-            .init(day: 31),
-            .init(day: nil),
-            .init(day: nil),
-            .init(day: nil),
-            .init(day: nil)
-        ]
     }
 
     struct MoodChartEntry: Identifiable {
@@ -352,6 +340,62 @@ private extension StatisticsView {
         if let updated = Calendar.current.date(byAdding: .month, value: value, to: referenceMonth) {
             referenceMonth = updated
         }
+    }
+
+    func generateCalendarSlots(for month: Date) -> [MoodSlot] {
+        let calendar = Calendar.current
+        var slots: [MoodSlot] = []
+
+        // 해당 월의 첫 날과 마지막 날 계산
+        guard let monthInterval = calendar.dateInterval(of: .month, for: month),
+              let numberOfDays = calendar.range(of: .day, in: .month, for: month)?.count else {
+            return slots
+        }
+
+        // 첫 날의 요일 (1: 일요일, 2: 월요일, ..., 7: 토요일)
+        let firstWeekday = calendar.component(.weekday, from: monthInterval.start)
+
+        // 첫 주의 빈 칸 추가 (일요일이 1이므로 -1)
+        for _ in 0..<(firstWeekday - 1) {
+            slots.append(MoodSlot(day: nil, weekday: nil))
+        }
+
+        // 실제 날짜 추가
+        for day in 1...numberOfDays {
+            guard let dayDate = calendar.date(byAdding: .day, value: day - 1, to: monthInterval.start) else { continue }
+            let weekday = calendar.component(.weekday, from: dayDate)
+
+            // 목데이터: 12월 1일부터 7일까지 매일 기록
+            let character: MentoryCharacter?
+            if calendar.isDate(month, equalTo: Date(), toGranularity: .month) {
+                switch day {
+                case 1: character = .cool
+                case 2: character = .cool
+                case 3: character = .cool
+                case 4: character = .warm
+                case 5: character = .cool
+                case 6: character = .warm
+                case 7: character = .cool
+                default: character = nil
+                }
+            } else {
+                character = nil
+            }
+
+            // 오늘 날짜만 하이라이트
+            let isHighlighted = day == calendar.component(.day, from: Date()) &&
+                               calendar.isDate(month, equalTo: Date(), toGranularity: .month)
+
+            slots.append(MoodSlot(day: day, character: character, isHighlighted: isHighlighted, weekday: weekday))
+        }
+
+        // 마지막 주의 빈 칸 추가 (7의 배수로 맞추기)
+        let remainingSlots = (7 - (slots.count % 7)) % 7
+        for _ in 0..<remainingSlots {
+            slots.append(MoodSlot(day: nil, weekday: nil))
+        }
+
+        return slots
     }
 }
 
