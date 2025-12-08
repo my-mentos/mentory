@@ -34,6 +34,9 @@
 - [사용 기술](#사용-기술)
 - [시작하기](#시작하기)
   - [필요 조건](#필요-조건)
+  - [설치 방법](#설치-방법)
+  - [환경 설정](#환경-설정)
+  - [실행 방법](#실행-방법)
 - [소프트웨어 디자인](#소프트웨어-디자인)
 - [개발 문서](#개발-문서)
 - [트러블슈팅 문서](#트러블슈팅-문서)
@@ -170,6 +173,75 @@
     </td>
   </tr>
 </table>
+
+### 설치 방법
+
+1. **저장소 클론**
+   ```bash
+   git clone https://github.com/EST-iOS4/Mentory.git
+   cd Mentory
+   ```
+
+2. **프로젝트 열기**
+   ```bash
+   cd Mentory
+   open Mentory.xcodeproj
+   ```
+
+### 환경 설정
+
+#### 1. ESTSOFT Alan LLM API 토큰 설정
+
+1. `Secrets.xcconfig.sample` 파일을 복사하여 `Secrets.xcconfig` 파일 생성
+   ```bash
+   cp Mentory/Secrets.xcconfig.sample Mentory/Secrets.xcconfig
+   ```
+
+2. `Secrets.xcconfig` 파일을 열어 ESTSOFT에서 제공받은 API 토큰 입력
+   ```
+   TOKEN = 여기에-발급받은-토큰-입력
+   ```
+
+3. Xcode에서 프로젝트 설정 확인
+   - [Mentory.xcodeproj](Mentory/Mentory.xcodeproj)를 선택
+   - **Info** 탭에서 `ALAN_API_TOKEN` 값이 `$(TOKEN)`으로 설정되어 있는지 확인
+
+#### 2. Firebase 설정
+
+1. [Firebase Console](https://console.firebase.google.com/)에서 프로젝트 생성
+
+2. iOS 앱 추가 및 `GoogleService-Info.plist` 다운로드
+
+3. 다운로드한 파일을 프로젝트의 `Mentory/Mentory/` 디렉토리에 추가
+   - Xcode에서 [Mentory/Mentory](Mentory/Mentory) 폴더에 드래그 앤 드롭
+   - **Copy items if needed** 체크
+
+4. Firebase AI 기능 활성화
+   - Firebase Console에서 **Build** > **AI** 메뉴로 이동
+   - Gemini API 활성화
+
+### 실행 방법
+
+#### iOS 앱 실행
+
+1. Xcode에서 타겟을 **Mentory**로 선택
+2. 시뮬레이터 또는 실제 디바이스 선택
+3. `Cmd + R` 또는 실행 버튼 클릭
+
+#### watchOS 앱 실행
+
+1. Xcode에서 타겟을 **MentoryWatch Watch App**으로 선택
+2. Watch 시뮬레이터 선택
+3. `Cmd + R` 또는 실행 버튼 클릭
+
+> **참고**: watchOS 앱을 실행하려면 먼저 iOS 앱이 실행되어 있어야 데이터 동기화가 정상적으로 작동합니다.
+
+#### 위젯 테스트
+
+1. iOS 앱을 먼저 실행
+2. 홈 화면으로 이동
+3. 위젯 추가 화면에서 **Mentory** 위젯 선택
+4. 원하는 크기의 위젯을 홈 화면에 배치
 
 ## 소프트웨어 디자인
 
