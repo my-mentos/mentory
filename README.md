@@ -407,7 +407,7 @@ Mentory/
 아래는 팀원별로 개발을 진행하며 겪은 문제에 대한 트러블슈팅 문서입니다. 새로운 문서를 추가하려면 `docs/troubleshooting/<이름-폴더>/YYYYMMDD-short-title.md` 형식으로 새 마크다운 파일을 만들고, 아래에 문서 참조를 추가하면 됩니다.
 
 1. 박재이
-   - 작성된 문서 없음
+   - [2025-11-19 MindAnalyze API 호출 시 결과 미반환](docs/troubleshooting/parkjay/mindanalyze-recordform-reset.md)
 2. 송지석
    - [2025-11-18 설정 탭 화면이 표시되지 않는 문제](docs/troubleshooting/jiseok/2025-11-18-Tabbar-view.md)
 3. 구현모
