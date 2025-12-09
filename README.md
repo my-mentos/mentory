@@ -410,6 +410,7 @@ Mentory/
    - 작성된 문서 없음
 2. 송지석
    - [2025-11-18 설정 탭 화면이 표시되지 않는 문제](docs/troubleshooting/jiseok/2025-11-18-Tabbar-view.md)
+   - [2025-12-09 App Group & Signing — “Unknown Name (Team ID)” 문제](docs/troubleshooting/jiseok/2025-12-9-appgroup-signing.md)
 3. 구현모
    - [2025-11-17 앱 아이콘 설정](docs/troubleshooting/hyeonmo/20251117-app-icon.md)
    - [2025-12-02 WatchConnectivity MainActor 동시성 충돌](docs/troubleshooting/hyeonmo/20251202-watchconnectivity.md)
