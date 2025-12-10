@@ -46,6 +46,9 @@
 
 ## 관련 링크
 
+> [!NOTE]
+> 프로젝트를 빌드하기 위해서는 Secrets.xcconfig 와 GoogleService-Info.plist 파일이 필요합니다.
+
 - [작업 진행 상황](https://www.figma.com/board/SiHyXGeXghxikBKJqoxnkh/%EC%A7%84%ED%96%89-%EC%83%81%ED%99%A9?node-id=0-1&t=87sDM1UrF9fC4KOp-1)
 
 ## 스크린샷
