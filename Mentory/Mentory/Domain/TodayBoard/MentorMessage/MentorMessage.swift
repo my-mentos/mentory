@@ -132,10 +132,13 @@ final class MentorMessage: Sendable, ObservableObject {
         self.recentUpdate = .now
 
         // Watch로 멘토 메시지 전송
-        await WatchConnectivityManager.shared.updateMentorMessage(
-            messageContent,
-            character: messageCharacter.rawValue
-        )
+        let watchManager = WatchConnectivityManager.shared
+        
+        watchManager.message = messageContent
+        watchManager.character = messageCharacter.rawValue
+        
+        await watchManager.updateContext()
+        
         logger.debug("Watch로 멘토 메시지 전송: \(messageCharacter.rawValue)")
     }
     

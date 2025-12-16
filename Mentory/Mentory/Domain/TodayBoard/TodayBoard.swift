@@ -244,7 +244,13 @@ final class TodayBoard: Sendable, ObservableObject {
         let todos = suggestions.map { $0.content }
         let completionStatus = suggestions.map { $0.isDone }
 
-        await WatchConnectivityManager.shared.updateActionTodos(todos, completionStatus: completionStatus)
+        let watchManager = WatchConnectivityManager.shared
+        
+        watchManager.todos = todos
+        watchManager.todoCompletions = completionStatus
+        
+        await watchManager.updateContext()
+        
         logger.debug("Suggestions를 Watch로 전송: \(todos.count)개")
     }
 

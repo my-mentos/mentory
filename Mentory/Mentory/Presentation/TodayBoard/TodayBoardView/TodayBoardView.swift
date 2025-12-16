@@ -57,8 +57,10 @@ struct TodayBoardView: View {
         }
         .task {
             // WatchConnectivity 설정
-            await WatchConnectivityManager.shared.setUp()
-            await WatchConnectivityManager.shared.setTodoCompletionHandler { todoText, isCompleted in
+            let watchManager = WatchConnectivityManager.shared
+            
+            let handlers = WatchConnectivityManager.HandlerSet {
+                todoText, isCompleted in
                 Task { @MainActor in
                     await todayBoard.handleWatchTodoCompletion(
                         todoText: todoText,
@@ -67,6 +69,9 @@ struct TodayBoardView: View {
                     await todayBoard.fetchEarnedBadges()
                 }
             }
+            watchManager.handlers = handlers
+            
+            await watchManager.setUp()
         }
     }
 }

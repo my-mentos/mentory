@@ -9,25 +9,17 @@ import SwiftData
 
 // MARK: App
 @main
-struct MentoryApp: App { 
-    
+struct MentoryApp: App {
     // MARK: model
     @State var mentoryiOS = MentoryiOS(.real)
-
-    // MARK: WatchConnectivity
-    @StateObject private var watchConnectivity = WatchConnectivityManager.shared
-
-    init() {
-        Task {
-            await WatchConnectivityManager.shared.setUp()
-        }
-    }
+    @State private var watchConnectivity = WatchConnectivityManager.shared
+    
 
     // MARK: body
     var body: some Scene {
         WindowGroup {
             MentoryiOSView(mentoryiOS)
-                .environmentObject(watchConnectivity)
+                .environment(watchConnectivity)
         }
     }
 }
