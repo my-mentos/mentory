@@ -21,11 +21,11 @@
 		CE26C2DF2ED1E385008668E0 /* DequeModule in Frameworks */ = {isa = PBXBuildFile; productRef = CE26C2DE2ED1E385008668E0 /* DequeModule */; };
 		CE2903302ECD9EDD00AC403C /* FirebaseAI in Frameworks */ = {isa = PBXBuildFile; productRef = CE29032F2ECD9EDD00AC403C /* FirebaseAI */; };
 		CE2903322ECD9EDD00AC403C /* FirebaseAILogic in Frameworks */ = {isa = PBXBuildFile; productRef = CE2903312ECD9EDD00AC403C /* FirebaseAILogic */; };
-		CE6442FA2EE95633003DBEE5 /* Values.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE0028872ECF906E003324B0 /* Values.framework */; };
-		CE6442FB2EE95633003DBEE5 /* Values.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CE0028872ECF906E003324B0 /* Values.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CE6CB1422ED385AD00390FF3 /* AsyncAlgorithms in Frameworks */ = {isa = PBXBuildFile; productRef = CE6CB1412ED385AD00390FF3 /* AsyncAlgorithms */; };
 		CEB755832ECB9FF900FCE15A /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = CEB755822ECB9FF900FCE15A /* Collections */; };
 		CEB755852ECB9FF900FCE15A /* DequeModule in Frameworks */ = {isa = PBXBuildFile; productRef = CEB755842ECB9FF900FCE15A /* DequeModule */; };
+		CEE4F0C52EF16BC200AA1AB0 /* Values.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE0028872ECF906E003324B0 /* Values.framework */; };
+		CEE4F0C62EF16BC200AA1AB0 /* Values.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CE0028872ECF906E003324B0 /* Values.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -115,13 +115,13 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		CE00286A2ECF71E1003324B0 /* Embed Frameworks */ = {
+		CEE4F0C72EF16BC200AA1AB0 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				CE6442FB2EE95633003DBEE5 /* Values.framework in Embed Frameworks */,
+				CEE4F0C62EF16BC200AA1AB0 /* Values.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -205,7 +205,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CE6442FA2EE95633003DBEE5 /* Values.framework in Frameworks */,
+				CEE4F0C52EF16BC200AA1AB0 /* Values.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -327,7 +327,7 @@
 				588879682ECD98EB00083137 /* Sources */,
 				588879692ECD98EB00083137 /* Frameworks */,
 				5888796A2ECD98EB00083137 /* Resources */,
-				CE00286A2ECF71E1003324B0 /* Embed Frameworks */,
+				CEE4F0C72EF16BC200AA1AB0 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -930,14 +930,15 @@
 				SDKROOT = auto;
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx watchos watchsimulator xros xrsimulator";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_MODULE = YES;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TARGETED_DEVICE_FAMILY = "1,2,4,7";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 				XROS_DEPLOYMENT_TARGET = 26.1;
@@ -983,14 +984,15 @@
 				SDKROOT = auto;
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx watchos watchsimulator xros xrsimulator";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_MODULE = YES;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TARGETED_DEVICE_FAMILY = "1,2,4,7";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 				XROS_DEPLOYMENT_TARGET = 26.1;
