@@ -25,6 +25,7 @@ actor WatchConnectivityEngine: NSObject {
     private var cachedMentorCharacter: String = ""
     private var cachedActionTodos: [String] = []
     private var cachedTodoCompletionStatus: [Bool] = []
+    
     private var cachedIsPaired: Bool = false
     private var cachedIsWatchAppInstalled: Bool = false
     private var cachedIsReachable: Bool = false
@@ -185,20 +186,58 @@ actor WatchConnectivityEngine: NSObject {
         let mentorCharacter: String
     }
     
-    final class HandlerSet {
+    final class HandlerSet: NSObject, WCSessionDelegate {
         // MARK: core
         private let logger = Logger()
         let activateHandler: @Sendable (ConnectionState) -> Void
-        let changeHandler: @Sendable (Bool) -> Void
-        let todoHandler: @Sendable (String) -> Void
+        let todoHandler: @Sendable (String, Bool) -> Void
         
-        init(activateHandler: @Sendable @escaping (ConnectionState) -> Void, changeHandler: @Sendable @escaping (Bool) -> Void, todoHandler: @Sendable @escaping (String) -> Void) {
+        init(activateHandler: @Sendable @escaping (ConnectionState) -> Void, todoHandler: @Sendable @escaping (String, Bool) -> Void) {
             self.activateHandler = activateHandler
-            self.changeHandler = changeHandler
             self.todoHandler = todoHandler
         }
         
         // MARK: operator
+        func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: (any Error)?) {
+            let connectionState = ConnectionState(
+                isPaired: session.isPaired,
+                isWatchAppInstalled: session.isWatchAppInstalled,
+                isReachable: session.isReachable
+            )
+            
+            activateHandler(connectionState)
+        }
+        
+        func sessionDidBecomeInactive(_ session: WCSession) {
+            // Watch가 새로운 기기로 전환하는 중
+        }
+        
+        func sessionDidDeactivate(_ session: WCSession) {
+            // Watch가 전환 완료
+            session.activate()
+        }
+        
+        func sessionReachabilityDidChange(_ session: WCSession) {
+            let connectionState = ConnectionState(
+                isPaired: session.isPaired,
+                isWatchAppInstalled: session.isWatchAppInstalled,
+                isReachable: session.isReachable
+            )
+            
+            activateHandler(connectionState)
+        }
+        
+        func session(_ session: WCSession, didReceiveMessage message: [String : Any]) {
+            guard let action = message["action"] as? String,
+                  action == "todoCompletion",
+                  let todoText = message["todoText"] as? String,
+                  let isCompleted = message["isCompleted"] as? Bool else {
+                return
+            }
+
+            todoHandler(todoText, isCompleted)
+
+        }
     }
 }
 
