@@ -10,22 +10,19 @@ import Combine
 /// iOS 앱에서 Watch 앱과 통신하기 위한 매니저
 @MainActor @Observable
 final class WatchConnectivityManager {
-    // MARK: - Core
+    // MARK: core
     static let shared = WatchConnectivityManager()
+    private init() { }
 
-    // MARK: - State
+    // MARK: state
     var isPaired: Bool = false
     var isWatchAppInstalled: Bool = false
     var isReachable: Bool = false
 
     private var engine: WatchConnectivityEngine? = nil
 
-    // MARK: - Initialization
-    private init() { }
 
-    // MARK: - Public Methods
-
-    /// 엔진 설정 및 활성화
+    // MARK: action
     func setUp() async {
         // capture
         guard engine == nil else {
@@ -41,7 +38,8 @@ final class WatchConnectivityManager {
                 self?.isReachable = state.isReachable
             }
         }
-        await engine.activate()
+        
+        engine.activate()
 
         // mutate
         self.engine = engine

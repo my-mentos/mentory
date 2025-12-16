@@ -14,7 +14,7 @@ actor WatchConnectivityEngine: NSObject {
     // MARK: core
     static let shared = WatchConnectivityEngine()
 
-    private nonisolated let logger = Logger(subsystem: "Mentory.WatchConnectivityEngine", category: "Service")
+    private nonisolated let logger = Logger()
     private nonisolated let session: WCSession
 
     // MARK: - State
@@ -28,10 +28,15 @@ actor WatchConnectivityEngine: NSObject {
 
     // MARK: - Handler
     private var stateUpdateHandler: StateUpdateHandler?
+    func setStateUpdateHandler(_ handler: @escaping StateUpdateHandler) {
+        self.stateUpdateHandler = handler
+    }
+    
     private var todoCompletionHandler: TodoCompletionHandler?
+    func setTodoCompletionHandler(_ handler: @escaping TodoCompletionHandler) {
+        self.todoCompletionHandler = handler
+    }
 
-    typealias StateUpdateHandler = @Sendable (ConnectionState) -> Void
-    typealias TodoCompletionHandler = @Sendable (String, Bool) -> Void
 
     // MARK: - Initialization
     private override init() {
@@ -49,16 +54,6 @@ actor WatchConnectivityEngine: NSObject {
 
         session.delegate = self
         session.activate()
-    }
-
-    /// 상태 업데이트 핸들러 설정
-    func setStateUpdateHandler(_ handler: @escaping StateUpdateHandler) {
-        self.stateUpdateHandler = handler
-    }
-
-    /// 투두 완료 처리 핸들러 설정
-    func setTodoCompletionHandler(_ handler: @escaping TodoCompletionHandler) {
-        self.todoCompletionHandler = handler
     }
 
     /// 멘토 메시지를 Watch로 전송
@@ -175,6 +170,22 @@ actor WatchConnectivityEngine: NSObject {
 
         stateUpdateHandler?(state)
     }
+    
+    
+    // MARK: value
+    typealias StateUpdateHandler = @Sendable (ConnectionState) -> Void
+    typealias TodoCompletionHandler = @Sendable (String, Bool) -> Void
+    
+    struct ConnectionState: Sendable, Hashable {
+        let isPaired: Bool
+        let isWatchAppInstalled: Bool
+        let isReachable: Bool
+    }
+
+    struct CachedData: Sendable, Hashable {
+        let mentorMessage: String
+        let mentorCharacter: String
+    }
 }
 
 // MARK: - WCSessionDelegate
@@ -214,16 +225,4 @@ extension WatchConnectivityEngine: @preconcurrency WCSessionDelegate {
         }
     }
 
-}
-
-// MARK: - Data Model
-struct ConnectionState: Sendable {
-    let isPaired: Bool
-    let isWatchAppInstalled: Bool
-    let isReachable: Bool
-}
-
-struct CachedData: Sendable {
-    let mentorMessage: String
-    let mentorCharacter: String
 }
