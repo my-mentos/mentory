@@ -108,7 +108,8 @@ actor WatchConnectivityEngine: NSObject {
     // MARK: - Internal Methods
 
     /// 활성화 상태 업데이트
-    func handleActivation(state: WCSessionActivationState, session: WCSession, error: Error?) {
+    func handleActivation(state: WCSessionActivationState,
+                          session: WCSession, error: Error?) {
         cachedIsPaired = session.isPaired
         cachedIsWatchAppInstalled = session.isWatchAppInstalled
         cachedIsReachable = session.isReachable
@@ -185,6 +186,22 @@ actor WatchConnectivityEngine: NSObject {
     struct CachedData: Sendable, Hashable {
         let mentorMessage: String
         let mentorCharacter: String
+    }
+    
+    final class HandlerSet {
+        // MARK: core
+        private let logger = Logger()
+        let activateHandler: @Sendable (ConnectionState) -> Void
+        let changeHandler: @Sendable (Bool) -> Void
+        let todoHandler: @Sendable (String) -> Void
+        
+        init(activateHandler: @Sendable @escaping (ConnectionState) -> Void, changeHandler: @Sendable @escaping (Bool) -> Void, todoHandler: @Sendable @escaping (String) -> Void) {
+            self.activateHandler = activateHandler
+            self.changeHandler = changeHandler
+            self.todoHandler = todoHandler
+        }
+        
+        // MARK: operator
     }
 }
 
