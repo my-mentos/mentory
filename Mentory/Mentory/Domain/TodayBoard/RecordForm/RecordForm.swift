@@ -98,7 +98,6 @@ final class RecordForm: Sendable, ObservableObject, Identifiable {
             return
         }
         
-        let todayBoard = self.owner!
 //        let mentoryiOS = todayBoard.owner!
 
         // 이를 어디에서 설명해야 하는가.
