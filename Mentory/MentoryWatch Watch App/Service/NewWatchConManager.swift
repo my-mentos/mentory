@@ -45,7 +45,9 @@ final class NewWatchConManager: Sendable {
         }
         
         // process
-        let handler = HandlerSet { [weak self] watchData in
+        let handler = HandlerSet { status in
+            
+        } updateHandler: { [weak self] watchData in
             Task { @MainActor in
                 self?.mentorMessage = watchData.mentorMessage
                 self?.mentorCharacter = watchData.mentorCharacter
@@ -113,6 +115,7 @@ final class NewWatchConManager: Sendable {
     }
     
     // MARK: value
+    typealias StateHandler = @Sendable (String) -> Void
     typealias UpdateHandler = @Sendable (WatchData) -> Void
     
     struct WatchData: Sendable, Hashable {
@@ -124,14 +127,35 @@ final class NewWatchConManager: Sendable {
     }
     
     nonisolated final class HandlerSet: NSObject, WCSessionDelegate {
+        private let logger = Logger()
+        let stateHandler: StateHandler
         let updateHandler: UpdateHandler
-        init(updateHandler: @escaping UpdateHandler) {
+        init(stateHandler: @escaping StateHandler, updateHandler: @escaping UpdateHandler) {
+            self.stateHandler = stateHandler
             self.updateHandler = updateHandler
         }
         
         func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: (any Error)?) {
             // ConnectionStatus 업데이트
-            fatalError("구현 예정입니다.")
+            let statusMessage: String
+
+            switch activationState {
+            case .activated:
+                statusMessage = "활성화됨"
+            case .inactive:
+                statusMessage = "비활성화됨"
+            case .notActivated:
+                statusMessage = "활성화 안됨"
+            @unknown default:
+                statusMessage = "알 수 없는 상태"
+            }
+
+            if let error {
+                logger.error("WCSession 활성화 오류: \(error.localizedDescription)")
+                stateHandler("오류: \(error.localizedDescription)")
+            } else {
+                stateHandler(statusMessage)
+            }
         }
         
         func session(_ session: WCSession, didReceiveMessage message: [String : Any]) {
