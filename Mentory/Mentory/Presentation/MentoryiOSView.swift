@@ -93,7 +93,11 @@ struct MentoryiOSView: View {
     
     @ViewBuilder
     private var StaticTab: some View {
-        Text("통계 화면 준비 중")
+        if let statisticsBoard = mentoryiOS.statisticsBoard {
+            StatisticsBoardView(board: statisticsBoard)
+        } else {
+            Text("통계 화면을 준비 중입니다.")
+        }
     }
     
     @ViewBuilder

@@ -53,6 +53,7 @@ final class MentoryiOS: Sendable, ObservableObject {
     @Published var onboarding: Onboarding? = nil
     @Published var todayBoard: TodayBoard? = nil
     @Published var settingBoard: SettingBoard? = nil
+    @Published var statisticsBoard: StatisticsBoard? = nil
     
     
     // MARK: action
@@ -100,6 +101,7 @@ final class MentoryiOS: Sendable, ObservableObject {
 
         self.todayBoard = TodayBoard(owner: self)
         self.settingBoard = SettingBoard(owner: self)
+        self.statisticsBoard = StatisticsBoard(mentoryDB: MentoryDBAdapter())
     }
     func saveUserName() async {
         // capture
