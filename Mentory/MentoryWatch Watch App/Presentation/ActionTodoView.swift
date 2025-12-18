@@ -67,9 +67,6 @@ struct ActionTodoView: View {
             
             connectivityManager.updateContext()
         }
-
-//        // 2. iPhone으로 완료 상태 전송
-//        await connectivityManager.sendTodoCompletion(todoText: todoText, isCompleted: newStatus)
     }
 }
 
