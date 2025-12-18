@@ -1,5 +1,5 @@
 //
-//  NewWatchConManager.swift
+//  WatchConnectManager.swift
 //  Mentory
 //
 //  Created by 김민우 on 12/17/25.
@@ -11,9 +11,9 @@ import WatchConnectivity
 
 // MARK: Object
 @MainActor @Observable
-final class NewWatchConManager: Sendable {
+final class WatchConnectManager: Sendable {
     // MARK: core
-    static let shared = NewWatchConManager()
+    static let shared = WatchConnectManager()
     
     
     // MARK: state
@@ -46,7 +46,7 @@ final class NewWatchConManager: Sendable {
         
         // process
         let handler = HandlerSet { status in
-            
+            // 상태 업데이트?
         } updateHandler: { [weak self] watchData in
             Task { @MainActor in
                 self?.mentorMessage = watchData.mentorMessage

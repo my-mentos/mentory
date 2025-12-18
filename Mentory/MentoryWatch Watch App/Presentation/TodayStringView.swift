@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct TodayStringView: View {
-    @State private var connectivityManager = NewWatchConManager.shared
+    @State private var connectivityManager = WatchConnectManager.shared
 
     var body: some View {
         ScrollView {
