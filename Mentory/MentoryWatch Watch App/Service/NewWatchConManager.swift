@@ -46,7 +46,7 @@ final class NewWatchConManager: Sendable {
         
         // process
         let handler = HandlerSet { status in
-            
+            // 상태 업데이트?
         } updateHandler: { [weak self] watchData in
             Task { @MainActor in
                 self?.mentorMessage = watchData.mentorMessage
