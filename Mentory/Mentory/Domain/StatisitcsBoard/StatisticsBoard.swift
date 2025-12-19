@@ -50,17 +50,31 @@ final class StatisticsBoard {
             }
         }
     }
+    
     func selectDate(_ date: Date?) {
         state.selectedDate = date
     }
+    
     func moveMonth(_ delta: Int) {
         guard let next = calendar.date(byAdding: .month, value: delta, to: state.selectedMonth) else { return }
         state.selectedMonth = next
         state.selectedDate = nil
     }
+    
     func record(for day: Date) -> RecordData? {
         state.allRecords.first { record in
             calendar.isDate(record.recordDate.rawValue, inSameDayAs: day)
         }
+    }
+    
+    func setMonth(_ date: Date) {
+        let comps = calendar.dateComponents([.year, .month], from: date)
+        state.selectedMonth = calendar.date(from: comps) ?? date
+        state.selectedDate = nil
+    }
+
+    func goToday() {
+        setMonth(Date())
+        state.selectedDate = Date()
     }
 }

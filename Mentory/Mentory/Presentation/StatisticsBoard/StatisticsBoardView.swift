@@ -32,7 +32,9 @@ struct StatisticsBoardView: View {
                             MonthHeader(
                                 month: board.state.selectedMonth,
                                 onPrev: { board.moveMonth(-1) },
-                                onNext: { board.moveMonth(1) }
+                                onNext: { board.moveMonth(1) },
+                                onPickMonth: { board.setMonth($0) },
+                                onToday: { board.goToday() }
                             )
 
                             CalendarGrid(
@@ -65,14 +67,39 @@ private struct MonthHeader: View {
     let month: Date
     let onPrev: () -> Void
     let onNext: () -> Void
+    let onPickMonth: (Date) -> Void
+    let onToday: () -> Void
 
+    private var isCurrentMonth: Bool {
+        Calendar.current.isDate(month, equalTo: Date(), toGranularity: .month)
+    }
+    
     var body: some View {
-        HStack {
+        HStack(spacing: 12) {
             Button(action: onPrev) { Image(systemName: "chevron.left") }
+
+            DatePicker(
+                "",
+                selection: Binding(
+                    get: { month },
+                    set: { onPickMonth($0) }
+                ),
+                displayedComponents: [.date]
+            )
+            .labelsHidden()
+            .datePickerStyle(.compact)
+
             Spacer()
-            Text(month, format: .dateTime.year().month())
-                .font(.headline)
-            Spacer()
+
+            Button("오늘로 이동") { onToday() }
+                .font(.subheadline.weight(.semibold))
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .background(.thinMaterial)
+                .clipShape(Capsule())
+                .disabled(isCurrentMonth)
+                .opacity(isCurrentMonth ? 0.4 : 1.0)
+
             Button(action: onNext) { Image(systemName: "chevron.right") }
         }
     }
@@ -102,6 +129,7 @@ private struct CalendarGrid: View {
                         day: day,
                         isCurrentMonth: calendar.isDate(day, equalTo: month, toGranularity: .month),
                         isSelected: selectedDate.map { calendar.isDate($0, inSameDayAs: day) } ?? false,
+                        isToday: calendar.isDateInToday(day),
                         record: recordForDay(day),
                         onTap: { onSelect(day) }
                     )
@@ -144,6 +172,7 @@ private struct DayCell: View {
     let day: Date
     let isCurrentMonth: Bool
     let isSelected: Bool
+    let isToday: Bool
     let record: RecordData?
     let onTap: () -> Void
 
