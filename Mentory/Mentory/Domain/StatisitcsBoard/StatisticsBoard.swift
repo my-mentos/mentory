@@ -22,10 +22,11 @@ final class StatisticsBoard {
     }
 
     private(set) var state = State()
-    private let mentoryDB: MentoryDBAdapter
+    private let mentoryDB: any MentoryDBInterface
     private let calendar = Calendar.current
 
-    init(mentoryDB: MentoryDBAdapter) {
+
+    init(mentoryDB: any MentoryDBInterface) {
         self.mentoryDB = mentoryDB
         self.state.selectedMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: Date())) ?? Date()
     }

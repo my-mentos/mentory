@@ -33,6 +33,8 @@ final class MentoryiOS: Sendable, ObservableObject {
             self.firebaseLLM = FirebaseLLMMock()
             self.reminderCenter = ReminderNotificationAdapter() // 임시
         }
+        
+        self.statisticsBoard = StatisticsBoard(mentoryDB: self.mentoryDB)
     }
     
     
@@ -101,7 +103,6 @@ final class MentoryiOS: Sendable, ObservableObject {
 
         self.todayBoard = TodayBoard(owner: self)
         self.settingBoard = SettingBoard(owner: self)
-        self.statisticsBoard = StatisticsBoard(mentoryDB: MentoryDBAdapter())
     }
     func saveUserName() async {
         // capture
