@@ -9,13 +9,13 @@ import SwiftUI
 import Values
 
 struct StatisticsBoardView: View {
-
+    
     @State private var board: StatisticsBoard
-
+    
     init(board: StatisticsBoard) {
         _board = State(initialValue: board)
     }
-
+    
     var body: some View {
         NavigationStack {
             Group {
@@ -36,14 +36,14 @@ struct StatisticsBoardView: View {
                                 onPickMonth: { board.setMonth($0) },
                                 onToday: { board.goToday() }
                             )
-
+                            
                             CalendarGrid(
                                 month: board.state.selectedMonth,
                                 selectedDate: board.state.selectedDate,
                                 recordForDay: { board.record(for: $0) },
                                 onSelect: { board.selectDate($0) }
                             )
-
+                            
                             if let selected = board.state.selectedDate,
                                let record = board.record(for: selected) {
                                 SelectedDayCard(day: selected, record: record)
@@ -59,7 +59,9 @@ struct StatisticsBoardView: View {
             }
             .navigationTitle("통계")
         }
-        .onAppear { board.load() }
+        .onAppear {
+            board.load()
+        }
     }
 }
 
@@ -69,15 +71,24 @@ private struct MonthHeader: View {
     let onNext: () -> Void
     let onPickMonth: (Date) -> Void
     let onToday: () -> Void
-
+    
     private var isCurrentMonth: Bool {
         Calendar.current.isDate(month, equalTo: Date(), toGranularity: .month)
     }
     
+    private var monthFormatter: DateFormatter {
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "ko_KR")
+        f.dateFormat = "yyyy년 M월"
+        return f
+    }
+    
     var body: some View {
         HStack(spacing: 12) {
-            Button(action: onPrev) { Image(systemName: "chevron.left") }
-
+            Button(action: onPrev) {
+                Image(systemName: "chevron.left")
+            }
+            
             DatePicker(
                 "",
                 selection: Binding(
@@ -88,19 +99,23 @@ private struct MonthHeader: View {
             )
             .labelsHidden()
             .datePickerStyle(.compact)
-
+            .environment(\.locale, Locale(identifier: "ko_KR"))
             Spacer()
-
-            Button("오늘로 이동") { onToday() }
-                .font(.subheadline.weight(.semibold))
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
-                .background(.thinMaterial)
-                .clipShape(Capsule())
-                .disabled(isCurrentMonth)
-                .opacity(isCurrentMonth ? 0.4 : 1.0)
-
-            Button(action: onNext) { Image(systemName: "chevron.right") }
+            
+            Button("오늘로 이동") {
+                onToday()
+            }
+            .font(.subheadline.weight(.semibold))
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .background(.thinMaterial)
+            .clipShape(Capsule())
+            .disabled(isCurrentMonth)
+            .opacity(isCurrentMonth ? 0.4 : 1.0)
+            
+            Button(action: onNext) {
+                Image(systemName: "chevron.right")
+            }
         }
     }
 }
@@ -110,11 +125,11 @@ private struct CalendarGrid: View {
     let selectedDate: Date?
     let recordForDay: (Date) -> RecordData?
     let onSelect: (Date) -> Void
-
+    
     private let calendar = Calendar.current
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 6), count: 7)
     private let weekdaySymbols = ["일","월","화","수","목","금","토"]
-
+    
     var body: some View {
         VStack(spacing: 8) {
             LazyVGrid(columns: columns, spacing: 8) {
@@ -122,13 +137,15 @@ private struct CalendarGrid: View {
                     Text(w).font(.caption).foregroundStyle(.secondary)
                 }
             }
-
+            
             LazyVGrid(columns: columns, spacing: 8) {
                 ForEach(daysInMonthGrid(month), id: \.self) { day in
                     DayCell(
                         day: day,
                         isCurrentMonth: calendar.isDate(day, equalTo: month, toGranularity: .month),
-                        isSelected: selectedDate.map { calendar.isDate($0, inSameDayAs: day) } ?? false,
+                        isSelected: selectedDate.map {
+                            calendar.isDate($0, inSameDayAs: day)
+                        } ?? false,
                         isToday: calendar.isDateInToday(day),
                         record: recordForDay(day),
                         onTap: { onSelect(day) }
@@ -137,33 +154,29 @@ private struct CalendarGrid: View {
             }
         }
     }
-
-    // 달력 그리드용 날짜 배열(앞/뒤 공백 포함)
+    
     private func daysInMonthGrid(_ month: Date) -> [Date] {
         let startOfMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: month))!
         let range = calendar.range(of: .day, in: .month, for: startOfMonth)!
-        let firstWeekday = calendar.component(.weekday, from: startOfMonth) // 1=일
-
+        let firstWeekday = calendar.component(.weekday, from: startOfMonth)
+        
         var days: [Date] = []
-
-        // 앞쪽 빈칸(이전 달 날짜로 채우기)
+        
         let leading = firstWeekday - 1
         if leading > 0 {
             for i in stride(from: leading, to: 0, by: -1) {
                 days.append(calendar.date(byAdding: .day, value: -i, to: startOfMonth)!)
             }
         }
-
-        // 이번 달 날짜
+        
         for d in range {
             days.append(calendar.date(byAdding: .day, value: d - 1, to: startOfMonth)!)
         }
-
-        // 뒤쪽 채우기(7의 배수로)
+        
         while days.count % 7 != 0 {
             days.append(calendar.date(byAdding: .day, value: 1, to: days.last!)!)
         }
-
+        
         return days
     }
 }
@@ -175,17 +188,16 @@ private struct DayCell: View {
     let isToday: Bool
     let record: RecordData?
     let onTap: () -> Void
-
+    
     private let calendar = Calendar.current
-
+    
     var body: some View {
         Button(action: onTap) {
             VStack(spacing: 4) {
                 Text("\(calendar.component(.day, from: day))")
                     .font(.subheadline)
                     .foregroundStyle(isCurrentMonth ? .primary : .secondary)
-
-                // 기록이 있으면 감정 표시(일단 텍스트/점으로 MVP)
+                
                 if let record {
                     Text(record.emotion.rawValue)
                         .font(.caption2)
@@ -207,15 +219,15 @@ private struct DayCell: View {
 private struct SelectedDayCard: View {
     let day: Date
     let record: RecordData
-
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(day.formatted(date: .long, time: .omitted))
                 .font(.headline)
-
+            
             Text(record.emotion.rawValue)
                 .font(.subheadline)
-
+            
             Text(record.analyzedResult)
                 .font(.footnote)
                 .foregroundStyle(.secondary)
