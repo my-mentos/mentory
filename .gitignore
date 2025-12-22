@@ -17,3 +17,16 @@ Secrets.xcconfig
 xcuserdata/
 *.xcscmblueprint
 *.xccheckout
+
+# fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
+fastlane/README.md
+fastlane/app_store_connect_api_key.json
+build/
+*.ipa
+*.dSYM.zip
+Gemfile.lock
+.env
