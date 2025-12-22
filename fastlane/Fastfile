@@ -1,0 +1,100 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:ios)
+
+platform :ios do
+  desc "Push a new beta build to TestFlight"
+  lane :beta do
+    # 빌드 번호 자동 증가
+    increment_build_number(
+      xcodeproj: "Mentory/Mentory.xcodeproj"
+    )
+
+    # 앱 빌드
+    build_app(
+      scheme: "Mentory",
+      workspace: nil,
+      xcodeproj: "Mentory/Mentory.xcodeproj",
+      export_method: "app-store",
+      export_options: {
+        provisioningProfiles: {
+          "cloud.mandooplz.Mentory" => "match AppStore cloud.mandooplz.Mentory",
+          "cloud.mandooplz.Mentory.watch" => "match AppStore cloud.mandooplz.Mentory.watch",
+          "cloud.mandooplz.Mentory.widget" => "match AppStore cloud.mandooplz.Mentory.widget"
+        }
+      },
+      output_directory: "./build",
+      output_name: "Mentory.ipa"
+    )
+
+    # TestFlight에 업로드
+    upload_to_testflight(
+      api_key_path: "fastlane/app_store_connect_api_key.json",
+      skip_waiting_for_build_processing: true,
+      # 테스터에게 자동으로 배포하지 않음 (App Store Connect에서 수동으로 선택)
+      distribute_external: false,
+      # changelog 파일이 있으면 사용
+      changelog: File.exist?("./fastlane/changelog.txt") ? File.read("./fastlane/changelog.txt") : "Bug fixes and improvements"
+    )
+  end
+
+  desc "Sync certificates and provisioning profiles"
+  lane :sync_certificates do
+    match(
+      type: "appstore",
+      app_identifier: [
+        "cloud.mandooplz.Mentory",
+        "cloud.mandooplz.Mentory.watch",
+        "cloud.mandooplz.Mentory.widget"
+      ],
+      readonly: true,
+      api_key_path: "fastlane/app_store_connect_api_key.json"
+    )
+  end
+
+  desc "Run tests"
+  lane :test do
+    run_tests(
+      scheme: "Mentory",
+      xcodeproj: "Mentory/Mentory.xcodeproj",
+      devices: ["iPhone 15 Pro"]
+    )
+  end
+
+  desc "Take screenshots"
+  lane :screenshots do
+    capture_screenshots(
+      scheme: "Mentory",
+      xcodeproj: "Mentory/Mentory.xcodeproj"
+    )
+  end
+
+  desc "Build app only (without uploading)"
+  lane :build_only do
+    increment_build_number(
+      xcodeproj: "Mentory/Mentory.xcodeproj"
+    )
+
+    build_app(
+      scheme: "Mentory",
+      workspace: nil,
+      xcodeproj: "Mentory/Mentory.xcodeproj",
+      export_method: "app-store",
+      output_directory: "./build",
+      output_name: "Mentory.ipa"
+    )
+  end
+end
