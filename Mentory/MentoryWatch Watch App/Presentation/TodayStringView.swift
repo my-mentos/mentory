@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct TodayStringView: View {
-    @StateObject private var connectivityManager = WatchConnectivityManager.shared
+    @State private var connectivityManager = WatchConnectManager.shared
 
     var body: some View {
         ScrollView {
@@ -23,14 +23,15 @@ struct TodayStringView: View {
                     .font(.headline)
 
                 // 멘토 메시지
-                Text(connectivityManager.mentorMessage)
+                Text(connectivityManager.mentorMessage ?? "")
                     .font(.body)
                     .multilineTextAlignment(.center)
                     .padding()
             }
         }
         .task {
-            await connectivityManager.loadInitialData()
+            connectivityManager.setUp()
+            connectivityManager.loadContext()
         }
     }
 

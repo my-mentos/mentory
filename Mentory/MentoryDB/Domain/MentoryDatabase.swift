@@ -264,6 +264,29 @@ public actor MentoryDatabase: Sendable {
             return nil
         }
     }
+    
+    public func getRecords() -> [RecordData] {
+        let context = ModelContext(MentoryDatabase.container)
+        let id = self.id
+
+        let descriptor = FetchDescriptor<MentoryDBModel>(
+            predicate: #Predicate { $0.id == id }
+        )
+
+        do {
+            guard let db = try context.fetch(descriptor).first else {
+                logger.error("MentoryDB가 존재하지 않아 getRecords에서 [] 반환")
+                return []
+            }
+
+            let sorted = db.records.sorted(by: { $0.recordDate > $1.recordDate })
+            return sorted.map { $0.toData() }
+        } catch {
+            logger.error("getRecords 조회 중 오류 발생: \(error)")
+            return []
+        }
+    }
+    
 
     public func getCompletedSuggestionsCount() -> Int {
         let context = ModelContext(MentoryDatabase.container)

@@ -28,6 +28,9 @@ struct MentoryDatabaseMock: MentoryDBInterface {
             object.userName = newName
         }
     }
+    @concurrent func getRecords() async throws -> [RecordData] {
+        return []
+    }
     
     @concurrent func getMentorMessage() async throws -> Values.MessageData? {
         return await MainActor.run {

@@ -81,7 +81,7 @@ final class MentorMessage: Sendable, ObservableObject {
         
         let mentoryiOS = self.owner!.owner!
         let mentoryDB = mentoryiOS.mentoryDB
-        let alanLLM = mentoryiOS.alanLLM
+        let firebaseLLM = mentoryiOS.firebaseLLM
         
         // process
         let messageFromDB: MessageData?
@@ -104,9 +104,9 @@ final class MentorMessage: Sendable, ObservableObject {
                 messageCharacter = messageFromDB!.characterType
             } else {
                 // AlanLLM - 새로운 메시지 가져오기
-                let question = AlanQuestion(character.question)
+                let question = FirebaseQuestion(character.question)
                 
-                async let answer = try await alanLLM.question(question)
+                async let answer = try await firebaseLLM.question(question)
                 let newMessageContent = try await answer.content
                 
                 messageContent = newMessageContent

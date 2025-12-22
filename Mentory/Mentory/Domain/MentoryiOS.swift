@@ -33,6 +33,8 @@ final class MentoryiOS: Sendable, ObservableObject {
             self.firebaseLLM = FirebaseLLMMock()
             self.reminderCenter = ReminderNotificationAdapter() // 임시
         }
+        
+        self.statisticsBoard = StatisticsBoard(mentoryDB: self.mentoryDB)
     }
     
     
@@ -53,6 +55,7 @@ final class MentoryiOS: Sendable, ObservableObject {
     @Published var onboarding: Onboarding? = nil
     @Published var todayBoard: TodayBoard? = nil
     @Published var settingBoard: SettingBoard? = nil
+    @Published var statisticsBoard: StatisticsBoard? = nil
     
     
     // MARK: action

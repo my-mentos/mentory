@@ -50,6 +50,9 @@ nonisolated struct MentoryDBAdapter: MentoryDBInterface {
         
         return DailyRecordAdapter(dailyRecord)
     }
+    @concurrent func getRecords() async throws -> [RecordData] {
+        return await mentoryDB.getRecords()
+    }
 
     @concurrent func getCompletedSuggestionsCount() async throws -> Int {
         await mentoryDB.getCompletedSuggestionsCount()

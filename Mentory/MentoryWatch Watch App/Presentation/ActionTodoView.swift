@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ActionTodoView: View {
-    @StateObject private var connectivityManager = WatchConnectivityManager.shared
+    @State private var connectivityManager = WatchConnectManager.shared
 
     var body: some View {
         List {
@@ -45,7 +45,9 @@ struct ActionTodoView: View {
         }
         .task {
             // View가 나타날 때 데이터 로드
-            await connectivityManager.loadInitialData()
+            connectivityManager.setUp()
+            
+            connectivityManager.loadContext()
         }
     }
 
@@ -59,10 +61,12 @@ struct ActionTodoView: View {
         if let index = connectivityManager.actionTodos.firstIndex(of: todoText),
            index < connectivityManager.todoCompletionStatus.count {
             connectivityManager.todoCompletionStatus[index] = newStatus
+            
+            connectivityManager.actionTodos[index] = todoText
+            connectivityManager.todoCompletionStatus[index] = newStatus
+            
+            connectivityManager.updateContext()
         }
-
-        // 2. iPhone으로 완료 상태 전송
-        await connectivityManager.sendTodoCompletion(todoText: todoText, isCompleted: newStatus)
     }
 }
 
