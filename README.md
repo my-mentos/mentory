@@ -385,6 +385,9 @@ Mentory/
 - [WatchConnectivity 이해하기](docs/watchos/watchconnectivity.md)
 - [Widget Extension 개념 이해하기](docs/Widget-Extension/README.md)
 - [Firebase AI 사용하기](docs/firebase-ai/README.md)
+- [APNs 푸시 알림 가이드](docs/APNs/README.md)
+- [Fastlane & TestFlight 배포 가이드](docs/fastlane-testflight/README.md)
+- [Fastlane 빠른 시작 가이드](docs/fastlane-testflight/QUICKSTART.md)
 
 ## 트러블슈팅 문서
 
