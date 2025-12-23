@@ -5,10 +5,11 @@
 //  Created by 김민우 on 12/23/25.
 //
 import Foundation
+import Values
 
 
 // MARK: Adapter
-public nonisolated struct FirebaseLLMFakeAdapter: Sendable {
+public nonisolated struct FirebaseLLMFakeAdapter: FirebaseLLMAdapterInterface {
     // MARK: core
     private let answerSamples: [String] = [
         "기록을 분석해보니 지금 집중하고 싶은 감정의 결이 명확하게 드러나고 있어요.",
@@ -23,7 +24,7 @@ public nonisolated struct FirebaseLLMFakeAdapter: Sendable {
     ]
 
     // MARK: task
-    func question(_ question: FirebaseQuestion) async -> FirebaseAnswer? {
+    public func question(_ question: FirebaseQuestion) async -> FirebaseAnswer? {
         let template = answerSamples.randomElement() ?? "기록을 잘 확인했어요."
         guard let snippet = excerpt(from: question, limit: 90) else {
             return FirebaseAnswer(template)
@@ -33,7 +34,7 @@ public nonisolated struct FirebaseLLMFakeAdapter: Sendable {
         return FirebaseAnswer(response)
     }
     
-    func getEmotionAnalysis(_ question: FirebaseQuestion, character: MentoryCharacter) async -> FirebaseAnalysis? {
+    public func getEmotionAnalysis(_ question: FirebaseQuestion, character: MentoryCharacter) async -> FirebaseAnalysis? {
         let mindType = determineMindType(from: question)
         let sentiment = sentiment(for: mindType)
         let message = empathyMessage(for: sentiment, character: character, question: question)

@@ -62,7 +62,7 @@ public actor DailyRecord: Sendable {
     
     // MARK: action
     public func getSuggestions() async -> [SuggestionData] {
-        let context = ModelContext(MentoryDatabase.container)
+        let context = ModelContext(MentoryDBReal.container)
         let recordId = self.id
 
         let descriptor = FetchDescriptor<DailyRecordModel>(

@@ -13,7 +13,7 @@ public nonisolated struct FirebaseLLMAdapter: FirebaseLLMAdapterInterface {
     private let ai: FirebaseAI
     private let model: GenerativeModel
     
-    init(mode: SystemMode) {
+    init() {
         if FirebaseApp.app() == nil {
             FirebaseApp.configure()
         }

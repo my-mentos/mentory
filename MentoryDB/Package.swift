@@ -5,6 +5,9 @@ import PackageDescription
 
 let package = Package(
     name: "MentoryDB",
+    platforms: [
+        .iOS(.v18)
+    ],
     products: [
         .library(
             name: "MentoryDB",
@@ -18,5 +21,17 @@ let package = Package(
         .target(
             name: "MentoryDB"
         ),
+        
+        .target(
+            name: "MentoryDBAdapter",
+            dependencies: [
+                "MentoryDB",
+                "MentoryDBFake"
+            ]
+        ),
+        
+        .target(
+            name: "MentoryDBFake"
+        )
     ]
 )
