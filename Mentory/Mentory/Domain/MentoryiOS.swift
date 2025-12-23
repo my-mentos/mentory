@@ -7,6 +7,10 @@
 import Foundation
 import Combine
 import OSLog
+import Values
+import FirebaseLLMAdapter
+import MentoryDBAdapter
+import iOSManager
 
 
 // MARK: Object
@@ -15,8 +19,7 @@ final class MentoryiOS: Sendable, ObservableObject {
     // MARK: core
     nonisolated let logger = Logger(subsystem: "MentoryiOS.MentoryiOS", category: "Domain")
     nonisolated let mentoryDB: any MentoryDBInterface
-    nonisolated let alanLLM: any AlanLLMInterface
-    nonisolated let firebaseLLM: any FirebaseLLMInterface
+    nonisolated let firebaseLLM: any FirebaseLLMAdapterInterface
 
     let reminderCenter: any ReminderNotificationInterface
 
@@ -24,13 +27,11 @@ final class MentoryiOS: Sendable, ObservableObject {
         switch mode {
         case .real:
             self.mentoryDB = MentoryDBAdapter()
-            self.alanLLM = AlanLLM()
-            self.firebaseLLM = FirebaseLLM()
+            self.firebaseLLM = FirebaseLLMAdapter()
             self.reminderCenter = ReminderNotificationAdapter()
         case .test:
-            self.mentoryDB = MentoryDatabaseMock()
-            self.alanLLM = AlanLLMMock()
-            self.firebaseLLM = FirebaseLLMMock()
+            self.mentoryDB = MentoryDBFakeAdapter()
+            self.firebaseLLM = FirebaseLLMFakeAdapter()
             self.reminderCenter = ReminderNotificationAdapter() // 임시
         }
         
@@ -118,12 +119,5 @@ final class MentoryiOS: Sendable, ObservableObject {
             logger.error("\(error)")
             return
         }
-    }
-    
-    
-    // MARK: view
-    enum SystemMode: Sendable, Hashable {
-        case test
-        case real
     }
 }

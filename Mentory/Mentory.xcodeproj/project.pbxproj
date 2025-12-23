@@ -11,21 +11,16 @@
 		69765AE42ECEADFF00776A5F /* MentoryWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 7B1337652ECD63A2009931A4 /* MentoryWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		7B1337682ECD63A2009931A4 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B1337672ECD63A2009931A4 /* WidgetKit.framework */; };
 		7B13376A2ECD63A2009931A4 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B1337692ECD63A2009931A4 /* SwiftUI.framework */; };
-		7BAE5F192ED3656D00BD1DDD /* Values.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE0028872ECF906E003324B0 /* Values.framework */; platformFilter = ios; };
-		CE00287A2ECF8D3B003324B0 /* MentoryDB.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE0028742ECF8D3B003324B0 /* MentoryDB.framework */; };
-		CE00287B2ECF8D3B003324B0 /* MentoryDB.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CE0028742ECF8D3B003324B0 /* MentoryDB.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		CE00288D2ECF906E003324B0 /* Values.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE0028872ECF906E003324B0 /* Values.framework */; };
-		CE00288E2ECF906E003324B0 /* Values.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CE0028872ECF906E003324B0 /* Values.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CE127F672ECB8858006A55E6 /* Secrets.xcconfig.sample in Resources */ = {isa = PBXBuildFile; fileRef = CE127F662ECB8858006A55E6 /* Secrets.xcconfig.sample */; };
-		CE26C2DD2ED1E385008668E0 /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = CE26C2DC2ED1E385008668E0 /* Collections */; };
-		CE26C2DF2ED1E385008668E0 /* DequeModule in Frameworks */ = {isa = PBXBuildFile; productRef = CE26C2DE2ED1E385008668E0 /* DequeModule */; };
-		CE2903302ECD9EDD00AC403C /* FirebaseAI in Frameworks */ = {isa = PBXBuildFile; productRef = CE29032F2ECD9EDD00AC403C /* FirebaseAI */; };
-		CE2903322ECD9EDD00AC403C /* FirebaseAILogic in Frameworks */ = {isa = PBXBuildFile; productRef = CE2903312ECD9EDD00AC403C /* FirebaseAILogic */; };
+		CE302CA62EFA460D005901BA /* FirebaseLLMAdapter in Frameworks */ = {isa = PBXBuildFile; productRef = CE302CA52EFA460D005901BA /* FirebaseLLMAdapter */; };
+		CE302CA92EFA49C0005901BA /* MentoryDBAdapter in Frameworks */ = {isa = PBXBuildFile; productRef = CE302CA82EFA49C0005901BA /* MentoryDBAdapter */; };
+		CE302CAC2EFA4D33005901BA /* Values in Frameworks */ = {isa = PBXBuildFile; productRef = CE302CAB2EFA4D33005901BA /* Values */; };
+		CE302CB72EFA52D9005901BA /* iOSManager.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE302CB62EFA529A005901BA /* iOSManager.framework */; };
+		CE302CB82EFA52D9005901BA /* iOSManager.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CE302CB62EFA529A005901BA /* iOSManager.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CE302CBA2EFA5552005901BA /* Values in Frameworks */ = {isa = PBXBuildFile; productRef = CE302CB92EFA5552005901BA /* Values */; };
 		CE6CB1422ED385AD00390FF3 /* AsyncAlgorithms in Frameworks */ = {isa = PBXBuildFile; productRef = CE6CB1412ED385AD00390FF3 /* AsyncAlgorithms */; };
 		CEB755832ECB9FF900FCE15A /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = CEB755822ECB9FF900FCE15A /* Collections */; };
 		CEB755852ECB9FF900FCE15A /* DequeModule in Frameworks */ = {isa = PBXBuildFile; productRef = CEB755842ECB9FF900FCE15A /* DequeModule */; };
-		CEE4F0C52EF16BC200AA1AB0 /* Values.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE0028872ECF906E003324B0 /* Values.framework */; };
-		CEE4F0C62EF16BC200AA1AB0 /* Values.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CE0028872ECF906E003324B0 /* Values.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,33 +38,12 @@
 			remoteGlobalIDString = 7B1337642ECD63A2009931A4;
 			remoteInfo = MentoryWidgetExtension;
 		};
-		7BAE5F1B2ED3656D00BD1DDD /* PBXContainerItemProxy */ = {
+		CE302CB52EFA529A005901BA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = CE39BFB42EC313F20090DF78 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = CE0028862ECF906E003324B0;
-			remoteInfo = Values;
-		};
-		CE0028782ECF8D3B003324B0 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CE39BFB42EC313F20090DF78 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = CE0028732ECF8D3B003324B0;
-			remoteInfo = MentoryDB;
-		};
-		CE00288B2ECF906E003324B0 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CE39BFB42EC313F20090DF78 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = CE0028862ECF906E003324B0;
-			remoteInfo = Values;
-		};
-		CE6442FC2EE95633003DBEE5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CE39BFB42EC313F20090DF78 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = CE0028862ECF906E003324B0;
-			remoteInfo = Values;
+			containerPortal = CE302CB02EFA529A005901BA /* iOSManager.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CEEDAA262EFA1E5B0019DA1E;
+			remoteInfo = iOSManager;
 		};
 		CE8EE8352EC5D1600006E5A4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -109,8 +83,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				CE00287B2ECF8D3B003324B0 /* MentoryDB.framework in Embed Frameworks */,
-				CE00288E2ECF906E003324B0 /* Values.framework in Embed Frameworks */,
+				CE302CB82EFA52D9005901BA /* iOSManager.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -121,7 +94,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				CEE4F0C62EF16BC200AA1AB0 /* Values.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -136,9 +108,10 @@
 		7B1337692ECD63A2009931A4 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		7BEACE232ED44E5F00E2ADA9 /* MentoryWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MentoryWidgetExtension.entitlements; sourceTree = "<group>"; };
 		CE0027132ECF3EB8003324B0 /* Mentory.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = Mentory.xctestplan; sourceTree = "<group>"; };
-		CE0028742ECF8D3B003324B0 /* MentoryDB.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MentoryDB.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		CE0028872ECF906E003324B0 /* Values.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Values.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE127F662ECB8858006A55E6 /* Secrets.xcconfig.sample */ = {isa = PBXFileReference; lastKnownFileType = text; path = Secrets.xcconfig.sample; sourceTree = "<group>"; };
+		CE302CAD2EFA529A005901BA /* ReminderNotificationAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderNotificationAdapter.swift; sourceTree = "<group>"; };
+		CE302CAE2EFA529A005901BA /* ReminderNotificationInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderNotificationInterface.swift; sourceTree = "<group>"; };
+		CE302CB02EFA529A005901BA /* iOSManager.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = iOSManager.xcodeproj; sourceTree = "<group>"; };
 		CE39BFBC2EC313F20090DF78 /* Mentory.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Mentory.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE8EE8312EC5D1600006E5A4 /* MentoryTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MentoryTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CED16A5E2ECB7FCD00CF012B /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
@@ -175,16 +148,6 @@
 			path = MentoryWidget;
 			sourceTree = "<group>";
 		};
-		CE0028752ECF8D3B003324B0 /* MentoryDB */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = MentoryDB;
-			sourceTree = "<group>";
-		};
-		CE0028882ECF906E003324B0 /* Values */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Values;
-			sourceTree = "<group>";
-		};
 		CE39BFBE2EC313F20090DF78 /* Mentory */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -205,7 +168,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CEE4F0C52EF16BC200AA1AB0 /* Values.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -218,33 +180,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		CE0028712ECF8D3B003324B0 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				CE26C2DD2ED1E385008668E0 /* Collections in Frameworks */,
-				CE26C2DF2ED1E385008668E0 /* DequeModule in Frameworks */,
-				7BAE5F192ED3656D00BD1DDD /* Values.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		CE0028842ECF906E003324B0 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		CE39BFB92EC313F20090DF78 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CE2903322ECD9EDD00AC403C /* FirebaseAILogic in Frameworks */,
 				CEB755832ECB9FF900FCE15A /* Collections in Frameworks */,
 				CEB755852ECB9FF900FCE15A /* DequeModule in Frameworks */,
-				CE00287A2ECF8D3B003324B0 /* MentoryDB.framework in Frameworks */,
-				CE2903302ECD9EDD00AC403C /* FirebaseAI in Frameworks */,
-				CE00288D2ECF906E003324B0 /* Values.framework in Frameworks */,
+				CE302CB72EFA52D9005901BA /* iOSManager.framework in Frameworks */,
+				CE302CAC2EFA4D33005901BA /* Values in Frameworks */,
+				CE302CA92EFA49C0005901BA /* MentoryDBAdapter in Frameworks */,
+				CE302CA62EFA460D005901BA /* FirebaseLLMAdapter in Frameworks */,
 				CE6CB1422ED385AD00390FF3 /* AsyncAlgorithms in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -253,6 +198,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE302CBA2EFA5552005901BA /* Values in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -262,11 +208,39 @@
 		7B1337662ECD63A2009931A4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CE302CB12EFA529A005901BA /* iOSManager */,
 				694B366D2ECE207F0094E855 /* Speech.framework */,
 				7B1337672ECD63A2009931A4 /* WidgetKit.framework */,
 				7B1337692ECD63A2009931A4 /* SwiftUI.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		CE302CAF2EFA529A005901BA /* iOSManager */ = {
+			isa = PBXGroup;
+			children = (
+				CE302CAD2EFA529A005901BA /* ReminderNotificationAdapter.swift */,
+				CE302CAE2EFA529A005901BA /* ReminderNotificationInterface.swift */,
+			);
+			path = iOSManager;
+			sourceTree = "<group>";
+		};
+		CE302CB12EFA529A005901BA /* iOSManager */ = {
+			isa = PBXGroup;
+			children = (
+				CE302CAF2EFA529A005901BA /* iOSManager */,
+				CE302CB02EFA529A005901BA /* iOSManager.xcodeproj */,
+			);
+			name = iOSManager;
+			path = ../iOSManager;
+			sourceTree = "<group>";
+		};
+		CE302CB22EFA529A005901BA /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CE302CB62EFA529A005901BA /* iOSManager.framework */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		CE39BFB32EC313F20090DF78 = {
@@ -280,8 +254,6 @@
 				CE8EE8322EC5D1600006E5A4 /* MentoryTests */,
 				7B13376B2ECD63A2009931A4 /* MentoryWidget */,
 				5888796D2ECD98EB00083137 /* MentoryWatch Watch App */,
-				CE0028752ECF8D3B003324B0 /* MentoryDB */,
-				CE0028882ECF906E003324B0 /* Values */,
 				7B1337662ECD63A2009931A4 /* Frameworks */,
 				CE39BFBD2EC313F20090DF78 /* Products */,
 			);
@@ -294,30 +266,11 @@
 				CE8EE8312EC5D1600006E5A4 /* MentoryTests.xctest */,
 				7B1337652ECD63A2009931A4 /* MentoryWidgetExtension.appex */,
 				5888796C2ECD98EB00083137 /* MentoryWatch Watch App.app */,
-				CE0028742ECF8D3B003324B0 /* MentoryDB.framework */,
-				CE0028872ECF906E003324B0 /* Values.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
-
-/* Begin PBXHeadersBuildPhase section */
-		CE00286F2ECF8D3B003324B0 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		CE0028822ECF906E003324B0 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
 		5888796B2ECD98EB00083137 /* MentoryWatch Watch App */ = {
@@ -332,7 +285,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				CE6442FD2EE95633003DBEE5 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				5888796D2ECD98EB00083137 /* MentoryWatch Watch App */,
@@ -366,55 +318,6 @@
 			productReference = 7B1337652ECD63A2009931A4 /* MentoryWidgetExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
-		CE0028732ECF8D3B003324B0 /* MentoryDB */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = CE00287C2ECF8D3B003324B0 /* Build configuration list for PBXNativeTarget "MentoryDB" */;
-			buildPhases = (
-				CE00286F2ECF8D3B003324B0 /* Headers */,
-				CE0028702ECF8D3B003324B0 /* Sources */,
-				CE0028712ECF8D3B003324B0 /* Frameworks */,
-				CE0028722ECF8D3B003324B0 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				7BAE5F1C2ED3656D00BD1DDD /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				CE0028752ECF8D3B003324B0 /* MentoryDB */,
-			);
-			name = MentoryDB;
-			packageProductDependencies = (
-				CE26C2DC2ED1E385008668E0 /* Collections */,
-				CE26C2DE2ED1E385008668E0 /* DequeModule */,
-			);
-			productName = MentoryDB;
-			productReference = CE0028742ECF8D3B003324B0 /* MentoryDB.framework */;
-			productType = "com.apple.product-type.framework";
-		};
-		CE0028862ECF906E003324B0 /* Values */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = CE00288F2ECF906E003324B0 /* Build configuration list for PBXNativeTarget "Values" */;
-			buildPhases = (
-				CE0028822ECF906E003324B0 /* Headers */,
-				CE0028832ECF906E003324B0 /* Sources */,
-				CE0028842ECF906E003324B0 /* Frameworks */,
-				CE0028852ECF906E003324B0 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				CE0028882ECF906E003324B0 /* Values */,
-			);
-			name = Values;
-			packageProductDependencies = (
-			);
-			productName = Values;
-			productReference = CE0028872ECF906E003324B0 /* Values.framework */;
-			productType = "com.apple.product-type.framework";
-		};
 		CE39BFBB2EC313F20090DF78 /* Mentory */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = CE39BFC72EC313F30090DF78 /* Build configuration list for PBXNativeTarget "Mentory" */;
@@ -431,8 +334,6 @@
 			dependencies = (
 				69765AE32ECEADFD00776A5F /* PBXTargetDependency */,
 				69765AE62ECEADFF00776A5F /* PBXTargetDependency */,
-				CE0028792ECF8D3B003324B0 /* PBXTargetDependency */,
-				CE00288C2ECF906E003324B0 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				CE39BFBE2EC313F20090DF78 /* Mentory */,
@@ -441,9 +342,10 @@
 			packageProductDependencies = (
 				CEB755822ECB9FF900FCE15A /* Collections */,
 				CEB755842ECB9FF900FCE15A /* DequeModule */,
-				CE29032F2ECD9EDD00AC403C /* FirebaseAI */,
-				CE2903312ECD9EDD00AC403C /* FirebaseAILogic */,
 				CE6CB1412ED385AD00390FF3 /* AsyncAlgorithms */,
+				CE302CA52EFA460D005901BA /* FirebaseLLMAdapter */,
+				CE302CA82EFA49C0005901BA /* MentoryDBAdapter */,
+				CE302CAB2EFA4D33005901BA /* Values */,
 			);
 			productName = Mentory;
 			productReference = CE39BFBC2EC313F20090DF78 /* Mentory.app */;
@@ -467,6 +369,7 @@
 			);
 			name = MentoryTests;
 			packageProductDependencies = (
+				CE302CB92EFA5552005901BA /* Values */,
 			);
 			productName = MentoryTests;
 			productReference = CE8EE8312EC5D1600006E5A4 /* MentoryTests.xctest */;
@@ -486,12 +389,6 @@
 						CreatedOnToolsVersion = 26.1.1;
 					};
 					7B1337642ECD63A2009931A4 = {
-						CreatedOnToolsVersion = 26.1;
-					};
-					CE0028732ECF8D3B003324B0 = {
-						CreatedOnToolsVersion = 26.1;
-					};
-					CE0028862ECF906E003324B0 = {
 						CreatedOnToolsVersion = 26.1;
 					};
 					CE39BFBB2EC313F20090DF78 = {
@@ -514,23 +411,39 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				CEB755812ECB9FF900FCE15A /* XCRemoteSwiftPackageReference "swift-collections" */,
-				CE29032E2ECD9EDD00AC403C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				CE6CB1402ED385AD00390FF3 /* XCRemoteSwiftPackageReference "swift-async-algorithms" */,
+				CE302CA42EFA460D005901BA /* XCLocalSwiftPackageReference "../FirebaseLLM" */,
+				CE302CA72EFA49C0005901BA /* XCLocalSwiftPackageReference "../MentoryDB" */,
+				CE302CAA2EFA4D33005901BA /* XCLocalSwiftPackageReference "../Values" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CE39BFBD2EC313F20090DF78 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = CE302CB22EFA529A005901BA /* Products */;
+					ProjectRef = CE302CB02EFA529A005901BA /* iOSManager.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				CE39BFBB2EC313F20090DF78 /* Mentory */,
 				CE8EE8302EC5D1600006E5A4 /* MentoryTests */,
 				7B1337642ECD63A2009931A4 /* MentoryWidgetExtension */,
 				5888796B2ECD98EB00083137 /* MentoryWatch Watch App */,
-				CE0028732ECF8D3B003324B0 /* MentoryDB */,
-				CE0028862ECF906E003324B0 /* Values */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		CE302CB62EFA529A005901BA /* iOSManager.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = iOSManager.framework;
+			remoteRef = CE302CB52EFA529A005901BA /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		5888796A2ECD98EB00083137 /* Resources */ = {
@@ -541,20 +454,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		7B1337632ECD63A2009931A4 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		CE0028722ECF8D3B003324B0 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		CE0028852ECF906E003324B0 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -593,20 +492,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		CE0028702ECF8D3B003324B0 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		CE0028832ECF906E003324B0 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		CE39BFB82EC313F20090DF78 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -633,27 +518,6 @@
 			isa = PBXTargetDependency;
 			target = 7B1337642ECD63A2009931A4 /* MentoryWidgetExtension */;
 			targetProxy = 69765AE52ECEADFF00776A5F /* PBXContainerItemProxy */;
-		};
-		7BAE5F1C2ED3656D00BD1DDD /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			platformFilter = ios;
-			target = CE0028862ECF906E003324B0 /* Values */;
-			targetProxy = 7BAE5F1B2ED3656D00BD1DDD /* PBXContainerItemProxy */;
-		};
-		CE0028792ECF8D3B003324B0 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = CE0028732ECF8D3B003324B0 /* MentoryDB */;
-			targetProxy = CE0028782ECF8D3B003324B0 /* PBXContainerItemProxy */;
-		};
-		CE00288C2ECF906E003324B0 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = CE0028862ECF906E003324B0 /* Values */;
-			targetProxy = CE00288B2ECF906E003324B0 /* PBXContainerItemProxy */;
-		};
-		CE6442FD2EE95633003DBEE5 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = CE0028862ECF906E003324B0 /* Values */;
-			targetProxy = CE6442FC2EE95633003DBEE5 /* PBXContainerItemProxy */;
 		};
 		CE8EE8362EC5D1600006E5A4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -696,7 +560,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 26.1;
+				WATCHOS_DEPLOYMENT_TARGET = 26.2;
 			};
 			name = Debug;
 		};
@@ -733,7 +597,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 26.1;
+				WATCHOS_DEPLOYMENT_TARGET = 26.2;
 			};
 			name = Release;
 		};
@@ -804,198 +668,6 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		CE00287D2ECF8D3B003324B0 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 3X262XJF5T;
-				"DEVELOPMENT_TEAM[sdk=macosx*]" = 3X262XJF5T;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_MODULE_VERIFIER = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_BUNDLE_IDENTIFIER = cloud.mandooplz.Mentory.MentoryDB;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SKIP_INSTALL = YES;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_INSTALL_MODULE = YES;
-				SWIFT_INSTALL_OBJC_HEADER = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 6.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
-		};
-		CE00287E2ECF8D3B003324B0 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 3X262XJF5T;
-				"DEVELOPMENT_TEAM[sdk=macosx*]" = 3X262XJF5T;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_MODULE_VERIFIER = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_BUNDLE_IDENTIFIER = cloud.mandooplz.Mentory.MentoryDB;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SKIP_INSTALL = YES;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_INSTALL_MODULE = YES;
-				SWIFT_INSTALL_OBJC_HEADER = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 6.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
-		CE0028902ECF906E003324B0 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
-				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 3X262XJF5T;
-				"DEVELOPMENT_TEAM[sdk=macosx*]" = 3X262XJF5T;
-				"DEVELOPMENT_TEAM[sdk=xros*]" = 3X262XJF5T;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_MODULE_VERIFIER = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
-					"@executable_path/../Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 26.1;
-				MARKETING_VERSION = 1.0;
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_BUNDLE_IDENTIFIER = cloud.mandooplz.Mentory.Values;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = auto;
-				SKIP_INSTALL = YES;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx watchos watchsimulator xros xrsimulator";
-				SUPPORTS_MACCATALYST = NO;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_INSTALL_MODULE = YES;
-				SWIFT_INSTALL_OBJC_HEADER = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 6.0;
-				TARGETED_DEVICE_FAMILY = "1,2,4,7";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-				XROS_DEPLOYMENT_TARGET = 26.1;
-			};
-			name = Debug;
-		};
-		CE0028912ECF906E003324B0 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
-				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 3X262XJF5T;
-				"DEVELOPMENT_TEAM[sdk=macosx*]" = 3X262XJF5T;
-				"DEVELOPMENT_TEAM[sdk=xros*]" = 3X262XJF5T;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_MODULE_VERIFIER = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
-					"@executable_path/../Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 26.1;
-				MARKETING_VERSION = 1.0;
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_BUNDLE_IDENTIFIER = cloud.mandooplz.Mentory.Values;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = auto;
-				SKIP_INSTALL = YES;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx watchos watchsimulator xros xrsimulator";
-				SUPPORTS_MACCATALYST = NO;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_INSTALL_MODULE = YES;
-				SWIFT_INSTALL_OBJC_HEADER = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 6.0;
-				TARGETED_DEVICE_FAMILY = "1,2,4,7";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-				XROS_DEPLOYMENT_TARGET = 26.1;
 			};
 			name = Release;
 		};
@@ -1303,24 +975,6 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		CE00287C2ECF8D3B003324B0 /* Build configuration list for PBXNativeTarget "MentoryDB" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				CE00287D2ECF8D3B003324B0 /* Debug */,
-				CE00287E2ECF8D3B003324B0 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		CE00288F2ECF906E003324B0 /* Build configuration list for PBXNativeTarget "Values" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				CE0028902ECF906E003324B0 /* Debug */,
-				CE0028912ECF906E003324B0 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		CE39BFB72EC313F20090DF78 /* Build configuration list for PBXProject "Mentory" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1350,15 +1004,22 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		CE29032E2ECD9EDD00AC403C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 12.6.0;
-			};
+/* Begin XCLocalSwiftPackageReference section */
+		CE302CA42EFA460D005901BA /* XCLocalSwiftPackageReference "../FirebaseLLM" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../FirebaseLLM;
 		};
+		CE302CA72EFA49C0005901BA /* XCLocalSwiftPackageReference "../MentoryDB" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../MentoryDB;
+		};
+		CE302CAA2EFA4D33005901BA /* XCLocalSwiftPackageReference "../Values" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../Values;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCRemoteSwiftPackageReference section */
 		CE6CB1402ED385AD00390FF3 /* XCRemoteSwiftPackageReference "swift-async-algorithms" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-async-algorithms.git";
@@ -1378,25 +1039,21 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		CE26C2DC2ED1E385008668E0 /* Collections */ = {
+		CE302CA52EFA460D005901BA /* FirebaseLLMAdapter */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = CEB755812ECB9FF900FCE15A /* XCRemoteSwiftPackageReference "swift-collections" */;
-			productName = Collections;
+			productName = FirebaseLLMAdapter;
 		};
-		CE26C2DE2ED1E385008668E0 /* DequeModule */ = {
+		CE302CA82EFA49C0005901BA /* MentoryDBAdapter */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = CEB755812ECB9FF900FCE15A /* XCRemoteSwiftPackageReference "swift-collections" */;
-			productName = DequeModule;
+			productName = MentoryDBAdapter;
 		};
-		CE29032F2ECD9EDD00AC403C /* FirebaseAI */ = {
+		CE302CAB2EFA4D33005901BA /* Values */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = CE29032E2ECD9EDD00AC403C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseAI;
+			productName = Values;
 		};
-		CE2903312ECD9EDD00AC403C /* FirebaseAILogic */ = {
+		CE302CB92EFA5552005901BA /* Values */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = CE29032E2ECD9EDD00AC403C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseAILogic;
+			productName = Values;
 		};
 		CE6CB1412ED385AD00390FF3 /* AsyncAlgorithms */ = {
 			isa = XCSwiftPackageProductDependency;

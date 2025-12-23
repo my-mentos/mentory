@@ -6,6 +6,8 @@
 //
 import SwiftUI
 import SwiftData
+import Values
+
 
 // MARK: App
 @main

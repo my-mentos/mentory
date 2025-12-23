@@ -8,49 +8,12 @@ import Foundation
 import Testing
 import Values
 @testable import Mentory
+import MentoryDBAdapter
 
 
 // MARK: Tests
 @Suite
 struct MentorMessageTests {
-    struct FetchCharacter {
-        let mentoryiOS: MentoryiOS
-        let mentorMessage: MentorMessage
-        let mentoryDB: any MentoryDBInterface
-        init() async throws {
-            self.mentoryiOS = await MentoryiOS()
-            self.mentorMessage = try await getMentorMessage(mentoryiOS)
-            self.mentoryDB = mentoryiOS.mentoryDB
-        }
-        
-        @Test(arguments: MentoryCharacter.allCases)
-        func updateCharacterFromDB(_ character: MentoryCharacter) async throws {
-            // given
-            await MainActor.run {
-                mentorMessage.character = character
-            }
-            
-            // when
-            await mentorMessage.fetchCharacter()
-            
-            // then
-            await #expect(mentorMessage.character == character)
-        }
-        
-        @Test func whenCharacterAlreadyFetched() async throws {
-            // given
-            await mentorMessage.fetchCharacter()
-            
-            let character = try #require(await mentorMessage.character)
-            
-            // when
-            await mentorMessage.fetchCharacter()
-            
-            // then
-            await #expect(mentorMessage.character == character)
-        }
-    }
-    
     struct UpdateContent {
         let mentoryiOS: MentoryiOS
         let mentorMessage: MentorMessage
@@ -61,24 +24,8 @@ struct MentorMessageTests {
             self.mentoryDB = mentoryiOS.mentoryDB
         }
         
-        @Test func whenCharacterIsNil() async throws {
-            // given
-            try await #require(mentorMessage.character == nil)
-            
-            try await #require(mentorMessage.content == nil)
-            
-            // when
-            await mentorMessage.updateContent()
-            
-            // then
-            await #expect(mentorMessage.content == nil)
-        }
-        
         @Test func setContent() async throws {
             // given
-            await mentorMessage.fetchCharacter()
-            try await #require(mentorMessage.character != nil)
-            
             try await #require(mentorMessage.content == nil)
             
             // when
@@ -89,9 +36,6 @@ struct MentorMessageTests {
         }
         @Test func setRecentUpdate() async throws {
             // given
-            await mentorMessage.fetchCharacter()
-            try await #require(mentorMessage.character != nil)
-            
             try await #require(mentorMessage.recentUpdate == nil)
             
             // when
@@ -103,7 +47,6 @@ struct MentorMessageTests {
         
         @Test func doNotUpdateContentIsSameDay() async throws {
             // given
-            await mentorMessage.fetchCharacter()
             await mentorMessage.updateContent()
             
             await mentorMessage.resetContent()
@@ -120,7 +63,6 @@ struct MentorMessageTests {
         
         @Test func loadContentFromMentoryDB() async throws {
             // given
-            await mentorMessage.fetchCharacter()
             await mentorMessage.updateContent()
             
             let recentUpdate = try #require(await mentorMessage.recentUpdate)

@@ -8,6 +8,7 @@ import Foundation
 import Combine
 import Values
 import OSLog
+import MentoryDBAdapter
 
 
 // MARK: Object

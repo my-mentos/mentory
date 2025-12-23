@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:MentoryDB">
+   </FileRef>
+   <FileRef
+      location = "group:iOSManager/iOSManager.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:FirebaseLLM">
+   </FileRef>
+   <FileRef
+      location = "group:Values">
+   </FileRef>
+   <FileRef
+      location = "group:Mentory/Mentory.xcodeproj">
+   </FileRef>
+</Workspace>

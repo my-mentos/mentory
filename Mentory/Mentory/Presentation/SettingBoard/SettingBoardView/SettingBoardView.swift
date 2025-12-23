@@ -8,7 +8,7 @@ import SwiftUI
 import WebKit
 import OSLog
 import Combine
-import UserNotifications
+import iOSManager
 
 // MARK: Object
 class SettingBoardViewModel: ObservableObject {
