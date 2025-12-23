@@ -8,8 +8,7 @@ import Foundation
 
 
 // MARK: Value
-nonisolated
-public struct FirebaseQuestion: Sendable, Hashable {
+public nonisolated struct FirebaseQuestion: Sendable, Hashable {
     public let content: String
     public let imageData: Data?
     public let voiceURL: URL?

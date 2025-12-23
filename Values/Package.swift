@@ -6,12 +6,14 @@ import PackageDescription
 let package = Package(
     name: "Values",
     products: [
+        // Values
         .library(
             name: "Values",
             targets: ["Values"]
         ),
     ],
     targets: [
+        // Values
         .target(
             name: "Values"
         ),

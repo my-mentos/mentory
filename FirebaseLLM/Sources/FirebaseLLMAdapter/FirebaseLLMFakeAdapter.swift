@@ -1,17 +1,14 @@
 //
-//  FirebaseLLMFake.swift
-//  Mentory
+//  FirebaseLLMFakeAdapter.swift
+//  FirebaseLLM
 //
-//  Created by 김민우 on 12/1/25.
+//  Created by 김민우 on 12/23/25.
 //
 import Foundation
-import Values
 
 
-
-// MARK: Mock -> 어떻게 보면 Adapter 아닌가?
-nonisolated
-struct FirebaseLLMMock: FirebaseLLMInterface {
+// MARK: Adapter
+public nonisolated struct FirebaseLLMFakeAdapter: Sendable {
     // MARK: core
     private let answerSamples: [String] = [
         "기록을 분석해보니 지금 집중하고 싶은 감정의 결이 명확하게 드러나고 있어요.",
@@ -25,9 +22,8 @@ struct FirebaseLLMMock: FirebaseLLMInterface {
         "힘들", "지치", "짜증", "화나", "불안", "걱정", "슬프", "우울", "외롭", "답답", "피곤", "lonely", "tired", "anxious", "stressed", "depressed"
     ]
 
-    // MARK: flow
-    @concurrent
-    func question(_ question: FirebaseQuestion) async throws -> FirebaseAnswer {
+    // MARK: task
+    func question(_ question: FirebaseQuestion) async -> FirebaseAnswer? {
         let template = answerSamples.randomElement() ?? "기록을 잘 확인했어요."
         guard let snippet = excerpt(from: question, limit: 90) else {
             return FirebaseAnswer(template)
@@ -37,8 +33,7 @@ struct FirebaseLLMMock: FirebaseLLMInterface {
         return FirebaseAnswer(response)
     }
     
-    @concurrent
-    func getEmotionAnalysis(_ question: FirebaseQuestion, character: MentoryCharacter) async throws -> FirebaseAnalysis {
+    func getEmotionAnalysis(_ question: FirebaseQuestion, character: MentoryCharacter) async -> FirebaseAnalysis? {
         let mindType = determineMindType(from: question)
         let sentiment = sentiment(for: mindType)
         let message = empathyMessage(for: sentiment, character: character, question: question)
@@ -49,6 +44,7 @@ struct FirebaseLLMMock: FirebaseLLMInterface {
                                 actionKeywords: actions)
     }
 
+    
     // MARK: value
     private func determineMindType(from question: FirebaseQuestion) -> Emotion {
         let normalized = question.content

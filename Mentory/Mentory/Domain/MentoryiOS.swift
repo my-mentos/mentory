@@ -7,6 +7,7 @@
 import Foundation
 import Combine
 import OSLog
+import Values
 
 
 // MARK: Object
@@ -116,12 +117,5 @@ final class MentoryiOS: Sendable, ObservableObject {
             logger.error("\(error)")
             return
         }
-    }
-    
-    
-    // MARK: view
-    enum SystemMode: Sendable, Hashable {
-        case test
-        case real
     }
 }

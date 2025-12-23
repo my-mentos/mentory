@@ -5,20 +5,35 @@ import PackageDescription
 
 let package = Package(
     name: "FirebaseLLM",
+    platforms: [
+        .iOS(.v18)
+    ],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
-            name: "FirebaseLLM",
-            targets: ["FirebaseLLM"]
+            name: "FirebaseLLMAdapter",
+            targets: ["FirebaseLLMAdapter"]
         ),
     ],
     dependencies: [
-        .package(path: "../Values")
+        .package(path: "../Values"),
+        .package(url: "https://github.com/firebase/firebase-ios-sdk.git", branch: "main")
     ],
     targets: [
+        
         .target(
-            name: "FirebaseLLM"
+            name: "FirebaseLLMAdapter",
+            dependencies: [
+                "FirebaseLLMFake",
+                .product(name: "FirebaseAI", package: "firebase-ios-sdk"),
+                .product(name: "FirebaseAILogic", package: "firebase-ios-sdk"),
+                .product(name: "FirebaseCore", package: "firebase-ios-sdk")
+            ]
         ),
+        
+        .target(
+            name: "FirebaseLLMFake"
+        )
 
     ]
 )
