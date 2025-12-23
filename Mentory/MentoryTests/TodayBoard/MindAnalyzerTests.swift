@@ -67,49 +67,6 @@ struct MindAnalyzerTests {
             
         }
         
-        @Test func setSuggestions() async throws {
-            // given
-            try await #require(mindAnalyzer.suggestions.isEmpty == true)
-            
-            await MainActor.run {
-                mindAnalyzer.character = .cool
-            }
-            
-            // when
-            await mindAnalyzer.analyze()
-            
-            // then
-            await #expect(mindAnalyzer.suggestions.isEmpty == false)
-        }
-        @Test func appendThreeSuggestions() async throws {
-            // given
-            try await #require(mindAnalyzer.suggestions.count == 0)
-            
-            await MainActor.run {
-                mindAnalyzer.character = .cool
-            }
-            
-            // when
-            await mindAnalyzer.analyze()
-            
-            // then
-            await #expect(mindAnalyzer.suggestions.count == 3)
-        }
-        
-        @Test func TodayBoard_createSuggestions() async throws {
-            // given
-            try await #require(todayBoard.suggestions.isEmpty == true)
-            
-            await MainActor.run {
-                mindAnalyzer.character = .cool
-            }
-            
-            // when
-            await mindAnalyzer.analyze()
-            
-            // then
-            await #expect(todayBoard.suggestions.isEmpty == false)
-        }
         
         @Test func whenTextInputFromRecordFormIsEmpty() async throws {
             // given

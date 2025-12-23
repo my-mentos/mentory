@@ -8,6 +8,8 @@ import Foundation
 import Combine
 import Values
 import OSLog
+import FirebaseLLMAdapter
+import MentoryDBAdapter
 
 
 // MARK: Object
@@ -34,39 +36,8 @@ final class MentorMessage: Sendable, ObservableObject {
     
     
     // MARK: action
-//    func fetchCharacter() async {
-//        // capture
-//        guard self.character == nil else {
-//            logger.error("이미 Character가 설정되어 있습니다.")
-//            return
-//        }
-//        
-//        let todayBoard = self.owner!
-//        let mentoryiOS = todayBoard.owner!
-//        let mentoryDB = mentoryiOS.mentoryDB
-//        
-//        
-//        // process
-//        let character: MentoryCharacter
-//        do {
-//            let fetchResult = try await mentoryDB.getCharacter()
-//            character = fetchResult ?? .random
-//        } catch {
-//            logger.error("\(#function) 실패 : \(error)")
-//            return
-//        }
-//        
-//        
-//        // mutate
-//        self.character = character
-//    }
     
     func updateContent() async {
-        // capture
-//        guard let character else {
-//            logger.error("MentorMessage의 Character가 nil입니다. 먼저 Character를 설정하세요.")
-//            return
-//        }
         let todayBoard = self.owner!
         let currentDate = todayBoard.currentDate
         logger.debug("currentDate는요:\(currentDate.rawValue)")
@@ -106,8 +77,12 @@ final class MentorMessage: Sendable, ObservableObject {
                 // AlanLLM - 새로운 메시지 가져오기
                 let question = FirebaseQuestion(character.question)
                 
-                async let answer = try await firebaseLLM.question(question)
-                let newMessageContent = try await answer.content
+                guard let answer = await firebaseLLM.question(question) else {
+                    logger.error("FirebaseLLM의 응답이 nil입니다.")
+                    return
+                }
+                
+                let newMessageContent = answer.content
                 
                 messageContent = newMessageContent
                 messageCharacter = character

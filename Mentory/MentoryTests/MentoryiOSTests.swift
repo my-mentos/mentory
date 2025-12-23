@@ -6,6 +6,7 @@
 //
 import Testing
 @testable import Mentory
+import MentoryDBAdapter
 
 
 // MARK: Tests
