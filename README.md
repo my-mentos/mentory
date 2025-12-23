@@ -296,6 +296,10 @@
 아래 사진을 통해 MentoryiOS, MentoryLLM, MentoryDB 도메인을 확인할 수 있습니다.
 
 <p align="center">
+  <img width="80%" height="auto" alt="image" src="https://github.com/user-attachments/assets/6c348677-a126-497d-8d30-dc8dd29528aa" />
+</p>
+
+<p align="center">
   <img src="mentory.png" alt="소프트웨어 디자인 다이어그램">
 </p>
 
