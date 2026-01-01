@@ -236,9 +236,7 @@ fileprivate struct RecordStatCard<Content: View>: View {
                 .map { recordFormState in recordFormState != nil }
             
             for await isPresent in stream {
-                Task {
-                    self.showFullScreenCover = isPresent
-                }
+                self.showFullScreenCover = isPresent
             }
         }
         
@@ -251,11 +249,6 @@ fileprivate struct RecordStatCard<Content: View>: View {
         .fullScreenCover(item: $todayBoard.recordFormSelection, content: { recorForm in
             navDestination(recorForm)
         })
-//        .fullScreenCover(isPresented: $showFullScreenCover) {
-//            if let form = todayBoard.recordFormSelection {
-//                navDestination(form)
-//            }
-//        }
     }
 }
 
