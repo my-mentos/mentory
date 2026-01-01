@@ -13,14 +13,11 @@ struct MindAnalyzerView: View {
     @State private var showingSubmitAlert = false
     @ObservedObject var mindAnalyzer: MindAnalyzer
     @Namespace private var mentorNamespace
-    var parentDismiss: DismissAction
     
     init(
         mindAnalyzer: MindAnalyzer,
-        parentDismiss: DismissAction
     ) {
         self.mindAnalyzer = mindAnalyzer
-        self.parentDismiss = parentDismiss
     }
     
     private var isSelectingStage: Bool {
@@ -145,10 +142,9 @@ struct MindAnalyzerView: View {
                     isPresented: mindAnalyzer.isAnalyzeFinished
                 ) {
                     let recordForm = mindAnalyzer.owner!
-                    //recordForm.removeForm()
+                    
                     recordForm.finish()
                     mindAnalyzer.finish()
-                    parentDismiss()
                 }
             }
         }
@@ -458,13 +454,13 @@ private struct ConfirmButton: View {
 // MARK: Preview
 private struct MindAnalyzerPreview: View {
     @StateObject private var mentoryiOS = MentoryiOS()
-    @Environment(\.dismiss) var dismiss
+    
     var body: some View {
         if let todayBoard = mentoryiOS.todayBoard,
            let recordForm = todayBoard.recordForms.first,
            let mindAnalyzer = recordForm.mindAnalyzer
         {
-            MindAnalyzerView(mindAnalyzer: mindAnalyzer, parentDismiss: dismiss)
+            MindAnalyzerView(mindAnalyzer: mindAnalyzer)
         } else {
             ProgressView("프리뷰 로딩 중입니다.")
                 .task {

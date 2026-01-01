@@ -183,6 +183,7 @@ fileprivate struct RecordStatCard<Content: View>: View {
     @ObservedObject var todayBoard: TodayBoard
     @State var showFullScreenCover: Bool = false
     @State var showDateSelectionSheet: Bool = false
+    @Environment(\.dismiss) var dismissAction
     
     let imageName: String
     let content: String
@@ -245,12 +246,9 @@ fileprivate struct RecordStatCard<Content: View>: View {
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
         }
-        .fullScreenCover(isPresented: $showFullScreenCover) {
-            if let form = todayBoard.recordFormSelection {
-                navDestination(form)
-                
-            }
-        }
+        .fullScreenCover(item: $todayBoard.recordFormSelection, content: { recorForm in
+            navDestination(recorForm)
+        })
     }
 }
 

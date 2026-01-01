@@ -36,8 +36,7 @@ struct RecordContainerView: View {
             RecordFormView(recordForm: recordForm)
                 .navigationDestination(for: String.self) { value in
                     if value == "MindAnalyzerView" {
-                        MindAnalyzerView(mindAnalyzer: recordForm.mindAnalyzer!,
-                                         parentDismiss: dismiss)
+                        MindAnalyzerView(mindAnalyzer: recordForm.mindAnalyzer!)
                     }
                 }
             

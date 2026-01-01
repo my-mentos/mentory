@@ -23,7 +23,9 @@ struct RecordFormView: View {
     // MARK: - Body
     var body: some View {
         RecordFormLayout(
-            todayDate: {TodayDate(targetDate: recordForm.targetDate)},
+            todayDate: {
+                TodayDate(targetDate: recordForm.targetDate)
+            },
             main: {
                 TitleField(
                     prompt: "제목",
