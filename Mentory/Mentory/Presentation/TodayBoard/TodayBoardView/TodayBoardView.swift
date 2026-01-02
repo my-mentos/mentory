@@ -12,9 +12,10 @@ import Values
 
 // MARK: View
 struct TodayBoardView: View {
-    // MARK: model
+    // MARK: core
     @ObservedObject var todayBoard: TodayBoard
     @ObservedObject var mentoryiOS: MentoryiOS
+    
     
     // MARK: body
     var body: some View {
