@@ -21,12 +21,6 @@ struct RecordContainerView: View {
     var body: some View {
         NavigationStack(path: $navigationPath) {
             RecordFormView(recordForm: recordForm)
-                .navigationDestination(for: String.self) { value in
-                    if value == "MindAnalyzerView" {
-                        MindAnalyzerView(mindAnalyzer: recordForm.mindAnalyzer!)
-                    }
-                }
-            
                 .toolbar {
                     // MARK: 취소 버튼
                     ToolbarItem(placement: .navigationBarLeading) {

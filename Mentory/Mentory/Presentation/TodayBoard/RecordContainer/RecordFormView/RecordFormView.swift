@@ -43,6 +43,9 @@ struct RecordFormView: View {
                         Image(systemName: "checkmark")
                     }
                     .disabled(!recordForm.canProceed)
+                    .navigationDestination(item: $recordForm.mindAnalyzer) { mindAnalyzer in
+                        MindAnalyzerView(mindAnalyzer: mindAnalyzer)
+                    }
                 }
             },
             todayDate: {

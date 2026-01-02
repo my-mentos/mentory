@@ -14,9 +14,9 @@ import MentoryDBAdapter
 
 // MARK: Object
 @MainActor
-final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {    
+final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
     // MARK: core
-    nonisolated let logger = Logger(subsystem: "MentoryiOS.MindAnalyzer", category: "Domain")
+    nonisolated let logger = Logger()
     init(owner: RecordForm) {
         self.owner = owner
     }
