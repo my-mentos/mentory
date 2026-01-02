@@ -26,17 +26,7 @@ public final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
     public nonisolated let id = UUID()
     internal weak var owner: RecordForm?
     
-//    @Published private(set) var isAnalyzing: Bool = false
-//    @Published var isAnalyzeFinished: Bool = false
     @Published var status: Status = .ready
-    
-//    func startAnalyze() {
-//        isAnalyzing = true
-//    }
-//    func stopAnalyze() {
-//        isAnalyzing = false
-//    }
-//    
     @Published var character: MentoryCharacter? = nil
     
     @Published var analyzedResult: String? = nil
