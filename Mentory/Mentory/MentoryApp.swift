@@ -13,7 +13,7 @@ import Values
 @main
 struct MentoryApp: App {
     // MARK: model
-    @State var mentoryiOS = MentoryiOS(.real)
+    @State var mentoryiOS = MentoryiOS(.test)
     @State private var watchConnectivity = WatchConnectivityManager.shared
     
 

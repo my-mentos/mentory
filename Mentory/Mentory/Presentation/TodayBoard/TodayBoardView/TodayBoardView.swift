@@ -181,9 +181,7 @@ fileprivate struct GreetingHeader: View {
 
 fileprivate struct RecordStatCard<Content: View>: View {
     @ObservedObject var todayBoard: TodayBoard
-    @State var showFullScreenCover: Bool = false
     @State var showDateSelectionSheet: Bool = false
-    @Environment(\.dismiss) var dismissAction
     
     let imageName: String
     let content: String
@@ -230,14 +228,6 @@ fileprivate struct RecordStatCard<Content: View>: View {
         }
         .task {
             await todayBoard.setUpRecordForms()
-        }
-        .task {
-            let stream = todayBoard.$recordFormSelection.values
-                .map { recordFormState in recordFormState != nil }
-            
-            for await isPresent in stream {
-                self.showFullScreenCover = isPresent
-            }
         }
         
         // 날짜 선택 Sheet (반쯤 올라옴)

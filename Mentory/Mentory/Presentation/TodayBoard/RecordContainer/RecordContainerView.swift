@@ -9,24 +9,12 @@ import Foundation
 import SwiftUI
 import Combine
 
-//@MainActor
-//struct CancelToolbarHidden: PreferenceKey {
-//    nonisolated
-//    static let defaultValue: Bool = false
-//    
-//    nonisolated
-//    static func reduce(value: inout Bool, nextValue: () -> Bool) {
-//        value = nextValue()
-//    }
-//}
-
 
 // MARK: View
 struct RecordContainerView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var navigationPath = NavigationPath()
     @State private var isSubmitEnabled = false
-//    @State private var isCancelHidden = false
     @ObservedObject var recordForm: RecordForm
     
     
@@ -43,7 +31,6 @@ struct RecordContainerView: View {
                 .toolbar {
                     // MARK: 취소 버튼
                     ToolbarItem(placement: .navigationBarLeading) {
-//                        if !isCancelHidden {
                             Button {
                                 if navigationPath.isEmpty {
                                     // 현재 화면 = RecordFormView
