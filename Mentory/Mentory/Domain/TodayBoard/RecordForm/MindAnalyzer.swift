@@ -14,41 +14,33 @@ import MentoryDBAdapter
 
 // MARK: Object
 @MainActor
-final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
+public final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
     // MARK: core
-    nonisolated let logger = Logger()
-    init(owner: RecordForm) {
+    private nonisolated let logger = Logger()
+    internal init(owner: RecordForm) {
         self.owner = owner
     }
     
     
     // MARK: state
     public nonisolated let id = UUID()
-    weak var owner: RecordForm?
+    internal weak var owner: RecordForm?
     
-    @Published private(set) var isAnalyzing: Bool = false
-    func startAnalyze() {
-        isAnalyzing = true
-    }
-    func stopAnalyze() {
-        isAnalyzing = false
-    }
-    
+    @Published var status: Status = .ready
     @Published var character: MentoryCharacter? = nil
     
-    @Published var isAnalyzeFinished: Bool = false
     @Published var analyzedResult: String? = nil
     @Published var mindType: Emotion? = nil
     
     private(set) var currentDate: MentoryDate = .now
-    func refreshCurrentDate() {
+    public func refreshCurrentDate() {
         self.currentDate = .now
     }
     
     
     
     // MARK: action
-    func analyze() async {
+    public func analyze() async {
         // capture
         guard let textInput = owner?.textInput else {
             logger.error("Owner?.textInput이 nil입니다.")
@@ -138,10 +130,9 @@ final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
         // mutate
         self.mindType = analysis.mindType
         self.analyzedResult = analysis.empathyMessage
-        self.isAnalyzeFinished = true
     }
     
-    func updateSuggestions() async {
+    public func updateSuggestions() async {
         // capture
         let currentDate = self.currentDate
         
@@ -190,12 +181,34 @@ final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
         
     }
     
-    func finish() {
+    public func finish() {
         //capture
         let recordForm = self.owner!
         let todayBoard = recordForm.owner!
         
         //mutate
         todayBoard.recordFormSelection = nil
+    }
+    
+    
+    // MARK: value
+    public enum Status: Sendable, Hashable {
+        // MARK: core
+        case ready
+        case analyzing
+        case finished
+        
+        // MARK: operator
+        public var isAnalyzing: Bool {
+            self == .analyzing
+        }
+        
+        public var isAnalyzeFinished: Bool {
+            self == .finished
+        }
+        
+        public var isSelectingStage: Bool {
+            self == .ready
+        }
     }
 }

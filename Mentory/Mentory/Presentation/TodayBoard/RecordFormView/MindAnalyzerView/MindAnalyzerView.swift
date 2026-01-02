@@ -10,34 +10,17 @@ import Values
 // MARK: View
 struct MindAnalyzerView: View {
     // MARK: model
+    @ObservedObject private(set) var mindAnalyzer: MindAnalyzer
+    
     @State private var showingSubmitAlert = false
-    @ObservedObject var mindAnalyzer: MindAnalyzer
     @Namespace private var mentorNamespace
     
-    init(
-        mindAnalyzer: MindAnalyzer,
-    ) {
-        self.mindAnalyzer = mindAnalyzer
-    }
-    
-    private var isSelectingStage: Bool {
-        !mindAnalyzer.isAnalyzing && !mindAnalyzer.isAnalyzeFinished
-    }
-    
-    private var isGeneratingStage: Bool {
-        mindAnalyzer.isAnalyzing
-    }
-    
-    private var isResultStage: Bool {
-        !mindAnalyzer.isAnalyzing && mindAnalyzer.isAnalyzeFinished
-    }
     
     // MARK: body
     var body: some View {
         MindAnalyzerLayout {
-            // Group{
-            if isSelectingStage {
-                
+            switch mindAnalyzer.status {
+            case .ready:
                 Header(
                     title: "누구에게 면담을 요청할까요?",
                     description: "오늘의 감정을 가장 잘 표현해줄 멘토를 선택하면 맞춤 리포트를 보내드릴게요."
@@ -50,16 +33,16 @@ struct MindAnalyzerView: View {
                 )
                 
                 AnalyzeButton(
-                    iconName: mindAnalyzer.isAnalyzing
+                    iconName: mindAnalyzer.status.isAnalyzing
                     ? "hourglass" : "paperplane",
-                    label: mindAnalyzer.isAnalyzing ? "면담 요청 중" : "면담 요청하기",
-                    isActive: !mindAnalyzer.isAnalyzing
+                    label: mindAnalyzer.status.isAnalyzing ? "면담 요청 중" : "면담 요청하기",
+                    isActive: !mindAnalyzer.status.isAnalyzing
                     && mindAnalyzer.character != nil
                 ) {
                     showingSubmitAlert = true
                 }
                 .disabled(
-                    mindAnalyzer.character == nil || mindAnalyzer.isAnalyzing
+                    mindAnalyzer.character == nil || mindAnalyzer.status.isAnalyzing
                 )
                 
                 .alert("일기 제출하기", isPresented: $showingSubmitAlert) {
@@ -67,7 +50,7 @@ struct MindAnalyzerView: View {
                     Button("제출") {
                         Task {
                             withAnimation {
-                                mindAnalyzer.startAnalyze()
+                                mindAnalyzer.status = .analyzing
                             }
                             
                             await mindAnalyzer.analyze()
@@ -79,7 +62,7 @@ struct MindAnalyzerView: View {
                             await todayBoard.sendSuggestionsToWatch()
                             
                             withAnimation {
-                                mindAnalyzer.stopAnalyze()
+                                mindAnalyzer.status = .finished
                             }
                         }
                     }
@@ -97,7 +80,7 @@ struct MindAnalyzerView: View {
                     mindType: mindAnalyzer.mindType
                 )
                 .allowsHitTesting(false)
-            } else if isGeneratingStage {
+            case .analyzing:
                 if let character = mindAnalyzer.character {
                     CharacterPicker.SelectableCard(
                         character: character,
@@ -116,8 +99,7 @@ struct MindAnalyzerView: View {
                     result: mindAnalyzer.analyzedResult,
                     mindType: mindAnalyzer.mindType
                 )
-            } else if isResultStage {
-                
+            case .finished:
                 if let character = mindAnalyzer.character {
                     CharacterPicker.SelectableCard(
                         character: character,
@@ -139,7 +121,7 @@ struct MindAnalyzerView: View {
                 ConfirmButton(
                     icon: "checkmark.circle.fill",
                     label: "확인",
-                    isPresented: mindAnalyzer.isAnalyzeFinished
+                    isPresented: mindAnalyzer.status.isAnalyzeFinished
                 ) {
                     let recordForm = mindAnalyzer.owner!
                     
@@ -148,7 +130,7 @@ struct MindAnalyzerView: View {
                 }
             }
         }
-        .navigationBarBackButtonHidden(!isSelectingStage)
+        .navigationBarBackButtonHidden(!mindAnalyzer.status.isSelectingStage)
     }
 }
 
@@ -210,7 +192,7 @@ extension Emotion {
 }
 
 // MARK: Component
-private struct Header: View {
+fileprivate struct Header: View {
     let title: String
     let description: String
     
@@ -226,7 +208,7 @@ private struct Header: View {
     }
 }
 
-private struct CharacterPicker: View {
+fileprivate struct CharacterPicker: View {
     let characters: [MentoryCharacter]
     @Binding var selection: MentoryCharacter?
     
@@ -320,7 +302,7 @@ private struct CharacterPicker: View {
     }
 }
 
-private struct AnalyzeButton: View {
+fileprivate struct AnalyzeButton: View {
     let iconName: String
     let label: String
     let isActive: Bool
@@ -348,7 +330,7 @@ private struct AnalyzeButton: View {
     }
 }
 
-private struct AnalyzedResult: View {
+fileprivate struct AnalyzedResult: View {
     let readyPrompt: String
     let progressPrompt: String
     let isProgress: Bool
@@ -380,7 +362,7 @@ private struct AnalyzedResult: View {
         }
     }
     
-    private struct MindTypeResultView: View {
+    fileprivate struct MindTypeResultView: View {
         let mindType: Emotion
         
         var body: some View {
@@ -405,7 +387,7 @@ private struct AnalyzedResult: View {
             )
         }
     }
-    private struct StatusBadge: View {
+    fileprivate struct StatusBadge: View {
         let text: String
         
         var body: some View {
@@ -425,7 +407,7 @@ private struct AnalyzedResult: View {
     }
 }
 
-private struct ConfirmButton: View {
+fileprivate struct ConfirmButton: View {
     let icon: String
     let label: String
     let isPresented: Bool
@@ -452,7 +434,7 @@ private struct ConfirmButton: View {
 }
 
 // MARK: Preview
-private struct MindAnalyzerPreview: View {
+fileprivate struct MindAnalyzerPreview: View {
     @StateObject private var mentoryiOS = MentoryiOS()
     
     var body: some View {

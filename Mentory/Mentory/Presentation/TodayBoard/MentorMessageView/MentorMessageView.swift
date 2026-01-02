@@ -27,7 +27,6 @@ struct MentorMessageView: View {
             defaultContent: "잠시 후 당신을 위한 멘토리 메시지가 도착해요\n오늘은 냉철이일까요, 구름이일까요?\n조금만 기다려 주세요"
         )
         .task {
-//            await mentorMessage.loadTodayMentorMessageTest()
             await mentorMessage.updateContent()
         }
     }
