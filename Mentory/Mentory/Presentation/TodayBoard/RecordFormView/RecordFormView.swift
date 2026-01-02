@@ -16,17 +16,17 @@ import Values
 // MARK: View
 struct RecordFormView: View {
     // MARK: core
-    nonisolated let logger = Logger(subsystem: "MentoryiOS.RecordForm", category: "Presentation")
-    @ObservedObject var recordForm: RecordForm
+    private nonisolated let logger = Logger()
+    @ObservedObject private(set) var recordForm: RecordForm
     
     
-    // MARK: - Body
+    // MARK: body
     var body: some View {
         RecordFormLayout(
             topBar: {
                 ToolbarItem(id: "recordForm.finish", placement: .topBarLeading) {
                     Button {
-                        recordForm.finish() // RecordFormView에서 보일 뒤로가기 버튼
+                        recordForm.finish()
                     } label: {
                         Image(systemName: "xmark")
                     }
@@ -53,20 +53,17 @@ struct RecordFormView: View {
             },
             main: {
                 TitleField(
+                    recordForm: recordForm,
                     prompt: "제목",
                     text: $recordForm.titleInput
                 )
-                .onReceive(recordForm.$titleInput) { _ in
-                    recordForm.validateInput()
-                }
                 
                 BodyField(
+                    recordForm: recordForm,
                     prompt: "글쓰기 시작...",
                     text: $recordForm.textInput
                 )
-                .onReceive(recordForm.$textInput) { _ in
-                    recordForm.validateInput()
-                }
+                
                 
                 ImagePreviewCard(
                     model: recordForm
@@ -164,6 +161,7 @@ fileprivate struct LiquidGlassIconButtonLabel: View {
 
 
 fileprivate struct TitleField: View {
+    let recordForm: RecordForm
     let prompt: String
     @Binding var text: String
     
@@ -173,10 +171,14 @@ fileprivate struct TitleField: View {
                 .font(.title3)
                 .padding()
         }
+        .onReceive(recordForm.$titleInput) { _ in
+            recordForm.validateInput()
+        }
     }
 }
 
 fileprivate struct BodyField: View {
+    let recordForm: RecordForm
     let prompt: String
     @Binding var text: String
     
@@ -197,6 +199,9 @@ fileprivate struct BodyField: View {
                     .frame(minHeight: 300)
                     .padding()
             }
+        }
+        .onReceive(recordForm.$textInput) { _ in
+            recordForm.validateInput()
         }
     }
 }
