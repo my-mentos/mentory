@@ -17,7 +17,7 @@ import MentoryDBAdapter
 public final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
     // MARK: core
     private nonisolated let logger = Logger()
-    init(owner: RecordForm) {
+    internal init(owner: RecordForm) {
         self.owner = owner
     }
     
@@ -33,14 +33,14 @@ public final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
     @Published var mindType: Emotion? = nil
     
     private(set) var currentDate: MentoryDate = .now
-    func refreshCurrentDate() {
+    public func refreshCurrentDate() {
         self.currentDate = .now
     }
     
     
     
     // MARK: action
-    func analyze() async {
+    public func analyze() async {
         // capture
         guard let textInput = owner?.textInput else {
             logger.error("Owner?.textInput이 nil입니다.")
@@ -132,7 +132,7 @@ public final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
         self.analyzedResult = analysis.empathyMessage
     }
     
-    func updateSuggestions() async {
+    public func updateSuggestions() async {
         // capture
         let currentDate = self.currentDate
         
@@ -181,7 +181,7 @@ public final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
         
     }
     
-    func finish() {
+    public func finish() {
         //capture
         let recordForm = self.owner!
         let todayBoard = recordForm.owner!
