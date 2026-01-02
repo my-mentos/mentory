@@ -190,14 +190,6 @@ final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
         
     }
     
-    func cancel() {
-        // capture
-        let recordForm = self.owner!
-        
-        // mutate
-        recordForm.mindAnalyzer = nil
-    }
-    
     func finish() {
         //capture
         let recordForm = self.owner!
@@ -205,10 +197,5 @@ final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
         
         //mutate
         todayBoard.recordFormSelection = nil
-//        todayBoard.recordForms.removeAll { recordForm in
-//            logger.debug("remove: 전체 \(recordForm.id)/ \(self.owner!.id)")
-//            return recordForm.id == self.owner!.id
-//        }
-        
     }
 }

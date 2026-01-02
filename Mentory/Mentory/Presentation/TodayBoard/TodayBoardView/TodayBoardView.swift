@@ -41,7 +41,7 @@ struct TodayBoardView: View {
                 content: "오늘 기분을 기록해볼까요?",
                 navLabel: "기록하러 가기",
                 navDestination: { recordForm in
-                    RecordContainerView(recordForm: recordForm)
+                    RecordFormView(recordForm: recordForm)
                 }
             )
             

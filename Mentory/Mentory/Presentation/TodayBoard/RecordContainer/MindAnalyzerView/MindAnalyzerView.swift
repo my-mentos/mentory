@@ -72,12 +72,12 @@ struct MindAnalyzerView: View {
                             
                             await mindAnalyzer.analyze()
                             await mindAnalyzer.updateSuggestions()
-
+                            
                             // Watch로 투두 전송
                             let recordForm = mindAnalyzer.owner!
                             let todayBoard = recordForm.owner!
                             await todayBoard.sendSuggestionsToWatch()
-
+                            
                             withAnimation {
                                 mindAnalyzer.stopAnalyze()
                             }
@@ -87,7 +87,7 @@ struct MindAnalyzerView: View {
                     Text("일기를 제출하면 수정할 수 없습니다.\n제출하시겠습니까?")
                 }
                 .keyboardShortcut(.defaultAction)
-    
+                
                 
                 AnalyzedResult(
                     readyPrompt: "면담 요청을 보내면 멘토가 감정 리포트를 작성해드려요.",
