@@ -240,25 +240,21 @@ public actor MentoryDBReal: Sendable {
         let context = ModelContext(Self.container)
 
         do {
-            // 1) 모든 MentoryDBModel 삭제
             let dbs = try context.fetch(FetchDescriptor<MentoryDBModel>())
             for db in dbs {
                 context.delete(db)
             }
 
-            // 2) RecordTicket 삭제
             let tickets = try context.fetch(FetchDescriptor<RecordTicket>())
             for ticket in tickets {
                 context.delete(ticket)
             }
 
-            // 3) DailyRecordModel 삭제
             let records = try context.fetch(FetchDescriptor<DailyRecordModel>())
             for record in records {
                 context.delete(record)
             }
 
-            // 4) DailySuggestionModel 삭제
             let suggestions = try context.fetch(FetchDescriptor<DailySuggestionModel>())
             for suggestion in suggestions {
                 context.delete(suggestion)
