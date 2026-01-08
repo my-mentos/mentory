@@ -47,7 +47,10 @@ public nonisolated struct MentoryDBAdapter: MentoryDBInterface {
         await mentoryDB.isSameDayRecordExist(for: date)
     }
     
-
+    public func deleteAll() async throws {
+        await mentoryDB.deleteAll()
+    }
+    
     public func getRecentRecord() async throws -> DailyRecordAdapter? {
         guard let dailyRecord = await mentoryDB.getRecentRecord() else {
             return nil

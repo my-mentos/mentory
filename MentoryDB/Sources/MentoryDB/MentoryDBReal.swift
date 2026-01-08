@@ -236,6 +236,43 @@ public actor MentoryDBReal: Sendable {
         }
     }
 
+    public func deleteAll() {
+        let context = ModelContext(Self.container)
+
+        do {
+            // 1) 모든 MentoryDBModel 삭제
+            let dbs = try context.fetch(FetchDescriptor<MentoryDBModel>())
+            for db in dbs {
+                context.delete(db)
+            }
+
+            // 2) RecordTicket 삭제
+            let tickets = try context.fetch(FetchDescriptor<RecordTicket>())
+            for ticket in tickets {
+                context.delete(ticket)
+            }
+
+            // 3) DailyRecordModel 삭제
+            let records = try context.fetch(FetchDescriptor<DailyRecordModel>())
+            for record in records {
+                context.delete(record)
+            }
+
+            // 4) DailySuggestionModel 삭제
+            let suggestions = try context.fetch(FetchDescriptor<DailySuggestionModel>())
+            for suggestion in suggestions {
+                context.delete(suggestion)
+            }
+
+            try context.save()
+            logger.info("MentoryDB 전체 데이터 삭제 완료")
+
+        } catch {
+            logger.error("MentoryDB 전체 데이터 삭제 실패: \(error.localizedDescription)")
+        }
+    }
+
+    
     public func getRecentRecord() -> DailyRecord? {
         let context = ModelContext(MentoryDBReal.container)
         let id = self.id

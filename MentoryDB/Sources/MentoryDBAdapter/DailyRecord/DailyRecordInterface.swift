@@ -11,4 +11,5 @@ import Foundation
 // MARK: Interface
 public protocol DailyRecordInterface: Sendable {
     func getSuggestions() async throws -> [SuggestionData]
+    func deleteAll() async throws
 }
