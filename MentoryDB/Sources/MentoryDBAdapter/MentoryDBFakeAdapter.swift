@@ -37,7 +37,7 @@ public nonisolated struct MentoryDBFakeAdapter: MentoryDBInterface {
     }
     
     public func getMentorMessage() async throws -> Values.MessageData? {
-        return await MainActor.run {
+        await MainActor.run {
             object.message
         }
     }
@@ -48,7 +48,7 @@ public nonisolated struct MentoryDBFakeAdapter: MentoryDBInterface {
     }
     
     public func getCharacter() async throws -> MentoryCharacter? {
-        return await MainActor.run {
+        await MainActor.run {
             object.userCharacter
         }
     }
