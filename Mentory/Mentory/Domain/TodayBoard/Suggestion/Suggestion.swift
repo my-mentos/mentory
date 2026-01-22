@@ -11,6 +11,7 @@ import MentoryDBAdapter
 import OSLog
 
 
+
 // MARK: Object
 @MainActor
 final class Suggestion: Sendable, ObservableObject, Identifiable {
