@@ -122,6 +122,8 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
+				Presentation/TodayBoard/MindAnalyzerView/MindAnalyzerLayout.swift,
+				Presentation/TodayBoard/MindAnalyzerView/MindAnalyzerView.swift,
 			);
 			target = CE39BFBB2EC313F20090DF78 /* Mentory */;
 		};
