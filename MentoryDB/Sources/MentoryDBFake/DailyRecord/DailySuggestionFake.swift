@@ -8,7 +8,7 @@ import Foundation
 import Values
 
 
-// MARK: Fake Object
+// MARK: Object
 @MainActor
 final class DailySuggestionFake: Sendable {
     // MARK: core

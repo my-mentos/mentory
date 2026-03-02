@@ -5,7 +5,7 @@
 //  Created by 김민우 on 11/22/25.
 //
 import Foundation
-import MentoryDB
+import MentoryDBCore
 import Values
 
 
@@ -21,4 +21,3 @@ public nonisolated struct DailyRecordAdapter: DailyRecordInterface {
         await dailyRecord.getSuggestions()
     }
 }
-

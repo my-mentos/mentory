@@ -33,7 +33,16 @@ public nonisolated struct MentoryDBFakeAdapter: MentoryDBInterface {
         }
     }
     public func getRecords() async throws -> [RecordData] {
-        return []
+        await MainActor.run {
+            object.records
+                .map { dailyRecord in
+                    RecordData(
+                        recordDate: dailyRecord.recordDate,
+                        analyzedResult: dailyRecord.analyzedContent,
+                        emotion: dailyRecord.emotion
+                    )
+                }
+        }
     }
     
     public func getMentorMessage() async throws -> Values.MessageData? {

@@ -9,29 +9,29 @@ import Collections
 import Values
 
 
-// MARK: Object Model
+// MARK: Object
 @MainActor
-package final class MentoryDatabaseFake: Sendable {
+public final class MentoryDatabaseFake: Sendable {
     // MARK: core
-    package nonisolated init() { }
+    public nonisolated init() { }
     
     // MARK: state
-    package var userName: String? = nil
-    package var userCharacter: MentoryCharacter? = nil
-    package var message: MessageData? = nil
+    public var userName: String? = nil
+    public var userCharacter: MentoryCharacter? = nil
+    public var message: MessageData? = nil
     
     private var createRecordQueue: Deque<RecordData> = []
-    package func insertTicket(_ recordData: RecordData) {
+    public func insertTicket(_ recordData: RecordData) {
         self.createRecordQueue.append(recordData)
     }
     
-    package var records: [DailyRecordFake] = []
-    package func getDailyRecord(ticketId: UUID) -> DailyRecordFake? {
+    public var records: [DailyRecordFake] = []
+    public func getDailyRecord(ticketId: UUID) -> DailyRecordFake? {
         return records.first { dailyRecord in
             dailyRecord.ticketId == ticketId
         }
     }
-    package func isSameDayRecordExist(_ date: MentoryDate) -> Bool {
+    public func isSameDayRecordExist(_ date: MentoryDate) -> Bool {
         let result = self.records
             .contains { record in
                 record.recordDate.isSameDate(as: date) == true
@@ -39,18 +39,18 @@ package final class MentoryDatabaseFake: Sendable {
         
         return result
     }
-    package func getRecentRecord() -> DailyRecordFake? {
+    public func getRecentRecord() -> DailyRecordFake? {
         return self.records
             .max(by: { $0.recordDate < $1.recordDate })
     }
 
-    package func getCompletedSuggestionsCount() -> Int {
+    public func getCompletedSuggestionsCount() -> Int {
         return records.reduce(0) { total, record in
             total + record.suggestions.filter { $0.isDone }.count
         }
     }
 
-    package func updateSuggestionStatus(targetId: UUID, isDone: Bool) {
+    public func updateSuggestionStatus(targetId: UUID, isDone: Bool) {
         for record in records {
             if let suggestion = record.suggestions.first(where: { $0.id == targetId }) {
                 suggestion.isDone = isDone
@@ -60,7 +60,7 @@ package final class MentoryDatabaseFake: Sendable {
     }
 
     // MARK: action
-    package func createDailyRecords() {
+    public func createDailyRecords() {
         // mutate
         while createRecordQueue.isEmpty == false {
             let recordData = createRecordQueue.removeFirst()
@@ -81,4 +81,3 @@ package final class MentoryDatabaseFake: Sendable {
 
     // MARK: value
 }
-

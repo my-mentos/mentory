@@ -2,7 +2,7 @@
 
 <div align="center">
   <a href="https://github.com/EST-iOS4/Mentory">
-    <img src="./mentory-icon.png" alt="Logo" width="110" height="110">
+    <img src="./assets/images/mentory-icon.png" alt="Logo" width="110" height="110">
   </a>
 
   <h3>Mentory</h3>
@@ -25,7 +25,7 @@
 </div>
 
 <p align="center">
-  <img src="./mentory-intro.png" alt="App Introduction" width="800">
+  <img src="./assets/images/mentory-intro.png" alt="App Introduction" width="800">
 </p>
 
 ## 목차
@@ -38,10 +38,9 @@
   - [설치 방법](#설치-방법)
   - [환경 설정](#환경-설정)
   - [실행 방법](#실행-방법)
+- [Tuist 기반 최초 빌드 및 실행 절차](#tuist-기반-최초-빌드-및-실행-절차)
 - [소프트웨어 디자인](#소프트웨어-디자인)
 - [프로젝트 구조](#프로젝트-구조)
-- [개발 문서](#개발-문서)
-- [트러블슈팅 문서](#트러블슈팅-문서)
 - [팀원](#팀원)
 
 ## 관련 링크
@@ -222,6 +221,8 @@
   </tr>
 </table>
 
+> 권장 Tuist 버전: **4.39.1**
+
 ### 설치 방법
 
 1. **저장소 클론**
@@ -230,10 +231,21 @@
    cd Mentory
    ```
 
-2. **프로젝트 열기**
+2. **Tuist 설치** (이미 설치되어 있으면 생략)
    ```bash
-   cd Mentory
-   open Mentory.xcodeproj
+   brew install tuist
+   tuist version
+   ```
+
+3. **Tuist 의존성 설치 및 워크스페이스 생성**
+   ```bash
+   tuist install
+   tuist generate
+   ```
+
+4. **워크스페이스 열기**
+   ```bash
+   open mentory.xcworkspace
    ```
 
 ### 환경 설정
@@ -242,7 +254,7 @@
 
 1. `Secrets.xcconfig.sample` 파일을 복사하여 `Secrets.xcconfig` 파일 생성
    ```bash
-   cp Mentory/Secrets.xcconfig.sample Mentory/Secrets.xcconfig
+   cp MentoryApp/Secrets.xcconfig.sample MentoryApp/Secrets.xcconfig
    ```
 
 2. `Secrets.xcconfig` 파일을 열어 ESTSOFT에서 제공받은 API 토큰 입력
@@ -251,7 +263,7 @@
    ```
 
 3. Xcode에서 프로젝트 설정 확인
-   - [Mentory.xcodeproj](Mentory/Mentory.xcodeproj)를 선택
+   - [mentory.xcworkspace](mentory.xcworkspace)를 연 뒤 `Mentory` 타겟 선택
    - **Info** 탭에서 `ALAN_API_TOKEN` 값이 `$(TOKEN)`으로 설정되어 있는지 확인
 
 #### 2. Firebase 설정
@@ -260,8 +272,8 @@
 
 2. iOS 앱 추가 및 `GoogleService-Info.plist` 다운로드
 
-3. 다운로드한 파일을 프로젝트의 `Mentory/Mentory/` 디렉토리에 추가
-   - Xcode에서 [Mentory/Mentory](Mentory/Mentory) 폴더에 드래그 앤 드롭
+3. 다운로드한 파일을 프로젝트의 `MentoryApp/MentoryApp/` 디렉토리에 추가
+   - Xcode에서 [MentoryApp/MentoryApp](MentoryApp/MentoryApp) 폴더에 드래그 앤 드롭
    - **Copy items if needed** 체크
 
 4. Firebase AI 기능 활성화
@@ -278,7 +290,7 @@
 
 #### watchOS 앱 실행
 
-1. Xcode에서 타겟을 **MentoryWatch Watch App**으로 선택
+1. Xcode에서 타겟을 **MentoryWatchApp**으로 선택
 2. Watch 시뮬레이터 선택
 3. `Cmd + R` 또는 실행 버튼 클릭
 
@@ -291,6 +303,30 @@
 3. 위젯 추가 화면에서 **Mentory** 위젯 선택
 4. 원하는 크기의 위젯을 홈 화면에 배치
 
+### Tuist 기반 최초 빌드 및 실행 절차
+
+처음 참여한 개발자는 아래 순서로 진행하면 바로 빌드/실행할 수 있습니다.
+
+1. 저장소 클론
+   ```bash
+   git clone https://github.com/EST-iOS4/Mentory.git
+   cd Mentory
+   ```
+2. `MentoryApp/Secrets.xcconfig` 생성 후 `TOKEN` 값 설정
+   ```bash
+   cp MentoryApp/Secrets.xcconfig.sample MentoryApp/Secrets.xcconfig
+   ```
+3. Firebase에서 받은 `GoogleService-Info.plist`를 `MentoryApp/MentoryApp/`에 추가
+4. Tuist 의존성 설치 및 워크스페이스 생성
+   ```bash
+   tuist install
+   tuist generate
+   open mentory.xcworkspace
+   ```
+5. Xcode에서 `Mentory` 스킴 선택 후 `Cmd + B`(빌드), `Cmd + R`(실행)
+
+> `tuist generate` 이후에는 기존 `.xcodeproj` 대신 **`mentory.xcworkspace`** 를 기준으로 작업하세요.
+
 ## 소프트웨어 디자인
 
 아래 사진을 통해 MentoryiOS, MentoryLLM, MentoryDB 도메인을 확인할 수 있습니다.
@@ -300,14 +336,14 @@
 </p>
 
 <p align="center">
-  <img src="mentory.png" alt="소프트웨어 디자인 다이어그램">
+  <img src="./assets/images/mentory.png" alt="소프트웨어 디자인 다이어그램">
 </p>
 
 ## 프로젝트 구조
 
 ```
 Mentory/
-├── Mentory/                          # 메인 iOS 앱
+├── MentoryApp/                       # 메인 iOS 앱 프로젝트
 │   ├── MentoryApp.swift             # 앱 진입점
 │   ├── Domain/                      # 비즈니스 로직 계층
 │   │   ├── MentoryiOS.swift        # 메인 도메인 모델
@@ -343,7 +379,7 @@ Mentory/
 │   └── Domain/                     # DB 도메인 모델
 │       └── DailyRecord/            # 일일 감정 기록 모델
 │
-├── MentoryWatch Watch App/          # watchOS 앱
+├── MentoryWatchApp/                 # watchOS 앱
 │   ├── Domain/                     # Watch 앱 비즈니스 로직
 │   ├── Service/                    # Watch 앱 서비스
 │   └── Presentation/.              # UI 계층
@@ -352,7 +388,7 @@ Mentory/
 │   ├── MentoryWidgetBundle.swift   # 위젯 번들
 │   └── Presentation/               # 위젯 UI
 │
-├── Values/                          # 공유 값 타입 및 프로토콜
+├── MentoryShared/                   # 공유 값 타입 및 프로토콜 프로젝트 (Values 모듈)
 │   ├── MentoryiOS/                 # iOS 앱 관련 값 타입
 │   ├── MentoryDB/                  # DB 관련 값 타입
 │   ├── AlanLLM/                    # Alan LLM 관련 값 타입
@@ -374,38 +410,9 @@ Mentory/
 - **Presentation**: SwiftUI 뷰와 뷰모델을 포함하는 UI 계층
 - **Adapter**: 외부 서비스(LLM, DB, 알림 등)와의 통신을 담당하는 계층
 - **Service**: 공통 기능(마이크, 이미지 피커, Watch 연동)을 제공하는 계층
-- **Values**: 도메인 간 공유되는 값 타입과 프로토콜
+- **MentoryShared (Values 모듈)**: 도메인 간 공유되는 값 타입과 프로토콜
 
 각 계층은 의존성 역전 원칙(DIP)을 따르며, Mock 객체를 통해 테스트 가능하도록 설계되었습니다.
-
-## 개발 문서
-
-- [이슈(Issue) 작성하기](docs/write-issue/README.md)
-- [SwiftUI에서 Combine 기반 MVVM 사용하기](docs/swiftui-combine-mvvm/README.md)
-- [MVVM에 Swift Concurrency 도입하기](docs/mvvm-swift-concurrency/README.md)
-- [SwiftData 구현 가이드](docs/swiftdata/README.md)
-- [Alan API 사용법](docs/alan-api/README.md)
-- [WatchOS 기초](docs/watchos/README.md)
-- [WatchConnectivity 이해하기](docs/watchos/watchconnectivity.md)
-- [Widget Extension 개념 이해하기](docs/Widget-Extension/README.md)
-- [Firebase AI 사용하기](docs/firebase-ai/README.md)
-
-## 트러블슈팅 문서
-
-아래는 팀원별로 개발을 진행하며 겪은 문제에 대한 트러블슈팅 문서입니다. 새로운 문서를 추가하려면 `docs/troubleshooting/<이름-폴더>/YYYYMMDD-short-title.md` 형식으로 새 마크다운 파일을 만들고, 아래에 문서 참조를 추가하면 됩니다.
-
-1. 박재이
-   - [2025-11-19 MindAnalyze API 호출 시 결과 미반환](docs/troubleshooting/parkjay/mindanalyze-recordform-reset.md)
-2. 송지석
-   - [2025-11-18 설정 탭 화면이 표시되지 않는 문제](docs/troubleshooting/jiseok/2025-11-18-Tabbar-view.md)
-   - [2025-12-09 App Group & Signing — “Unknown Name (Team ID)” 문제](docs/troubleshooting/jiseok/2025-12-9-appgroup-signing.md)
-3. 구현모
-   - [2025-11-17 앱 아이콘 설정](docs/troubleshooting/hyeonmo/20251117-app-icon.md)
-   - [2025-12-02 WatchConnectivity MainActor 동시성 충돌](docs/troubleshooting/hyeonmo/20251202-watchconnectivity.md)
-   - [2025-12-03 WatchConnectivity Manager-Engine 분리 리팩토링](docs/troubleshooting/hyeonmo/20251203-watchconnectivity-refactoring.md)
-   - [2025-12-04 Firebase LLM 음성 파일 포맷 오류](docs/troubleshooting/hyeonmo/20251204-firebase-audio-format.md)
-4. 김민우
-   - 작성된 문서 없음
 
 ## 팀원
 
